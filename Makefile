@@ -1,4 +1,4 @@
-CFLAGS = -std=c11 -Wall -Wextra -Werror -pedantic
+CFLAGS = -std=c17 -Wall -Wextra -Werror -pedantic -O3
 
 all: lambda
 
