@@ -25,6 +25,15 @@ expressions.
 * Can abstract Church numerals back to their integer representation in the
   final output (e.g., `λf.λx.f (f x)` becomes `2`).
 
+## Install
+
+Clone the repo:
+
+```bash
+git clone https://github.com/dhodgson615/Lambda-Calculus-Interpreter-C.git
+cd Lambda-Calculus-Interpreter-C
+```
+
 ## Building
 
 A `Makefile` is provided for easy compilation.
