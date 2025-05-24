@@ -7,10 +7,10 @@ expressions.
 ## Features
 
 * Parses lambda expressions, including variables, abstractions (λx.M), and
-* applications (M N).
+  applications (M N).
 
 * Supports Church numerals: input numbers are automatically converted to their
-* Church numeral representation (e.g., `2` becomes `λf.λx.f (f x)`).
+  Church numeral representation (e.g., `2` becomes `λf.λx.f (f x)`).
 
 * Performs beta reduction: `(λx.M) N → M[x:=N]`
 
@@ -82,7 +82,7 @@ top of `lambda.c`) configurations that can be modified in `lambda.c`:
 ## Predefined Constants (δ-reduction)
 
 The interpreter predefines several common constants:
- 
+
 * `⊤` (True): `λx.λy.x`
 
 * `⊥` (False): `λx.λy.y`
