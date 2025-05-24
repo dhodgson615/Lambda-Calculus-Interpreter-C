@@ -208,8 +208,8 @@ make clean
 
 ## Metrics for Both Interpreters
 
-| Metric                       | C Version      | Python Version  | Ratio (Python / C) | Increase over C  |
-|-----------------------------|--------------:|----------------:|--------------------:|------------------:|
+| Metric                       | C Version      | Python Version  | Ratio (Python / C)  | Increase over C  |
+|------------------------------|---------------:|----------------:|--------------------:|-----------------:|
 | Real time (wall-clock)       | 3.60 s         | 45.81 s         | 12.72×              | +1,172.50%       |
 | User CPU time                | 2.09 s         | 34.76 s         | 16.63×              | +1,563.16%       |
 | System CPU time              | 0.30 s         | 6.74 s          | 22.47×              | +2,146.67%       |
