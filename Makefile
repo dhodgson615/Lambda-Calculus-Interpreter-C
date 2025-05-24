@@ -1,6 +1,6 @@
 CC := gcc
 
-CFLAGS = -std=c17 -Wall -Wextra -Werror -pedantic -O3 - march=native -flto -mtune=native -funroll-loops
+CFLAGS = -std=c17 -Wall -Wextra -Werror -pedantic -O3 -march=native -flto -mtune=native -funroll-loops
 
 all: lambda
 
