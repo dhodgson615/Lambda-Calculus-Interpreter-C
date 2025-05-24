@@ -148,21 +148,20 @@ Input:
 
 Output:
 ```
-Step 0: (+ 2) 1
-Step 1 (δ): (λm.λn.m ↑ n 2) 1
-Step 2 (β): λn.2 ↑ n 1
-Step 3 (β): 2 ↑ 1
-Step 4 (δ): (λf.λx.f (f x)) ↑ 1
-Step 5 (δ): (λf.λx.f (f x)) (λn.λf.λx.f (n f x)) 1
-Step 6 (β): (λx.(λn.λf.λx.f (n f x)) ((λn.λf.λx.f (n f x)) x)) 1
-Step 7 (β): (λn.λf.λx.f (n f x)) ((λn.λf.λx.f (n f x)) 1)
-Step 8 (β): λf.λx.f (((λn.λf.λx.f (n f x)) 1) f x)
-Step 9 (β): λf.λx.f ((λf'.λx'.f' (1 f' x')) f x)
-Step 10 (δ): λf.λx.f ((λf'.λx'.f' ((λf''.λx''.f'' x'') f' x')) f x)
-Step 11 (β): λf.λx.f ((λx'.f ((λf''.λx''.f'' x'') f x')) f x)
-Step 12 (β): λf.λx.f (f ((λf''.λx''.f'' x'') f (f x)))
-Step 13 (β): λf.λx.f (f ((λx''.f (f x'')) (f x)))
-Step 14 (β): λf.λx.f (f (f (f (f x))))
+Step 0: + (λf.(λx.f (f x))) (λf.(λx.f x))
+Step 1 (δ): (λm.(λn.m ↑ n)) (λf.(λx.f (f x))) (λf.(λx.f x))
+Step 2 (β): (λn.(λf.(λx.f (f x))) ↑ n) (λf.(λx.f x))
+Step 3 (β): (λf.(λx.f (f x))) ↑ (λf.(λx.f x))
+Step 4 (β): (λx.↑ (↑ x)) (λf.(λx.f x))
+Step 5 (β): ↑ (↑ (λf.(λx.f x)))
+Step 6 (δ): (λn.(λf.(λx.f (n f x)))) (↑ (λf.(λx.f x)))
+Step 7 (β): λf.(λx.f (↑ (λf.(λx.f x)) f x))
+Step 8 (δ): λf.(λx.f ((λn.(λf.(λx.f (n f x)))) (λf.(λx.f x)) f x))
+Step 9 (β): λf.(λx.f ((λf.(λx.f ((λf.(λx.f x)) f x))) f x))
+Step 10 (β): λf.(λx.f ((λx.f ((λf.(λx.f x)) f x)) x))
+Step 11 (β): λf.(λx.f (f ((λf.(λx.f x)) f x)))
+Step 12 (β): λf.(λx.f (f ((λx.f x) x)))
+Step 13 (β): λf.(λx.f (f (f x)))
 → normal form reached.
 
 δ-abstracted: 3
