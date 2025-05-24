@@ -215,7 +215,7 @@ make clean
 | System CPU time              | 0.30 s         | 6.74 s          | 22.47×              | +2,146.67 %       |
 | Max RSS (peak resident set)  | 2,490,368 B    | 137,674,752 B   | 55.28×              | +5,428.29 %       |
 | Peak memory footprint        | 1,655,616 B    | 115,574,528 B   | 69.81×              | +6,880.76 %       |
-| Page reclaims                | 354            | 1,809,444       | 5 111.42×           | +511,042.37 %     |
+| Page reclaims                | 354            | 1,809,444       | 5,111.42×           | +511,042.37 %     |
 | Page faults                  | 1              | 8               | 8.00×               | +700.00 %         |
 | Voluntary context switches   | 91,206         | 1,059,633       | 11.62×              | +1,061.80 %       |
 | Involuntary context switches | 20             | 4,172           | 208.60×             | +20,760.00 %      |
