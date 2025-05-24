@@ -1,4 +1,4 @@
-# Lambda Calculus Interpreter
+# Lambda-Calculus-Interpreter-C
 
 This project is a C implementation of a lambda calculus interpreter. It can
 parse lambda expressions, perform beta and delta reductions, and normalize
