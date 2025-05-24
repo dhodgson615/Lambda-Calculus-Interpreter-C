@@ -45,9 +45,10 @@ typedef struct {
     size_t cap;
 } strbuf;
 
-/* Expression creation and manipulation */
-
 Expr *  church(int n);
+bool    is_church_numeral(Expr *e);
+Expr *  abstract_numerals(Expr *e);
+
 Expr *  parse(Parser *p);
 Expr *  parse_expr(Parser *p);
 Expr *  parse_abs(Parser *p);
@@ -56,16 +57,17 @@ Expr *  parse_atom(Parser *p);
 int     parse_number(Parser *p);
 char *  parse_varname(Parser *p);
 
-bool    is_church_numeral(Expr *e);
-Expr *  abstract_numerals(Expr *e);
 Expr *  substitute(Expr *e, const char *v, Expr *val);
 Expr *  copy_expr(Expr *e);
+
 Expr *  make_variable(const char *n);
 Expr *  make_abstraction(const char *p, Expr *b);
 Expr *  make_application(Expr *f, Expr *a);
+
 void    free_expr(Expr *e);
 void    expr_to_buffer(Expr *e, char *buf, size_t cap);
 void    expr_to_buffer_rec(Expr *e, char *buf, size_t *pos, size_t cap);
+
 char    peek(Parser *p);
 char    consume(Parser *p);
 void    skip_whitespace(Parser *p);
@@ -77,6 +79,7 @@ bool    vs_has(VarSet *s, const char *x);
 void    vs_add(VarSet *s, const char *x);
 void    vs_rm(VarSet *s, const char *x);
 void    vs_free(VarSet *s);
+
 void    free_vars_rec(Expr *e, VarSet *s);
 VarSet  free_vars(Expr *e);
 char *  fresh_var(VarSet *s);
