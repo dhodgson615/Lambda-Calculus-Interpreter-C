@@ -62,7 +62,7 @@ You can run the interpreter in two ways:
     ```bash
     ./lambda "(λx.x) y"
     ```
-    Or for more complex expressions, you might need to quote parts:
+
     ```bash
     ./lambda "((λm.λn.m (λf.λx.f (n f x)) n) 2) 1"
     ```
@@ -176,3 +176,4 @@ To remove the compiled executable:
 ```bash
 make clean
 ```
+
