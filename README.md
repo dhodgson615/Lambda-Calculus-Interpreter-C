@@ -33,37 +33,33 @@ Clone and compile:
 git clone https://github.com/dhodgson615/Lambda-Calculus-Interpreter-C.git
 cd Lambda-Calculus-Interpreter-C
 make
-./lambda "+ 2 2"
+./lambda "+ 1 1"
 ```
 
 You should see similar output to this if you paste the above into a Unix terminal:
 
 ```
 Cloning into 'Lambda-Calculus-Interpreter-C'...
-remote: Enumerating objects: 45, done.
-remote: Counting objects: 100% (45/45), done.
-remote: Compressing objects: 100% (43/43), done.
-remote: Total 45 (delta 16), reused 0 (delta 0), pack-reused 0 (from 0)
-Receiving objects: 100% (45/45), 21.22 KiB | 4.24 MiB/s, done.
-Resolving deltas: 100% (16/16), done.
+remote: Enumerating objects: 48, done.
+remote: Counting objects: 100% (48/48), done.
+remote: Compressing objects: 100% (46/46), done.
+remote: Total 48 (delta 18), reused 0 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (48/48), 22.55 KiB | 7.52 MiB/s, done.
+Resolving deltas: 100% (18/18), done.
 cc -std=c17 -Wall -Wextra -Werror -pedantic -O3 lambda.c -o lambda
-Step 0: + (λf.(λx.f (f x))) (λf.(λx.f (f x)))
-Step 1 (δ): (λm.(λn.m ↑ n)) (λf.(λx.f (f x))) (λf.(λx.f (f x)))
-Step 2 (β): (λn.(λf.(λx.f (f x))) ↑ n) (λf.(λx.f (f x)))
-Step 3 (β): (λf.(λx.f (f x))) ↑ (λf.(λx.f (f x)))
-Step 4 (β): (λx.↑ (↑ x)) (λf.(λx.f (f x)))
-Step 5 (β): ↑ (↑ (λf.(λx.f (f x))))
-Step 6 (δ): (λn.(λf.(λx.f (n f x)))) (↑ (λf.(λx.f (f x))))
-Step 7 (β): λf.(λx.f (↑ (λf.(λx.f (f x))) f x))
-Step 8 (δ): λf.(λx.f ((λn.(λf.(λx.f (n f x)))) (λf.(λx.f (f x))) f x))
-Step 9 (β): λf.(λx.f ((λf.(λx.f ((λf.(λx.f (f x))) f x))) f x))
-Step 10 (β): λf.(λx.f ((λx.f ((λf.(λx.f (f x))) f x)) x))
-Step 11 (β): λf.(λx.f (f ((λf.(λx.f (f x))) f x)))
-Step 12 (β): λf.(λx.f (f ((λx.f (f x)) x)))
-Step 13 (β): λf.(λx.f (f (f (f x))))
+Step 0: + (λf.(λx.f x)) (λf.(λx.f x))
+Step 1 (δ): (λm.(λn.m ↑ n)) (λf.(λx.f x)) (λf.(λx.f x))
+Step 2 (β): (λn.(λf.(λx.f x)) ↑ n) (λf.(λx.f x))
+Step 3 (β): (λf.(λx.f x)) ↑ (λf.(λx.f x))
+Step 4 (β): (λx.↑ x) (λf.(λx.f x))
+Step 5 (β): ↑ (λf.(λx.f x))
+Step 6 (δ): (λn.(λf.(λx.f (n f x)))) (λf.(λx.f x))
+Step 7 (β): λf.(λx.f ((λf.(λx.f x)) f x))
+Step 8 (β): λf.(λx.f ((λx.f x) x))
+Step 9 (β): λf.(λx.f (f x))
 → normal form reached.
 
-δ-abstracted: 4
+δ-abstracted: 2
 ```
 
 ## Usage
