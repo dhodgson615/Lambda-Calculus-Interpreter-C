@@ -402,7 +402,7 @@ void normalize(expr *e) {
         expr *next;
         const char *rtype;
         if (!reduce_once(e, &next, &rtype)) {
-            printf("→ normal form reached.\n");
+            printf("\n→ normal form reached.\n");
             break;
         }
         free_expr(e);
@@ -410,8 +410,7 @@ void normalize(expr *e) {
         sb_reset(&sb);
         expr_to_buffer(e, sb.data, sb.cap);
 
-        if (CONFIG_SHOW_STEP_TYPE) printf("Step %d (%s): %s\n", step++, rtype,
-                                          sb.data);
+        if (CONFIG_SHOW_STEP_TYPE) printf("Step %d (%s): %s\n", step++, rtype, sb.data);
         else printf("Step %d: %s\n", step++, sb.data);
     }
     if (CONFIG_DELTA_ABSTRACT) {
