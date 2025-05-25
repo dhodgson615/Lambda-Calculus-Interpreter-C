@@ -286,22 +286,7 @@ expr *substitute(expr *e, const char *v, expr *val) {
     return make_application(substituted_fn, substituted_arg);
 }
 
-static const char *def_names[N_DEFS] = {"⊤", "⊥", "∧",       "∨", "↓", "↑",
-                                        "+", "*", "is_zero", "-", "≤", "pair"};
-static const char *def_src[N_DEFS] = {
-        "λx.λy.x",
-        "λx.λy.y",
-        "λp.λq.p q p",
-        "λp.λq.p p q",
-        "λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)",
-        "λn.λf.λx.f (n f x)",
-        "λm.λn.m ↑ n",
-        "λm.λn.m (+ n) 0",
-        "λn.n (λx.⊥) ⊤",
-        "λm.λn.n ↓ m",
-        "λm.λn.is_zero (- m n)",
-        "λx.λy.λf.f x y"};
-static expr *def_vals[N_DEFS];
+//
 
 int find_def(const char *s) {
     for (int i = 0; i < N_DEFS; i++) if (!strcmp(def_names[i], s)) return i;

@@ -8,10 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_PRINT_LEN  (1024 * 1024)
-#define N_DEFS         (12)
-#define ALWAYS_INLINE  __attribute__((always_inline))
-#define HOT            __attribute__((hot))
+#define MAX_PRINT_LEN   (1024 * 1024)
+#define ALWAYS_INLINE   __attribute__((always_inline))
+#define HOT             __attribute__((hot))
 
 
 typedef unsigned char uchar;
@@ -63,74 +62,94 @@ typedef struct {
 } strbuf;
 
 /**
+ * @brief Delta definitions.
+ */
+static const char *def_src[] = {"λx.λy.x", "λx.λy.y", "λp.λq.p q p",
+                                "λp.λq.p p q",
+                                "λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)",
+                                "λn.λf.λx.f (n f x)", "λm.λn.m ↑ n",
+                                "λm.λn.m (+ n) 0", "λn.n (λx.⊥) ⊤",
+                                "λm.λn.n ↓ m", "λm.λn.is_zero (- m n)",
+                                "λx.λy.λf.f x y"};
+
+#define N_DEFS ((int)(sizeof(def_src) / sizeof(def_src[0])))
+
+/**
+ * @brief Delta definition names.
+ */
+static const char *def_names[N_DEFS] = {"⊤", "⊥", "∧", "∨", "↓", "↑", "+", "*",
+                                        "is_zero", "-", "≤", "pair"};
+static expr *def_vals[N_DEFS];
+
+/**
  * @brief Create a Church numeral.
  * @param n the number
  * @return the Church numeral expression
  */
-expr *  church(int n);
+expr *church(int n);
 
 /**
  * @brief Check if an expression is a Church numeral.
  * @param e the expression to check
  * @return true if the expression is a Church numeral, false otherwise
  */
-bool    is_church_numeral(expr *e);
+bool is_church_numeral(expr *e);
 
 /**
  * @brief Abstract Church numerals in an expression.
  * @param e the expression to abstract
  * @return the abstracted expression
  */
-expr *  abstract_numerals(expr *e);
+expr *abstract_numerals(expr *e);
 
 /**
  * @brief Parse a lambda calculus expression.
  * @param p the parser
  * @return the parsed expression
  */
-expr *  parse(Parser *p);
+expr *parse(Parser *p);
 
 /**
  * @brief Parse a variable name from the input.
  * @param p the parser
  * @return the parsed variable name
  */
-expr *  parse_expr(Parser *p);
+expr *parse_expr(Parser *p);
 
 /**
  * @brief Parse an abstraction from the input.
  * @param p the parser
  * @return the parsed expression
  */
-expr *  parse_abs(Parser *p);
+expr *parse_abs(Parser *p);
 
 /**
  * @brief Parse an application from the input.
  * @param p the parser
  * @return the parsed expression
  */
-expr *  parse_app(Parser *p);
+expr *parse_app(Parser *p);
 
 /**
  * @brief Parse an atom from the input.
  * @param p the parser
  * @return the parsed expression
  */
-expr *  parse_atom(Parser *p);
+expr *parse_atom(Parser *p);
 
 /**
  * @brief Parse a number from the input.
  * @param p the parser
  * @return the parsed number
  */
-int     parse_number(Parser *p);
+int parse_number(Parser *p);
 
 /**
  * @brief Parse a variable name from the input.
  * @param p the parser
  * @return the parsed variable name
  */
-char *  parse_varname(Parser *p);
+char *parse_varname(Parser *p);
 
 /**
  * @brief Substitute a variable in an expression with a value.
@@ -139,21 +158,21 @@ char *  parse_varname(Parser *p);
  * @param val the value to substitute
  * @return the substituted expression
  */
-expr *  substitute(expr *e, const char *v, expr *val);
+expr *substitute(expr *e, const char *v, expr *val);
 
 /**
  * @brief Copy an expression.
  * @param e the expression to copy
  * @return the copied expression
  */
-expr *  copy_expr(expr *e);
+expr *copy_expr(expr *e);
 
 /**
  * @brief Create a new variable expression.
  * @param n the variable name
  * @return the new variable expression
  */
-expr *  make_variable(const char *n);
+expr *make_variable(const char *n);
 
 /**
  * @brief Create a new abstraction expression.
@@ -161,7 +180,7 @@ expr *  make_variable(const char *n);
  * @param b the body expression
  * @return the new abstraction expression
  */
-expr *  make_abstraction(const char *p, expr *b);
+expr *make_abstraction(const char *p, expr *b);
 
 /**
  * @brief Create a new application expression.
@@ -169,7 +188,7 @@ expr *  make_abstraction(const char *p, expr *b);
  * @param a the argument expression
  * @return the new application expression
  */
-expr *  make_application(expr *f, expr *a);
+expr *make_application(expr *f, expr *a);
 
 /**
  * @brief Create a new application expression.
@@ -177,7 +196,7 @@ expr *  make_application(expr *f, expr *a);
  * @param a the argument expression
  * @return the new application expression
  */
-void    free_expr(expr *e);
+void free_expr(expr *e);
 
 /**
  * @brief Create a new application expression.
@@ -185,7 +204,7 @@ void    free_expr(expr *e);
  * @param a the argument expression
  * @return the new application expression
  */
-void    expr_to_buffer(expr *e, char *buf, size_t cap);
+void expr_to_buffer(expr *e, char *buf, size_t cap);
 
 /**
  * @brief Convert an expression to a string.
@@ -194,69 +213,69 @@ void    expr_to_buffer(expr *e, char *buf, size_t cap);
  * @param pos the current position in the buffer
  * @param cap the size of the buffer
  */
-void    expr_to_buffer_rec(expr *e, char *buf, size_t *pos, size_t cap);
+void expr_to_buffer_rec(expr *e, char *buf, size_t *pos, size_t cap);
 
 /**
  * @brief Check if the next character is a whitespace.
  * @param p the parser
  * @return true if the next character is a whitespace, false otherwise
  */
-char    peek(Parser *p);
+char peek(Parser *p);
 
 /**
  * @brief Check if the next character is a whitespace.
  * @param p the parser
  * @return true if the next character is a whitespace, false otherwise
  */
-char    consume(Parser *p);
+char consume(Parser *p);
 
 /**
  * @brief Check if the next character is a whitespace.
  * @param p the parser
  * @return true if the next character is a whitespace, false otherwise
  */
-void    skip_whitespace(Parser *p);
+void skip_whitespace(Parser *p);
 
 /**
  * @brief Check if an expression is a delta redex.
  * @param e the expression to check
  * @return true if the expression is a delta redex, false otherwise
  */
-void    normalize(expr *e);
+void normalize(expr *e);
 
 /**
  * @brief Check if an expression is a delta redex.
  * @param e the expression to check
  * @return true if the expression is a delta redex, false otherwise
  */
-int     count_applications(expr *e);
+int count_applications(expr *e);
 
 /**
  * @brief Check if an expression is a delta redex.
  * @param e the expression to check
  * @return true if the expression is a delta redex, false otherwise
  */
-void    vs_init(VarSet *s);
+void vs_init(VarSet *s);
 
 /**
  * @brief Initialize a variable set.
  * @param s the variable set to initialize
  */
-bool    vs_has(VarSet *s, const char *x);
+bool vs_has(VarSet *s, const char *x);
 
 /**
  * @brief Add a variable to the set.
  * @param s the variable set
  * @param x the variable to add
  */
-void    vs_add(VarSet *s, const char *x);
+void vs_add(VarSet *s, const char *x);
 
 /**
  * @brief Remove a variable from the set.
  * @param s the variable set
  * @param x the variable to remove
  */
-void    vs_rm(VarSet *s, const char *x);
+void vs_rm(VarSet *s, const char *x);
 
 /**
  * @brief Check if a variable is in the set.
@@ -264,27 +283,27 @@ void    vs_rm(VarSet *s, const char *x);
  * @param x the variable to check
  * @return true if the variable is in the set, false otherwise
  */
-void    vs_free(VarSet *s);
+void vs_free(VarSet *s);
 
 /**
  * @brief Free a variable set.
  * @param s the variable set to free
  */
-void    free_vars_rec(expr *e, VarSet *s);
+void free_vars_rec(expr *e, VarSet *s);
 
 /**
  * @brief Get the free variables in an expression.
  * @param e the expression
  * @return the set of free variables
  */
-VarSet  free_vars(expr *e);
+VarSet free_vars(expr *e);
 
 /**
  * @brief Get a fresh variable name that is not in the set.
  * @param s the variable set
  * @return a fresh variable name
  */
-char *  fresh_var(VarSet *s);
+char *fresh_var(VarSet *s);
 
 /**
  * @brief Check if a variable is free in an expression.
@@ -292,7 +311,7 @@ char *  fresh_var(VarSet *s);
  * @param v the variable name
  * @return true if the variable is free, false otherwise
  */
-int     find_def(const char *s);
+int find_def(const char *s);
 
 /**
  * @brief Check if an expression is a delta redex.
@@ -300,7 +319,7 @@ int     find_def(const char *s);
  * @param out the reduced expression
  * @return true if the expression is a delta redex, false otherwise
  */
-bool    delta_reduce(expr *e, expr **out);
+bool delta_reduce(expr *e, expr **out);
 
 /**
  * @brief Check if an expression is a beta redex.
@@ -308,62 +327,62 @@ bool    delta_reduce(expr *e, expr **out);
  * @param out the reduced expression
  * @return true if the expression is a beta redex, false otherwise
  */
-bool    beta_reduce(expr *e, expr **out);
+bool beta_reduce(expr *e, expr **out);
 
 /**
  * @brief Check if an expression is a beta redex.
  * @param e the expression to check
  * @return true if the expression is a beta redex, false otherwise
  */
-bool    reduce_once(expr *e, expr **ne, const char **rtype);
+bool reduce_once(expr *e, expr **ne, const char **rtype);
 
 /**
  * @brief Get the current configuration values.
  * @return the current configuration values
  */
-bool    get_config_show_step_type(void);
+bool get_config_show_step_type(void);
 
 /**
  * @brief Set the configuration values.
  * @param value the new configuration values
  */
-void    set_config_show_step_type(bool value);
+void set_config_show_step_type(bool value);
 
 /**
  * @brief Get the current configuration values.
  * @return the current configuration values
  */
-bool    get_config_delta_abstract(void);
+bool get_config_delta_abstract(void);
 
 /**
  * @brief Set the configuration values.
  * @param value the new configuration values
  */
-void    set_config_delta_abstract(bool value);
+void set_config_delta_abstract(bool value);
 
 /**
  * @brief Get the current configuration values.
  * @return the current configuration values
  */
-void    sb_init(strbuf *sb, size_t init_cap);
+void sb_init(strbuf *sb, size_t init_cap);
 
 /**
  * @brief Append a string to the string buffer.
  * @param sb the string buffer
  * @param s the string to append
  */
-void    sb_ensure(strbuf *sb, size_t need);
+void sb_ensure(strbuf *sb, size_t need);
 
 /**
  * @brief Reset the string buffer.
  * @param sb the string buffer to reset
  */
-void    sb_reset(strbuf *sb);
+void sb_reset(strbuf *sb);
 
 /**
  * @brief Destroy the string buffer.
  * @param sb the string buffer to destroy
  */
-void    sb_destroy(strbuf *sb);
+void sb_destroy(strbuf *sb);
 
 #endif /* LAMBDA_H */
