@@ -91,12 +91,15 @@ void free_expr(expr *e) {
     if (!e) return;
 
     switch (e->type) {
-        case VAR_expr: free(e->var_name);
+        case VAR_expr:
+            free(e->var_name);
             break;
-        case ABS_expr: free(e->abs_param);
+        case ABS_expr:
+            free(e->abs_param);
             free_expr(e->abs_body);
             break;
-        case APP_expr: free_expr(e->app_fn);
+        case APP_expr:
+            free_expr(e->app_fn);
             free_expr(e->app_arg);
             break;
     }
@@ -107,9 +110,12 @@ expr *copy_expr(expr *e) {
     if (!e) return NULL;
 
     switch (e->type) {
-        case VAR_expr: return make_variable(e->var_name);
-        case ABS_expr: return make_abstraction(e->abs_param, copy_expr(e->abs_body));
-        case APP_expr: return make_application(copy_expr(e->app_fn), copy_expr(e->app_arg));
+        case VAR_expr:
+            return make_variable(e->var_name);
+        case ABS_expr:
+            return make_abstraction(e->abs_param, copy_expr(e->abs_body));
+        case APP_expr:
+            return make_application(copy_expr(e->app_fn), copy_expr(e->app_arg));
     }
 
     return NULL; // unreachable
@@ -141,8 +147,8 @@ void expr_to_buffer_rec(expr *e, char *buf, size_t *pos, size_t cap) {
         case ABS_expr: {
             // UTF-8 'λ' = 0xCE 0xBB
             if (*pos + 2 < cap - 1) {
-                buf[(*pos)++] = (char)0xCE;
-                buf[(*pos)++] = (char)0xBB;
+                buf[(*pos)++] = (char) 0xCE;
+                buf[(*pos)++] = (char) 0xBB;
             }
             size_t L = strlen(e->abs_param);
             if (*pos + L > cap - 1) L = cap - 1 - *pos;
@@ -266,7 +272,6 @@ expr *substitute(expr *e, const char *v, expr *val) {
             expr *renamed_body = substitute(e->abs_body, e->abs_param, nv_expr);
             expr *substituted_renamed_body = substitute(renamed_body, v, val);
             expr *result_expr = make_abstraction(nv_name, substituted_renamed_body);
-
             free_expr(nv_expr);
             free(nv_name);
             free_expr(renamed_body);
@@ -285,8 +290,6 @@ expr *substitute(expr *e, const char *v, expr *val) {
 
     return make_application(substituted_fn, substituted_arg);
 }
-
-//
 
 int find_def(const char *s) {
     for (int i = 0; i < N_DEFS; i++) if (!strcmp(def_names[i], s)) return i;
@@ -354,7 +357,8 @@ bool is_church_numeral(expr *e) {
     const char *f = e->abs_param;
     const char *x = e1->abs_param;
     expr *cur = e1->abs_body;
-    while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr) && (!strcmp(cur->app_fn->var_name, f))) {
+    while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr) &&
+           (!strcmp(cur->app_fn->var_name, f))) {
         cur = cur->app_arg;
     }
 
@@ -365,7 +369,8 @@ int count_applications(expr *e) {
     expr *cur = e->abs_body->abs_body;
     const char *f = e->abs_param;
     int cnt = 0;
-    while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr) && (!strcmp(cur->app_fn->var_name, f))) {
+    while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr) &&
+           (!strcmp(cur->app_fn->var_name, f))) {
         cnt++;
         cur = cur->app_arg;
     }
@@ -380,8 +385,10 @@ expr *abstract_numerals(expr *e) {
         snprintf(buf, sizeof(buf), "%d", n);
         return make_variable(buf);
     }
-    if (e->type == ABS_expr) return make_abstraction(e->abs_param, abstract_numerals(e->abs_body));
-    if (e->type == APP_expr) return make_application(abstract_numerals(e->app_fn), abstract_numerals(e->app_arg));
+    if (e->type == ABS_expr)
+        return make_abstraction(e->abs_param, abstract_numerals(e->abs_body));
+    if (e->type == APP_expr)
+        return make_application(abstract_numerals(e->app_fn), abstract_numerals(e->app_arg));
 
     return make_variable(e->var_name);
 }
@@ -403,7 +410,8 @@ void normalize(expr *e) {
         sb_reset(&sb);
         expr_to_buffer(e, sb.data, sb.cap);
 
-        if (CONFIG_SHOW_STEP_TYPE) printf("Step %d (%s): %s\n", step++, rtype, sb.data);
+        if (CONFIG_SHOW_STEP_TYPE) printf("Step %d (%s): %s\n", step++, rtype,
+                                          sb.data);
         else printf("Step %d: %s\n", step++, sb.data);
     }
     if (CONFIG_DELTA_ABSTRACT) {
@@ -452,13 +460,17 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-char peek(Parser *p) { return p->i < p->n ? p->src[p->i] : '\0'; }
+char peek(Parser *p) {
+    if (p->i < p->n) return p->src[p->i];
+    else return '\0';
+}
 
 char consume(Parser *p) {
     if (!peek(p)) return '\0';
 
     // UTF-8 λ = 0xCE 0xBB
-    if ((p->i + 1 < p->n) && ((uchar)p->src[p->i] == 0xCE) && ((uchar)p->src[p->i + 1] == 0xBB)) {
+    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) &&
+        ((uchar) p->src[p->i + 1] == 0xBB)) {
         p->i += 2;
         return '\0';
     }
@@ -466,7 +478,7 @@ char consume(Parser *p) {
     return p->src[p->i++];
 }
 
-void skip_whitespace(Parser *p) { while (isspace((uchar)peek(p))) p->i++; }
+void skip_whitespace(Parser *p) { while (isspace((uchar) peek(p))) p->i++; }
 
 expr *parse(Parser *p) {
     skip_whitespace(p);
@@ -483,8 +495,8 @@ expr *parse(Parser *p) {
 expr *parse_expr(Parser *p) {
     skip_whitespace(p);
     // detect λ
-    if ((p->i + 1 < p->n) && ((uchar)p->src[p->i] == 0xCE) &&
-        ((uchar)p->src[p->i + 1] == 0xBB)) {
+    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) &&
+        ((uchar) p->src[p->i + 1] == 0xBB)) {
         return parse_abs(p);
     }
 
@@ -522,8 +534,8 @@ expr *parse_app(Parser *p) {
 expr *parse_atom(Parser *p) {
     skip_whitespace(p);
     // λ as atom
-    if ((p->i + 1 < p->n) && ((uchar)p->src[p->i] == 0xCE) &&
-        ((uchar)p->src[p->i + 1] == 0xBB)) {
+    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) &&
+        ((uchar) p->src[p->i + 1] == 0xBB)) {
         return parse_abs(p);
     }
     char c = peek(p);
@@ -537,7 +549,7 @@ expr *parse_atom(Parser *p) {
         }
         return e;
     }
-    if (isdigit((uchar)c)) {
+    if (isdigit((uchar) c)) {
         int v = parse_number(p);
         return church(v);
     }
@@ -550,32 +562,33 @@ expr *parse_atom(Parser *p) {
 
 int parse_number(Parser *p) {
     int v = 0;
-    if (!isdigit((uchar)peek(p))) {
+    if (!isdigit((uchar) peek(p))) {
         fprintf(stderr, "Expected digit at %zu\n", p->i);
         exit(1);
     }
-    while (isdigit((uchar)peek(p))) v = v * 10 + (consume(p) - '0');
+    while (isdigit((uchar) peek(p))) v = v * 10 + (consume(p) - '0');
 
     return v;
+}
+
+bool is_invalid_char(Parser *p, char c) {
+    return (!c) || (isspace((uchar) c)) || (c == '(') || (c == ')') ||
+            (c == '.') || ((p->i + 1 < p->n) &&
+             ((uchar) p->src[p->i] == 0xCE) &&
+              ((uchar) p->src[p->i + 1] == 0xBB));
 }
 
 char *parse_varname(Parser *p) {
     skip_whitespace(p);
     char c = peek(p);
-    if ((!c) || (isspace((uchar)c)) || (c == '(') || (c == ')') || (c == '.') ||
-        ((p->i + 1 < p->n) && ((uchar)p->src[p->i] == 0xCE) &&
-         ((uchar)p->src[p->i + 1] == 0xBB))) {
+    if (is_invalid_char(p, c)) {
         fprintf(stderr, "Invalid var start at %zu\n", p->i);
         exit(1);
     }
     size_t start = p->i;
     while (p->i < p->n) {
         c = peek(p);
-        if ((!c) || (isspace((uchar)c)) || (c == '(') || (c == ')') || (c == '.') ||
-            ((p->i + 1 < p->n) && ((uchar)p->src[p->i] == 0xCE) &&
-             ((uchar)p->src[p->i + 1] == 0xBB))) {
-            break;
-        }
+        if (is_invalid_char(p, c)) break;
         p->i++;
     }
     size_t len = p->i - start;
