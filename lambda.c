@@ -522,10 +522,12 @@ expr *parse_app(Parser *p) {
     skip_whitespace(p);
     expr *e = parse_atom(p);
     skip_whitespace(p);
-    while ((peek(p)) && (peek(p) != ')') && (peek(p) != '.')) {
+    char c = peek(p);
+    while (c && c != ')' && c != '.') {
         expr *a = parse_atom(p);
         e = make_application(e, a);
         skip_whitespace(p);
+        c = peek(p);
     }
 
     return e;

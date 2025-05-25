@@ -20,9 +20,9 @@ typedef unsigned char byte;
  * @brief Parser structure.
  */
 typedef struct Parser {
-    const char *src;
-    size_t i;
-    size_t n;
+    const char  *src;
+    size_t       i;
+    size_t       n;
 } Parser;
 
 /**
@@ -36,29 +36,29 @@ typedef enum {
  * @brief Expression structure.
  */
 typedef struct expr {
-    exprType type;
-    char *var_name;
-    char *abs_param;
-    struct expr *abs_body;
-    struct expr *app_fn;
-    struct expr *app_arg;
+    exprType      type;
+    char         *var_name;
+    char         *abs_param;
+    struct expr  *abs_body;
+    struct expr  *app_fn;
+    struct expr  *app_arg;
 } expr;
 
 /**
  * @brief Variable set structure.
  */
 typedef struct VarSet {
-    char **v;
-    int c;
+    char  **v;
+    int     c;
 } VarSet;
 
 /**
  * @brief String buffer structure.
  */
 typedef struct strbuf {
-    char *data;
-    size_t len;
-    size_t cap;
+    char    *data;
+    size_t   len;
+    size_t   cap;
 } strbuf;
 
 /**
