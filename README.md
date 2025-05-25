@@ -207,18 +207,19 @@ make clean
 
 ## Metrics for Both Interpreters
 
-| Metric                       | C Version      | Python Version  | Ratio (Python / C)  | Increase over C  |
-|------------------------------|---------------:|----------------:|--------------------:|-----------------:|
-| Real time (wall-clock)       | 3.60 s         | 45.81 s         | 12.72×              | +1,172.50%       |
-| User CPU time                | 2.09 s         | 34.76 s         | 16.63×              | +1,563.16%       |
-| System CPU time              | 0.30 s         | 6.74 s          | 22.47×              | +2,146.67%       |
-| Max RSS (peak resident set)  | 2,490,368 B    | 137,674,752 B   | 55.28×              | +5,428.29%       |
-| Peak memory footprint        | 1,655,616 B    | 115,574,528 B   | 69.81×              | +6,880.76%       |
-| Page reclaims                | 354            | 1,809,444       | 5,111.42×           | +511,042.37%     |
-| Page faults                  | 1              | 8               | 8.00×               | +700.00%         |
-| Voluntary context switches   | 91,206         | 1,059,633       | 11.62×              | +1,061.80%       |
-| Involuntary context switches | 20             | 4,172           | 208.60×             | +20,760.00%      |
-| Instructions retired         | 39,850,552,397 | 733,017,604,485 | 18.39×              | +1,739.42%       |
-| Cycles elapsed               | 8,801,869,644  | 151,602,293,038 | 17.22×              | +1,622.39%       |
+| Metric                       | C Version      | Python Version  | Ratio (Python / C) | Increase over C |
+|:-----------------------------|---------------:|----------------:|-------------------:|----------------:|
+| Real time (wall-clock)       |          3.60s |          45.81s |             12.72x |      +1,172.50% |
+| User CPU time                |          2.09s |          34.76s |             16.63x |      +1,563.16% |
+| System CPU time              |          0.30s |           6.74s |             22.47x |      +2,146.67% |
+| Max RSS (peak resident set)  |     2,490,368B |    137,674,752B |             55.28x |      +5,428.29% |
+| Peak memory footprint        |     1,655,616B |    115,574,528B |             69.81x |      +6,880.76% |
+| Page reclaims                |            354 |       1,809,444 |          5,111.42x |    +511,042.37% |
+| Page faults                  |              1 |               8 |              8.00x |        +700.00% |
+| Voluntary context switches   |         91,206 |       1,059,633 |             11.62x |      +1,061.80% |
+| Involuntary context switches |             20 |           4,172 |            208.60x |     +20,760.00% |
+| Instructions retired         | 39,850,552,397 | 733,017,604,485 |             18.39x |      +1,739.42% |
+| Cycles elapsed               |  8,801,869,644 | 151,602,293,038 |             17.22x |      +1,622.39% |
 
-All of these benchmarks are from my M3 MacBook Air.
+All of these benchmarks are from my M3 MacBook Air. They're also outdated by a
+couple of versions.
