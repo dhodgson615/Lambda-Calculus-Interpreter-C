@@ -49,88 +49,88 @@ void sb_destroy(strbuf *sb) {
     sb->cap = sb->len = 0;
 }
 
-Expr *make_variable(const char *n) {
-    Expr *e = malloc(sizeof *e);
+expr *make_variable(const char *n) {
+    expr *e = malloc(sizeof *e);
     if (!e) {
         perror("malloc");
         exit(1);
     }
-    e->type = VAR_EXPR;
+    e->type = VAR_expr;
     e->var_name = strdup(n);
 
     return e;
 }
 
-Expr *make_abstraction(const char *p, Expr *b) {
-    Expr *e = malloc(sizeof *e);
+expr *make_abstraction(const char *p, expr *b) {
+    expr *e = malloc(sizeof *e);
     if (!e) {
         perror("malloc");
         exit(1);
     }
-    e->type = ABS_EXPR;
+    e->type = ABS_expr;
     e->abs_param = strdup(p);
     e->abs_body = b;
 
     return e;
 }
 
-Expr *make_application(Expr *f, Expr *a) {
-    Expr *e = malloc(sizeof *e);
+expr *make_application(expr *f, expr *a) {
+    expr *e = malloc(sizeof *e);
     if (!e) {
         perror("malloc");
         exit(1);
     }
-    e->type = APP_EXPR;
+    e->type = APP_expr;
     e->app_fn = f;
     e->app_arg = a;
 
     return e;
 }
 
-void free_expr(Expr *e) {
+void free_expr(expr *e) {
     if (!e) return;
 
     switch (e->type) {
-        case VAR_EXPR: free(e->var_name);
+        case VAR_expr: free(e->var_name);
             break;
-        case ABS_EXPR: free(e->abs_param);
+        case ABS_expr: free(e->abs_param);
             free_expr(e->abs_body);
             break;
-        case APP_EXPR: free_expr(e->app_fn);
+        case APP_expr: free_expr(e->app_fn);
             free_expr(e->app_arg);
             break;
     }
     free(e);
 }
 
-Expr *copy_expr(Expr *e) {
+expr *copy_expr(expr *e) {
     if (!e) return NULL;
 
     switch (e->type) {
-        case VAR_EXPR: return make_variable(e->var_name);
-        case ABS_EXPR: return make_abstraction(e->abs_param, copy_expr(e->abs_body));
-        case APP_EXPR: return make_application(copy_expr(e->app_fn), copy_expr(e->app_arg));
+        case VAR_expr: return make_variable(e->var_name);
+        case ABS_expr: return make_abstraction(e->abs_param, copy_expr(e->abs_body));
+        case APP_expr: return make_application(copy_expr(e->app_fn), copy_expr(e->app_arg));
     }
 
     return NULL; // unreachable
 }
 
-Expr *church(int n) {
-    Expr *body = make_variable("x");
+expr *church(int n) {
+    expr *body = make_variable("x");
     for (int i = 0; i < n; i++) {
-        Expr *fv = make_variable("f");
+        expr *fv = make_variable("f");
         body = make_application(fv, body);
     }
-    Expr *abs_x = make_abstraction("x", body);
+    expr *abs_x = make_abstraction("x", body);
 
     return make_abstraction("f", abs_x);
 }
 
-void expr_to_buffer_rec(Expr *e, char *buf, size_t *pos, size_t cap) {
+void expr_to_buffer_rec(expr *e, char *buf, size_t *pos, size_t cap) {
     if (*pos >= cap - 1) return;
 
     switch (e->type) {
-        case VAR_EXPR: {
+        case VAR_expr: {
             size_t L = strlen(e->var_name);
             if (*pos + L > cap - 1) L = cap - 1 - *pos;
             memcpy(buf + *pos, e->var_name, L);
@@ -138,7 +138,7 @@ void expr_to_buffer_rec(Expr *e, char *buf, size_t *pos, size_t cap) {
             break;
         }
 
-        case ABS_EXPR: {
+        case ABS_expr: {
             // UTF-8 'λ' = 0xCE 0xBB
             if (*pos + 2 < cap - 1) {
                 buf[(*pos)++] = (char)0xCE;
@@ -149,7 +149,7 @@ void expr_to_buffer_rec(Expr *e, char *buf, size_t *pos, size_t cap) {
             memcpy(buf + *pos, e->abs_param, L);
             *pos += L;
             if (*pos < cap - 1) buf[(*pos)++] = '.';
-            if (e->abs_body->type == ABS_EXPR) {
+            if (e->abs_body->type == ABS_expr) {
                 if (*pos < cap - 1) buf[(*pos)++] = '(';
                 expr_to_buffer_rec(e->abs_body, buf, pos, cap);
                 if (*pos < cap - 1) buf[(*pos)++] = ')';
@@ -157,14 +157,14 @@ void expr_to_buffer_rec(Expr *e, char *buf, size_t *pos, size_t cap) {
             break;
         }
 
-        case APP_EXPR: {
-            if (e->app_fn->type == ABS_EXPR) {
+        case APP_expr: {
+            if (e->app_fn->type == ABS_expr) {
                 if (*pos < cap - 1) buf[(*pos)++] = '(';
                 expr_to_buffer_rec(e->app_fn, buf, pos, cap);
                 if (*pos < cap - 1) buf[(*pos)++] = ')';
             } else expr_to_buffer_rec(e->app_fn, buf, pos, cap);
             if (*pos < cap - 1) buf[(*pos)++] = ' ';
-            if (e->app_arg->type != VAR_EXPR) {
+            if (e->app_arg->type != VAR_expr) {
                 if (*pos < cap - 1) buf[(*pos)++] = '(';
                 expr_to_buffer_rec(e->app_arg, buf, pos, cap);
                 if (*pos < cap - 1) buf[(*pos)++] = ')';
@@ -174,7 +174,7 @@ void expr_to_buffer_rec(Expr *e, char *buf, size_t *pos, size_t cap) {
     }
 }
 
-void expr_to_buffer(Expr *e, char *buf, size_t cap) {
+void expr_to_buffer(expr *e, char *buf, size_t cap) {
     size_t pos = 0;
     expr_to_buffer_rec(e, buf, &pos, cap);
     buf[pos < cap ? pos : cap - 1] = '\0';
@@ -213,9 +213,9 @@ void vs_free(VarSet *s) {
     free(s->v);
 }
 
-void free_vars_rec(Expr *e, VarSet *s) {
-    if (e->type == VAR_EXPR) vs_add(s, e->var_name);
-    else if (e->type == ABS_EXPR) {
+void free_vars_rec(expr *e, VarSet *s) {
+    if (e->type == VAR_expr) vs_add(s, e->var_name);
+    else if (e->type == ABS_expr) {
         free_vars_rec(e->abs_body, s);
         vs_rm(s, e->abs_param);
     } else {
@@ -224,7 +224,7 @@ void free_vars_rec(Expr *e, VarSet *s) {
     }
 }
 
-VarSet free_vars(Expr *e) {
+VarSet free_vars(expr *e) {
     VarSet s;
     vs_init(&s);
     free_vars_rec(e, &s);
@@ -248,12 +248,12 @@ char *fresh_var(VarSet *s) {
     }
 }
 
-Expr *substitute(Expr *e, const char *v, Expr *val) {
-    if (e->type == VAR_EXPR) {
+expr *substitute(expr *e, const char *v, expr *val) {
+    if (e->type == VAR_expr) {
         if (strcmp(e->var_name, v) == 0) return copy_expr(val);
         else return copy_expr(e);
     }
-    if (e->type == ABS_EXPR) {
+    if (e->type == ABS_expr) {
         if (strcmp(e->abs_param, v) == 0) return copy_expr(e);
         VarSet fv_val = free_vars(val);
         if (vs_has(&fv_val, e->abs_param)) {
@@ -262,10 +262,10 @@ Expr *substitute(Expr *e, const char *v, Expr *val) {
             for (int i = 0; i < fv_val.c; i++) vs_add(&forbidden_vars, fv_val.v[i]);
 
             char *nv_name = fresh_var(&forbidden_vars);
-            Expr *nv_expr = make_variable(nv_name);
-            Expr *renamed_body = substitute(e->abs_body, e->abs_param, nv_expr);
-            Expr *substituted_renamed_body = substitute(renamed_body, v, val);
-            Expr *result_expr = make_abstraction(nv_name, substituted_renamed_body);
+            expr *nv_expr = make_variable(nv_name);
+            expr *renamed_body = substitute(e->abs_body, e->abs_param, nv_expr);
+            expr *substituted_renamed_body = substitute(renamed_body, v, val);
+            expr *result_expr = make_abstraction(nv_name, substituted_renamed_body);
 
             free_expr(nv_expr);
             free(nv_name);
@@ -274,14 +274,14 @@ Expr *substitute(Expr *e, const char *v, Expr *val) {
             vs_free(&fv_val);
             return result_expr;
         } else {
-            Expr *new_body = substitute(e->abs_body, v, val);
-            Expr *result_expr = make_abstraction(e->abs_param, new_body);
+            expr *new_body = substitute(e->abs_body, v, val);
+            expr *result_expr = make_abstraction(e->abs_param, new_body);
             vs_free(&fv_val);
             return result_expr;
         }
     }
-    Expr *substituted_fn = substitute(e->app_fn, v, val);
-    Expr *substituted_arg = substitute(e->app_arg, v, val);
+    expr *substituted_fn = substitute(e->app_fn, v, val);
+    expr *substituted_arg = substitute(e->app_arg, v, val);
 
     return make_application(substituted_fn, substituted_arg);
 }
@@ -301,7 +301,7 @@ static const char *def_src[N_DEFS] = {
         "λm.λn.n ↓ m",
         "λm.λn.is_zero (- m n)",
         "λx.λy.λf.f x y"};
-static Expr *def_vals[N_DEFS];
+static expr *def_vals[N_DEFS];
 
 int find_def(const char *s) {
     for (int i = 0; i < N_DEFS; i++) if (!strcmp(def_names[i], s)) return i;
@@ -309,8 +309,8 @@ int find_def(const char *s) {
     return -1;
 }
 
-bool delta_reduce(Expr *e, Expr **out) {
-    if (e->type == VAR_EXPR) {
+bool delta_reduce(expr *e, expr **out) {
+    if (e->type == VAR_expr) {
         int i = find_def(e->var_name);
         if (i >= 0) {
             *out = copy_expr(def_vals[i]);
@@ -321,9 +321,9 @@ bool delta_reduce(Expr *e, Expr **out) {
     return false;
 }
 
-bool beta_reduce(Expr *e, Expr **out) {
-    if ((e->type == APP_EXPR) && (e->app_fn->type == ABS_EXPR)) {
-        Expr *argcp = copy_expr(e->app_arg);
+bool beta_reduce(expr *e, expr **out) {
+    if ((e->type == APP_expr) && (e->app_fn->type == ABS_expr)) {
+        expr *argcp = copy_expr(e->app_arg);
         *out = substitute(e->app_fn->abs_body, e->app_fn->abs_param, argcp);
         free_expr(argcp);
         return true;
@@ -332,8 +332,8 @@ bool beta_reduce(Expr *e, Expr **out) {
     return false;
 }
 
-bool reduce_once(Expr *e, Expr **ne, const char **rtype) {
-    Expr *tmp;
+bool reduce_once(expr *e, expr **ne, const char **rtype) {
+    expr *tmp;
     if (delta_reduce(e, &tmp)) {
         *ne = tmp;
         *rtype = "δ";
@@ -344,7 +344,7 @@ bool reduce_once(Expr *e, Expr **ne, const char **rtype) {
         *rtype = "β";
         return true;
     }
-    if (e->type == APP_EXPR) {
+    if (e->type == APP_expr) {
         if (reduce_once(e->app_fn, &tmp, rtype)) {
             *ne = make_application(tmp, copy_expr(e->app_arg));
             return true;
@@ -354,7 +354,7 @@ bool reduce_once(Expr *e, Expr **ne, const char **rtype) {
             return true;
         }
     }
-    if (e->type == ABS_EXPR && reduce_once(e->abs_body, &tmp, rtype)) {
+    if (e->type == ABS_expr && reduce_once(e->abs_body, &tmp, rtype)) {
         *ne = make_abstraction(e->abs_param, tmp);
         return true;
     }
@@ -362,25 +362,25 @@ bool reduce_once(Expr *e, Expr **ne, const char **rtype) {
     return false;
 }
 
-bool is_church_numeral(Expr *e) {
-    if (e->type != ABS_EXPR) return false;
-    Expr *e1 = e->abs_body;
-    if (e1->type != ABS_EXPR) return false;
+bool is_church_numeral(expr *e) {
+    if (e->type != ABS_expr) return false;
+    expr *e1 = e->abs_body;
+    if (e1->type != ABS_expr) return false;
     const char *f = e->abs_param;
     const char *x = e1->abs_param;
-    Expr *cur = e1->abs_body;
-    while ((cur->type == APP_EXPR) && (cur->app_fn->type == VAR_EXPR) && (!strcmp(cur->app_fn->var_name, f))) {
+    expr *cur = e1->abs_body;
+    while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr) && (!strcmp(cur->app_fn->var_name, f))) {
         cur = cur->app_arg;
     }
 
-    return (cur->type == VAR_EXPR) && (!strcmp(cur->var_name, x));
+    return (cur->type == VAR_expr) && (!strcmp(cur->var_name, x));
 }
 
-int count_applications(Expr *e) {
-    Expr *cur = e->abs_body->abs_body;
+int count_applications(expr *e) {
+    expr *cur = e->abs_body->abs_body;
     const char *f = e->abs_param;
     int cnt = 0;
-    while ((cur->type == APP_EXPR) && (cur->app_fn->type == VAR_EXPR) && (!strcmp(cur->app_fn->var_name, f))) {
+    while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr) && (!strcmp(cur->app_fn->var_name, f))) {
         cnt++;
         cur = cur->app_arg;
     }
@@ -388,47 +388,47 @@ int count_applications(Expr *e) {
     return cnt;
 }
 
-Expr *abstract_numerals(Expr *e) {
+expr *abstract_numerals(expr *e) {
     if (is_church_numeral(e)) {
         int n = count_applications(e);
         char buf[32];
         snprintf(buf, sizeof(buf), "%d", n);
         return make_variable(buf);
     }
-    if (e->type == ABS_EXPR) return make_abstraction(e->abs_param, abstract_numerals(e->abs_body));
-    if (e->type == APP_EXPR) return make_application(abstract_numerals(e->app_fn), abstract_numerals(e->app_arg));
+    if (e->type == ABS_expr) return make_abstraction(e->abs_param, abstract_numerals(e->abs_body));
+    if (e->type == APP_expr) return make_application(abstract_numerals(e->app_fn), abstract_numerals(e->app_arg));
 
     return make_variable(e->var_name);
 }
 
-void normalize(Expr *expr) {
+void normalize(expr *e) {
     sb_reset(&sb);
-    expr_to_buffer(expr, sb.data, sb.cap);
+    expr_to_buffer(e, sb.data, sb.cap);
     printf("Step 0: %s\n", sb.data);
     int step = 1;
     while (true) {
-        Expr *next;
+        expr *next;
         const char *rtype;
-        if (!reduce_once(expr, &next, &rtype)) {
+        if (!reduce_once(e, &next, &rtype)) {
             printf("→ normal form reached.\n");
             break;
         }
-        free_expr(expr);
-        expr = next;
+        free_expr(e);
+        e = next;
         sb_reset(&sb);
-        expr_to_buffer(expr, sb.data, sb.cap);
+        expr_to_buffer(e, sb.data, sb.cap);
 
         if (CONFIG_SHOW_STEP_TYPE) printf("Step %d (%s): %s\n", step++, rtype, sb.data);
         else printf("Step %d: %s\n", step++, sb.data);
     }
     if (CONFIG_DELTA_ABSTRACT) {
-        Expr *abs = abstract_numerals(expr);
+        expr *abs = abstract_numerals(e);
         sb_reset(&sb);
         expr_to_buffer(abs, sb.data, sb.cap);
         printf("\nδ-abstracted: %s\n", sb.data);
         free_expr(abs);
     }
-    free_expr(expr);
+    free_expr(e);
 }
 
 int main(int argc, char *argv[]) {
@@ -456,7 +456,7 @@ int main(int argc, char *argv[]) {
         input = strdup(buf);
     }
     Parser p = {input, 0, strlen(input)};
-    Expr *e = parse(&p);
+    expr *e = parse(&p);
     normalize(e);
 
     // cleanup
@@ -483,9 +483,9 @@ char consume(Parser *p) {
 
 void skip_whitespace(Parser *p) { while (isspace((uchar)peek(p))) p->i++; }
 
-Expr *parse(Parser *p) {
+expr *parse(Parser *p) {
     skip_whitespace(p);
-    Expr *e = parse_expr(p);
+    expr *e = parse_expr(p);
     skip_whitespace(p);
     if (peek(p)) {
         fprintf(stderr, "Unexpected '%c' at %zu\n", peek(p), p->i);
@@ -495,7 +495,7 @@ Expr *parse(Parser *p) {
     return e;
 }
 
-Expr *parse_expr(Parser *p) {
+expr *parse_expr(Parser *p) {
     skip_whitespace(p);
     // detect λ
     if ((p->i + 1 < p->n) && ((uchar)p->src[p->i] == 0xCE) &&
@@ -506,7 +506,7 @@ Expr *parse_expr(Parser *p) {
     return parse_app(p);
 }
 
-Expr *parse_abs(Parser *p) {
+expr *parse_abs(Parser *p) {
     p->i += 2; // consume λ
     char *v = parse_varname(p);
     skip_whitespace(p);
@@ -514,19 +514,19 @@ Expr *parse_abs(Parser *p) {
         fprintf(stderr, "Expected '.' after λ\n");
         exit(1);
     }
-    Expr *body = parse_expr(p);
-    Expr *ret = make_abstraction(v, body);
+    expr *body = parse_expr(p);
+    expr *ret = make_abstraction(v, body);
     free(v);
 
     return ret;
 }
 
-Expr *parse_app(Parser *p) {
+expr *parse_app(Parser *p) {
     skip_whitespace(p);
-    Expr *e = parse_atom(p);
+    expr *e = parse_atom(p);
     skip_whitespace(p);
     while ((peek(p)) && (peek(p) != ')') && (peek(p) != '.')) {
-        Expr *a = parse_atom(p);
+        expr *a = parse_atom(p);
         e = make_application(e, a);
         skip_whitespace(p);
     }
@@ -534,7 +534,7 @@ Expr *parse_app(Parser *p) {
     return e;
 }
 
-Expr *parse_atom(Parser *p) {
+expr *parse_atom(Parser *p) {
     skip_whitespace(p);
     // λ as atom
     if ((p->i + 1 < p->n) && ((uchar)p->src[p->i] == 0xCE) &&
@@ -544,7 +544,7 @@ Expr *parse_atom(Parser *p) {
     char c = peek(p);
     if (c == '(') {
         consume(p);
-        Expr *e = parse_expr(p);
+        expr *e = parse_expr(p);
         skip_whitespace(p);
         if (consume(p) != ')') {
             fprintf(stderr, "Expected ')'\n");
@@ -557,7 +557,7 @@ Expr *parse_atom(Parser *p) {
         return church(v);
     }
     char *name = parse_varname(p);
-    Expr *v = make_variable(name);
+    expr *v = make_variable(name);
     free(name);
 
     return v;

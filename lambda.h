@@ -22,27 +22,28 @@ typedef unsigned char byte;
  */
 typedef struct {
     const char *src;
-    size_t i, n;
+    size_t i;
+    size_t n;
 } Parser;
 
 /**
  * @brief Expression types.
  */
 typedef enum {
-    VAR_EXPR, ABS_EXPR, APP_EXPR
-} ExprType;
+    VAR_expr, ABS_expr, APP_expr
+} exprType;
 
 /**
  * @brief Expression structure.
  */
-typedef struct Expr {
-    ExprType type;
+typedef struct expr {
+    exprType type;
     char *var_name;
     char *abs_param;
-    struct Expr *abs_body;
-    struct Expr *app_fn;
-    struct Expr *app_arg;
-} Expr;
+    struct expr *abs_body;
+    struct expr *app_fn;
+    struct expr *app_arg;
+} expr;
 
 /**
  * @brief Variable set structure.
@@ -66,56 +67,56 @@ typedef struct {
  * @param n the number
  * @return the Church numeral expression
  */
-Expr *  church(int n);
+expr *  church(int n);
 
 /**
  * @brief Check if an expression is a Church numeral.
  * @param e the expression to check
  * @return true if the expression is a Church numeral, false otherwise
  */
-bool    is_church_numeral(Expr *e);
+bool    is_church_numeral(expr *e);
 
 /**
  * @brief Abstract Church numerals in an expression.
  * @param e the expression to abstract
  * @return the abstracted expression
  */
-Expr *  abstract_numerals(Expr *e);
+expr *  abstract_numerals(expr *e);
 
 /**
  * @brief Parse a lambda calculus expression.
  * @param p the parser
  * @return the parsed expression
  */
-Expr *  parse(Parser *p);
+expr *  parse(Parser *p);
 
 /**
  * @brief Parse a variable name from the input.
  * @param p the parser
  * @return the parsed variable name
  */
-Expr *  parse_expr(Parser *p);
+expr *  parse_expr(Parser *p);
 
 /**
  * @brief Parse an abstraction from the input.
  * @param p the parser
  * @return the parsed expression
  */
-Expr *  parse_abs(Parser *p);
+expr *  parse_abs(Parser *p);
 
 /**
  * @brief Parse an application from the input.
  * @param p the parser
  * @return the parsed expression
  */
-Expr *  parse_app(Parser *p);
+expr *  parse_app(Parser *p);
 
 /**
  * @brief Parse an atom from the input.
  * @param p the parser
  * @return the parsed expression
  */
-Expr *  parse_atom(Parser *p);
+expr *  parse_atom(Parser *p);
 
 /**
  * @brief Parse a number from the input.
@@ -138,21 +139,21 @@ char *  parse_varname(Parser *p);
  * @param val the value to substitute
  * @return the substituted expression
  */
-Expr *  substitute(Expr *e, const char *v, Expr *val);
+expr *  substitute(expr *e, const char *v, expr *val);
 
 /**
  * @brief Copy an expression.
  * @param e the expression to copy
  * @return the copied expression
  */
-Expr *  copy_expr(Expr *e);
+expr *  copy_expr(expr *e);
 
 /**
  * @brief Create a new variable expression.
  * @param n the variable name
  * @return the new variable expression
  */
-Expr *  make_variable(const char *n);
+expr *  make_variable(const char *n);
 
 /**
  * @brief Create a new abstraction expression.
@@ -160,7 +161,7 @@ Expr *  make_variable(const char *n);
  * @param b the body expression
  * @return the new abstraction expression
  */
-Expr *  make_abstraction(const char *p, Expr *b);
+expr *  make_abstraction(const char *p, expr *b);
 
 /**
  * @brief Create a new application expression.
@@ -168,7 +169,7 @@ Expr *  make_abstraction(const char *p, Expr *b);
  * @param a the argument expression
  * @return the new application expression
  */
-Expr *  make_application(Expr *f, Expr *a);
+expr *  make_application(expr *f, expr *a);
 
 /**
  * @brief Create a new application expression.
@@ -176,7 +177,7 @@ Expr *  make_application(Expr *f, Expr *a);
  * @param a the argument expression
  * @return the new application expression
  */
-void    free_expr(Expr *e);
+void    free_expr(expr *e);
 
 /**
  * @brief Create a new application expression.
@@ -184,7 +185,7 @@ void    free_expr(Expr *e);
  * @param a the argument expression
  * @return the new application expression
  */
-void    expr_to_buffer(Expr *e, char *buf, size_t cap);
+void    expr_to_buffer(expr *e, char *buf, size_t cap);
 
 /**
  * @brief Convert an expression to a string.
@@ -193,7 +194,7 @@ void    expr_to_buffer(Expr *e, char *buf, size_t cap);
  * @param pos the current position in the buffer
  * @param cap the size of the buffer
  */
-void    expr_to_buffer_rec(Expr *e, char *buf, size_t *pos, size_t cap);
+void    expr_to_buffer_rec(expr *e, char *buf, size_t *pos, size_t cap);
 
 /**
  * @brief Check if the next character is a whitespace.
@@ -221,14 +222,14 @@ void    skip_whitespace(Parser *p);
  * @param e the expression to check
  * @return true if the expression is a delta redex, false otherwise
  */
-void    normalize(Expr *expr);
+void    normalize(expr *e);
 
 /**
  * @brief Check if an expression is a delta redex.
  * @param e the expression to check
  * @return true if the expression is a delta redex, false otherwise
  */
-int     count_applications(Expr *e);
+int     count_applications(expr *e);
 
 /**
  * @brief Check if an expression is a delta redex.
@@ -269,14 +270,14 @@ void    vs_free(VarSet *s);
  * @brief Free a variable set.
  * @param s the variable set to free
  */
-void    free_vars_rec(Expr *e, VarSet *s);
+void    free_vars_rec(expr *e, VarSet *s);
 
 /**
  * @brief Get the free variables in an expression.
  * @param e the expression
  * @return the set of free variables
  */
-VarSet  free_vars(Expr *e);
+VarSet  free_vars(expr *e);
 
 /**
  * @brief Get a fresh variable name that is not in the set.
@@ -299,7 +300,7 @@ int     find_def(const char *s);
  * @param out the reduced expression
  * @return true if the expression is a delta redex, false otherwise
  */
-bool    delta_reduce(Expr *e, Expr **out);
+bool    delta_reduce(expr *e, expr **out);
 
 /**
  * @brief Check if an expression is a beta redex.
@@ -307,14 +308,14 @@ bool    delta_reduce(Expr *e, Expr **out);
  * @param out the reduced expression
  * @return true if the expression is a beta redex, false otherwise
  */
-bool    beta_reduce(Expr *e, Expr **out);
+bool    beta_reduce(expr *e, expr **out);
 
 /**
  * @brief Check if an expression is a beta redex.
  * @param e the expression to check
  * @return true if the expression is a beta redex, false otherwise
  */
-bool    reduce_once(Expr *e, Expr **ne, const char **rtype);
+bool    reduce_once(expr *e, expr **ne, const char **rtype);
 
 /**
  * @brief Get the current configuration values.
