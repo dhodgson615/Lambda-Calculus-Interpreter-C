@@ -19,7 +19,7 @@ typedef unsigned char byte;
 /**
  * @brief Parser structure.
  */
-typedef struct {
+typedef struct Parser {
     const char *src;
     size_t i;
     size_t n;
@@ -47,7 +47,7 @@ typedef struct expr {
 /**
  * @brief Variable set structure.
  */
-typedef struct {
+typedef struct VarSet {
     char **v;
     int c;
 } VarSet;
@@ -55,7 +55,7 @@ typedef struct {
 /**
  * @brief String buffer structure.
  */
-typedef struct {
+typedef struct strbuf {
     char *data;
     size_t len;
     size_t cap;
