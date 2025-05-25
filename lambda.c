@@ -9,33 +9,25 @@ static bool CONFIG_DELTA_ABSTRACT = true;
  * @brief Get the current configuration values.
  * @return the current configuration values
  */
-bool get_config_show_step_type(void) {
-    return CONFIG_SHOW_STEP_TYPE;
-}
+bool get_config_show_step_type(void) { return CONFIG_SHOW_STEP_TYPE; }
 
 /**
  * @brief Set the configuration value for showing step type.
  * @param value the new value for showing step type
  */
-void set_config_show_step_type(bool value) {
-    CONFIG_SHOW_STEP_TYPE = value;
-}
+void set_config_show_step_type(bool value) { CONFIG_SHOW_STEP_TYPE = value; }
 
 /**
  * @brief Get the current configuration value for delta abstraction.
  * @return the current configuration value for delta abstraction
  */
-bool get_config_delta_abstract(void) {
-    return CONFIG_DELTA_ABSTRACT;
-}
+bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; }
 
 /**
  * @brief Set the configuration value for delta abstraction.
  * @param value the new value for delta abstraction
  */
-void set_config_delta_abstract(bool value) {
-    CONFIG_DELTA_ABSTRACT = value;
-}
+void set_config_delta_abstract(bool value) { CONFIG_DELTA_ABSTRACT = value; }
 
 /**
  * @brief Initialize a string buffer.
@@ -61,8 +53,7 @@ void sb_init(strbuf *sb, size_t init_cap) {
 void sb_ensure(strbuf *sb, size_t need) {
     if (sb->len + need + 1 > sb->cap) {
         size_t new = sb->cap * 2;
-        while (new < sb->len + need + 1)
-            new *= 2;
+        while (new < sb->len + need + 1) new *= 2;
 
         sb->data = realloc(sb->data, new);
         if (!sb->data) {
@@ -105,6 +96,7 @@ Expr *make_variable(const char *n) {
     }
     e->type = VAR_EXPR;
     e->var_name = strdup(n);
+
     return e;
 }
 
@@ -123,6 +115,7 @@ Expr *make_abstraction(const char *p, Expr *b) {
     e->type = ABS_EXPR;
     e->abs_param = strdup(p);
     e->abs_body = b;
+
     return e;
 }
 
@@ -141,6 +134,7 @@ Expr *make_application(Expr *f, Expr *a) {
     e->type = APP_EXPR;
     e->app_fn = f;
     e->app_arg = a;
+
     return e;
 }
 
@@ -177,6 +171,7 @@ Expr *copy_expr(Expr *e) {
         case ABS_EXPR: return make_abstraction(e->abs_param, copy_expr(e->abs_body));
         case APP_EXPR: return make_application(copy_expr(e->app_fn), copy_expr(e->app_arg));
     }
+
     return NULL; // unreachable
 }
 
@@ -192,6 +187,7 @@ Expr *church(int n) {
         body = make_application(fv, body);
     }
     Expr *abs_x = make_abstraction("x", body);
+
     return make_abstraction("f", abs_x);
 }
 
@@ -207,72 +203,45 @@ void expr_to_buffer_rec(Expr *e, char *buf, size_t *pos, size_t cap) {
     switch (e->type) {
         case VAR_EXPR: {
             size_t L = strlen(e->var_name);
-            if (*pos + L > cap - 1)
-                L = cap - 1 - *pos;
-
+            if (*pos + L > cap - 1) L = cap - 1 - *pos;
             memcpy(buf + *pos, e->var_name, L);
             *pos += L;
             break;
         }
-        case ABS_EXPR:
+
+        case ABS_EXPR: {
             // UTF-8 'λ' = 0xCE 0xBB
             if (*pos + 2 < cap - 1) {
-                buf[(*pos)++] = (char) 0xCE;
-                buf[(*pos)++] = (char) 0xBB;
+                buf[(*pos)++] = (char)0xCE;
+                buf[(*pos)++] = (char)0xBB;
             }
-
             size_t L = strlen(e->abs_param);
-            if (*pos + L > cap - 1)
-                L = cap - 1 - *pos;
-
+            if (*pos + L > cap - 1) L = cap - 1 - *pos;
             memcpy(buf + *pos, e->abs_param, L);
             *pos += L;
-
-            if (*pos < cap - 1)
-                buf[(*pos)++] = '.';
-
+            if (*pos < cap - 1) buf[(*pos)++] = '.';
             if (e->abs_body->type == ABS_EXPR) {
-                if (*pos < cap - 1)
-                    buf[(*pos)++] = '(';
-
+                if (*pos < cap - 1) buf[(*pos)++] = '(';
                 expr_to_buffer_rec(e->abs_body, buf, pos, cap);
-
-                if (*pos < cap - 1)
-                    buf[(*pos)++] = ')';
-
-            } else
-                expr_to_buffer_rec(e->abs_body, buf, pos, cap);
-
+                if (*pos < cap - 1) buf[(*pos)++] = ')';
+            } else expr_to_buffer_rec(e->abs_body, buf, pos, cap);
             break;
+        }
 
-        case APP_EXPR:
+        case APP_EXPR: {
             if (e->app_fn->type == ABS_EXPR) {
-                if (*pos < cap - 1)
-                    buf[(*pos)++] = '(';
-
+                if (*pos < cap - 1) buf[(*pos)++] = '(';
                 expr_to_buffer_rec(e->app_fn, buf, pos, cap);
-                if (*pos < cap - 1)
-                    buf[(*pos)++] = ')';
-
-            } else
-                expr_to_buffer_rec(e->app_fn, buf, pos, cap);
-
-            if (*pos < cap - 1)
-                buf[(*pos)++] = ' ';
-
+                if (*pos < cap - 1) buf[(*pos)++] = ')';
+            } else expr_to_buffer_rec(e->app_fn, buf, pos, cap);
+            if (*pos < cap - 1) buf[(*pos)++] = ' ';
             if (e->app_arg->type != VAR_EXPR) {
-                if (*pos < cap - 1)
-                    buf[(*pos)++] = '(';
-
+                if (*pos < cap - 1) buf[(*pos)++] = '(';
                 expr_to_buffer_rec(e->app_arg, buf, pos, cap);
-
-                if (*pos < cap - 1)
-                    buf[(*pos)++] = ')';
-
-            } else
-                expr_to_buffer_rec(e->app_arg, buf, pos, cap);
-
+                if (*pos < cap - 1) buf[(*pos)++] = ')';
+            } else expr_to_buffer_rec(e->app_arg, buf, pos, cap);
             break;
+        }
     }
 }
 
@@ -304,9 +273,7 @@ void vs_init(VarSet *s) {
  * @return true if the variable is in the set, false otherwise
  */
 bool vs_has(VarSet *s, const char *x) {
-    for (int i = 0; i < s->c; i++)
-        if (!strcmp(s->v[i], x))
-            return true;
+    for (int i = 0; i < s->c; i++) if (!strcmp(s->v[i], x)) return true;
 
     return false;
 }
@@ -318,7 +285,6 @@ bool vs_has(VarSet *s, const char *x) {
  */
 void vs_add(VarSet *s, const char *x) {
     if (vs_has(s, x)) return;
-
     s->v = realloc(s->v, sizeof(char *) * (s->c + 1));
     s->v[s->c++] = strdup(x);
 }
@@ -344,9 +310,7 @@ void vs_rm(VarSet *s, const char *x) {
  * @param s the variable set to free
  */
 void vs_free(VarSet *s) {
-    for (int i = 0; i < s->c; i++)
-        free(s->v[i]);
-
+    for (int i = 0; i < s->c; i++) free(s->v[i]);
     free(s->v);
 }
 
@@ -356,9 +320,8 @@ void vs_free(VarSet *s) {
  * @param s the variable set to fill
  */
 void free_vars_rec(Expr *e, VarSet *s) {
-    if (e->type == VAR_EXPR) {
-        vs_add(s, e->var_name);
-    } else if (e->type == ABS_EXPR) {
+    if (e->type == VAR_EXPR) vs_add(s, e->var_name);
+    else if (e->type == ABS_EXPR) {
         free_vars_rec(e->abs_body, s);
         vs_rm(s, e->abs_param);
     } else {
@@ -376,6 +339,7 @@ VarSet free_vars(Expr *e) {
     VarSet s;
     vs_init(&s);
     free_vars_rec(e, &s);
+
     return s;
 }
 
@@ -387,18 +351,14 @@ VarSet free_vars(Expr *e) {
 char *fresh_var(VarSet *s) {
     for (char c = 'a'; c <= 'z'; c++) {
         char buf[2] = {c, '\0'};
-        if (!vs_has(s, buf))
-            return strdup(buf);
-
+        if (!vs_has(s, buf)) return strdup(buf);
     }
     int idx = 1;
     while (true) {
         for (char c = 'a'; c <= 'z'; c++) {
             char buf[8];
             snprintf(buf, sizeof(buf), "%c%d", c, idx);
-            if (!vs_has(s, buf))
-                return strdup(buf);
-
+            if (!vs_has(s, buf)) return strdup(buf);
         }
         idx++;
     }
@@ -413,34 +373,24 @@ char *fresh_var(VarSet *s) {
  */
 Expr *substitute(Expr *e, const char *v, Expr *val) {
     if (e->type == VAR_EXPR) {
-        if (strcmp(e->var_name, v) == 0)
-            return copy_expr(val);
-        else
-            return copy_expr(e);
+        if (strcmp(e->var_name, v) == 0) return copy_expr(val);
+        else return copy_expr(e);
     }
-
     if (e->type == ABS_EXPR) {
-        if (strcmp(e->abs_param, v) == 0)
-            return copy_expr(e);
-
+        if (strcmp(e->abs_param, v) == 0) return copy_expr(e);
         VarSet fv_val = free_vars(val);
-
         if (vs_has(&fv_val, e->abs_param)) {
             VarSet forbidden_vars = free_vars(e);
             vs_add(&forbidden_vars, e->abs_param);
-            for (int i = 0; i < fv_val.c; i++)
-                vs_add(&forbidden_vars, fv_val.v[i]);
+            for (int i = 0; i < fv_val.c; i++) vs_add(&forbidden_vars, fv_val.v[i]);
 
             char *nv_name = fresh_var(&forbidden_vars);
             Expr *nv_expr = make_variable(nv_name);
-
             Expr *renamed_body = substitute(e->abs_body, e->abs_param, nv_expr);
-            free_expr(nv_expr);
-
             Expr *substituted_renamed_body = substitute(renamed_body, v, val);
-
             Expr *result_expr = make_abstraction(nv_name, substituted_renamed_body);
 
+            free_expr(nv_expr);
             free(nv_name);
             free_expr(renamed_body);
             vs_free(&forbidden_vars);
@@ -453,18 +403,27 @@ Expr *substitute(Expr *e, const char *v, Expr *val) {
             return result_expr;
         }
     }
-
     Expr *substituted_fn = substitute(e->app_fn, v, val);
     Expr *substituted_arg = substitute(e->app_arg, v, val);
+
     return make_application(substituted_fn, substituted_arg);
 }
 
-static const char *def_names[N_DEFS] = {"⊤", "⊥", "∧", "∨", "↓", "↑",
+static const char *def_names[N_DEFS] = {"⊤", "⊥", "∧",       "∨", "↓", "↑",
                                         "+", "*", "is_zero", "-", "≤", "pair"};
-static const char *def_src[N_DEFS] = {"λx.λy.x", "λx.λy.y", "λp.λq.p q p", "λp.λq.p p q",
-                                      "λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)", "λn.λf.λx.f (n f x)", "λm.λn.m ↑ n",
-                                      "λm.λn.m (+ n) 0", "λn.n (λx.⊥) ⊤", "λm.λn.n ↓ m", "λm.λn.is_zero (- m n)",
-                                      "λx.λy.λf.f x y"};
+static const char *def_src[N_DEFS] = {
+        "λx.λy.x",
+        "λx.λy.y",
+        "λp.λq.p q p",
+        "λp.λq.p p q",
+        "λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)",
+        "λn.λf.λx.f (n f x)",
+        "λm.λn.m ↑ n",
+        "λm.λn.m (+ n) 0",
+        "λn.n (λx.⊥) ⊤",
+        "λm.λn.n ↓ m",
+        "λm.λn.is_zero (- m n)",
+        "λx.λy.λf.f x y"};
 static Expr *def_vals[N_DEFS];
 
 /**
@@ -473,9 +432,7 @@ static Expr *def_vals[N_DEFS];
  * @return the index of the definition, or -1 if not found
  */
 int find_def(const char *s) {
-    for (int i = 0; i < N_DEFS; i++)
-        if (!strcmp(def_names[i], s))
-            return i;
+    for (int i = 0; i < N_DEFS; i++) if (!strcmp(def_names[i], s)) return i;
 
     return -1;
 }
@@ -494,6 +451,7 @@ bool delta_reduce(Expr *e, Expr **out) {
             return true;
         }
     }
+
     return false;
 }
 
@@ -510,6 +468,7 @@ bool beta_reduce(Expr *e, Expr **out) {
         free_expr(argcp);
         return true;
     }
+
     return false;
 }
 
@@ -557,19 +516,15 @@ bool reduce_once(Expr *e, Expr **ne, const char **rtype) {
  */
 bool is_church_numeral(Expr *e) {
     if (e->type != ABS_EXPR) return false;
-
     Expr *e1 = e->abs_body;
-
-    if (e1->type != ABS_EXPR)
-        return false;
-
+    if (e1->type != ABS_EXPR) return false;
     const char *f = e->abs_param;
     const char *x = e1->abs_param;
     Expr *cur = e1->abs_body;
-    while ((cur->type == APP_EXPR) && (cur->app_fn->type == VAR_EXPR)
-                                   && (!strcmp(cur->app_fn->var_name, f))) {
+    while ((cur->type == APP_EXPR) && (cur->app_fn->type == VAR_EXPR) && (!strcmp(cur->app_fn->var_name, f))) {
         cur = cur->app_arg;
     }
+
     return (cur->type == VAR_EXPR) && (!strcmp(cur->var_name, x));
 }
 
@@ -582,11 +537,11 @@ int count_applications(Expr *e) {
     Expr *cur = e->abs_body->abs_body;
     const char *f = e->abs_param;
     int cnt = 0;
-    while ((cur->type == APP_EXPR) && (cur->app_fn->type == VAR_EXPR)
-                                   && (!strcmp(cur->app_fn->var_name, f))) {
+    while ((cur->type == APP_EXPR) && (cur->app_fn->type == VAR_EXPR) && (!strcmp(cur->app_fn->var_name, f))) {
         cnt++;
         cur = cur->app_arg;
     }
+
     return cnt;
 }
 
@@ -602,11 +557,8 @@ Expr *abstract_numerals(Expr *e) {
         snprintf(buf, sizeof(buf), "%d", n);
         return make_variable(buf);
     }
-    if (e->type == ABS_EXPR)
-        return make_abstraction(e->abs_param, abstract_numerals(e->abs_body));
-
-    if (e->type == APP_EXPR)
-        return make_application(abstract_numerals(e->app_fn), abstract_numerals(e->app_arg));
+    if (e->type == ABS_EXPR) return make_abstraction(e->abs_param, abstract_numerals(e->abs_body));
+    if (e->type == APP_EXPR) return make_application(abstract_numerals(e->app_fn), abstract_numerals(e->app_arg));
 
     return make_variable(e->var_name);
 }
@@ -619,7 +571,6 @@ void normalize(Expr *expr) {
     sb_reset(&sb);
     expr_to_buffer(expr, sb.data, sb.cap);
     printf("Step 0: %s\n", sb.data);
-
     int step = 1;
     while (true) {
         Expr *next;
@@ -630,16 +581,12 @@ void normalize(Expr *expr) {
         }
         free_expr(expr);
         expr = next;
-
         sb_reset(&sb);
         expr_to_buffer(expr, sb.data, sb.cap);
 
-        if (CONFIG_SHOW_STEP_TYPE)
-            printf("Step %d (%s): %s\n", step++, rtype, sb.data);
-        else
-            printf("Step %d: %s\n", step++, sb.data);
+        if (CONFIG_SHOW_STEP_TYPE) printf("Step %d (%s): %s\n", step++, rtype, sb.data);
+        else printf("Step %d: %s\n", step++, sb.data);
     }
-
     if (CONFIG_DELTA_ABSTRACT) {
         Expr *abs = abstract_numerals(expr);
         sb_reset(&sb);
@@ -662,41 +609,31 @@ int main(int argc, char *argv[]) {
         Parser dp = {def_src[i], 0, strlen(def_src[i])};
         def_vals[i] = parse(&dp);
     }
-
     sb_init(&sb, MAX_PRINT_LEN);
-
     char *input;
     char buf[2048];
     if (argc > 1) {
         size_t L = 0;
-        for (int i = 1; i < argc; i++)
-            L += strlen(argv[i]) + 1;
-
+        for (int i = 1; i < argc; i++) L += strlen(argv[i]) + 1;
         input = malloc(L + 1);
         input[0] = '\0';
         for (int i = 1; i < argc; i++) {
             strcat(input, argv[i]);
-            if (i < argc - 1)
-                strcat(input, " ");
+            if (i < argc - 1) strcat(input, " ");
         }
     } else {
         printf("λ-expr> ");
-        if (!fgets(buf, sizeof(buf), stdin))
-            return 0;
-
+        if (!fgets(buf, sizeof(buf), stdin)) return 0;
         buf[strcspn(buf, "\n")] = '\0';
         input = strdup(buf);
     }
-
     Parser p = {input, 0, strlen(input)};
     Expr *e = parse(&p);
     normalize(e);
 
     // cleanup
     free(input);
-    for (int i = 0; i < N_DEFS; i++)
-        free_expr(def_vals[i]);
-
+    for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
     sb_destroy(&sb);
 
     return 0;
@@ -706,11 +643,7 @@ int main(int argc, char *argv[]) {
  * @brief Check if the next character is valid.
  * @param p the parser
  */
-char peek(Parser *p) {
-    if (p->i < p->n) return p->src[p->i];
-    else return '\0';
-
-}
+char peek(Parser *p) { return p->i < p->n ? p->src[p->i] : '\0'; }
 
 /**
  * @brief Consume the next character and return it.
@@ -718,15 +651,14 @@ char peek(Parser *p) {
  * @return the consumed character
  */
 char consume(Parser *p) {
-    if (!peek(p))
-        return '\0';
+    if (!peek(p)) return '\0';
 
     // UTF-8 λ = 0xCE 0xBB
-    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE)
-                          && ((uchar) p->src[p->i + 1] == 0xBB)) {
+    if ((p->i + 1 < p->n) && ((uchar)p->src[p->i] == 0xCE) && ((uchar)p->src[p->i + 1] == 0xBB)) {
         p->i += 2;
         return '\0';
     }
+
     return p->src[p->i++];
 }
 
@@ -734,10 +666,7 @@ char consume(Parser *p) {
  * @brief Skip whitespace characters in the input.
  * @param p the parser
  */
-void skip_whitespace(Parser *p) {
-    while (isspace((uchar) peek(p)))
-        p->i++;
-}
+void skip_whitespace(Parser *p) { while (isspace((uchar)peek(p))) p->i++; }
 
 /**
  * @brief Parse a lambda expression from the input.
@@ -752,6 +681,7 @@ Expr *parse(Parser *p) {
         fprintf(stderr, "Unexpected '%c' at %zu\n", peek(p), p->i);
         exit(1);
     }
+
     return e;
 }
 
@@ -763,10 +693,11 @@ Expr *parse(Parser *p) {
 Expr *parse_expr(Parser *p) {
     skip_whitespace(p);
     // detect λ
-    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE)
-                          && ((uchar) p->src[p->i + 1] == 0xBB)) {
+    if ((p->i + 1 < p->n) && ((uchar)p->src[p->i] == 0xCE) &&
+        ((uchar)p->src[p->i + 1] == 0xBB)) {
         return parse_abs(p);
     }
+
     return parse_app(p);
 }
 
@@ -786,6 +717,7 @@ Expr *parse_abs(Parser *p) {
     Expr *body = parse_expr(p);
     Expr *ret = make_abstraction(v, body);
     free(v);
+
     return ret;
 }
 
@@ -803,6 +735,7 @@ Expr *parse_app(Parser *p) {
         e = make_application(e, a);
         skip_whitespace(p);
     }
+
     return e;
 }
 
@@ -814,13 +747,11 @@ Expr *parse_app(Parser *p) {
 Expr *parse_atom(Parser *p) {
     skip_whitespace(p);
     // λ as atom
-    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE)
-                          && ((uchar) p->src[p->i + 1] == 0xBB)) {
+    if ((p->i + 1 < p->n) && ((uchar)p->src[p->i] == 0xCE) &&
+        ((uchar)p->src[p->i + 1] == 0xBB)) {
         return parse_abs(p);
     }
-
     char c = peek(p);
-
     if (c == '(') {
         consume(p);
         Expr *e = parse_expr(p);
@@ -831,13 +762,14 @@ Expr *parse_atom(Parser *p) {
         }
         return e;
     }
-    if (isdigit((uchar) c)) {
+    if (isdigit((uchar)c)) {
         int v = parse_number(p);
         return church(v);
     }
     char *name = parse_varname(p);
     Expr *v = make_variable(name);
     free(name);
+
     return v;
 }
 
@@ -848,12 +780,11 @@ Expr *parse_atom(Parser *p) {
  */
 int parse_number(Parser *p) {
     int v = 0;
-    if (!isdigit((uchar) peek(p))) {
+    if (!isdigit((uchar)peek(p))) {
         fprintf(stderr, "Expected digit at %zu\n", p->i);
         exit(1);
     }
-    while (isdigit((uchar) peek(p)))
-        v = v * 10 + (consume(p) - '0');
+    while (isdigit((uchar)peek(p))) v = v * 10 + (consume(p) - '0');
 
     return v;
 }
@@ -866,22 +797,18 @@ int parse_number(Parser *p) {
 char *parse_varname(Parser *p) {
     skip_whitespace(p);
     char c = peek(p);
-    if ((!c) || (isspace((uchar) c))
-             || (c == '(')
-             || (c == ')')
-             || (c == '.')
-             || ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) && ((uchar) p->src[p->i + 1] == 0xBB))) {
+    if ((!c) || (isspace((uchar)c)) || (c == '(') || (c == ')') || (c == '.') ||
+        ((p->i + 1 < p->n) && ((uchar)p->src[p->i] == 0xCE) &&
+         ((uchar)p->src[p->i + 1] == 0xBB))) {
         fprintf(stderr, "Invalid var start at %zu\n", p->i);
         exit(1);
     }
     size_t start = p->i;
     while (p->i < p->n) {
         c = peek(p);
-        if ((!c) || (isspace((uchar) c))
-                 || (c == '(')
-                 || (c == ')')
-                 || (c == '.')
-                 || ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) && ((uchar) p->src[p->i + 1] == 0xBB))) {
+        if ((!c) || (isspace((uchar)c)) || (c == '(') || (c == ')') || (c == '.') ||
+            ((p->i + 1 < p->n) && ((uchar)p->src[p->i] == 0xCE) &&
+             ((uchar)p->src[p->i + 1] == 0xBB))) {
             break;
         }
         p->i++;
@@ -894,5 +821,6 @@ char *parse_varname(Parser *p) {
     }
     memcpy(out, p->src + start, len);
     out[len] = '\0';
+
     return out;
 }
