@@ -5,35 +5,14 @@ static strbuf sb;
 static bool CONFIG_SHOW_STEP_TYPE = true;
 static bool CONFIG_DELTA_ABSTRACT = true;
 
-/**
- * @brief Get the current configuration values.
- * @return the current configuration values
- */
 bool get_config_show_step_type(void) { return CONFIG_SHOW_STEP_TYPE; }
 
-/**
- * @brief Set the configuration value for showing step type.
- * @param value the new value for showing step type
- */
 void set_config_show_step_type(bool value) { CONFIG_SHOW_STEP_TYPE = value; }
 
-/**
- * @brief Get the current configuration value for delta abstraction.
- * @return the current configuration value for delta abstraction
- */
 bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; }
 
-/**
- * @brief Set the configuration value for delta abstraction.
- * @param value the new value for delta abstraction
- */
 void set_config_delta_abstract(bool value) { CONFIG_DELTA_ABSTRACT = value; }
 
-/**
- * @brief Initialize a string buffer.
- * @param sb the string buffer to initialize
- * @param init_cap the initial capacity of the buffer
- */
 void sb_init(strbuf *sb, size_t init_cap) {
     sb->data = malloc(init_cap);
     if (!sb->data) {
@@ -45,11 +24,6 @@ void sb_init(strbuf *sb, size_t init_cap) {
     sb->data[0] = '\0';
 }
 
-/**
- * @brief Ensure that the string buffer has enough capacity.
- * @param sb the string buffer to check
- * @param need the amount of space needed
- */
 void sb_ensure(strbuf *sb, size_t need) {
     if (sb->len + need + 1 > sb->cap) {
         size_t new = sb->cap * 2;
@@ -64,30 +38,17 @@ void sb_ensure(strbuf *sb, size_t need) {
     }
 }
 
-/**
- * @brief Reset the string buffer.
- * @param sb the string buffer to reset
- */
 void sb_reset(strbuf *sb) {
     sb->len = 0;
     sb->data[0] = '\0';
 }
 
-/**
- * @brief Destroy the string buffer.
- * @param sb the string buffer to destroy
- */
 void sb_destroy(strbuf *sb) {
     free(sb->data);
     sb->data = NULL;
     sb->cap = sb->len = 0;
 }
 
-/**
- * @brief Make a new variable expression.
- * @param n the name of the variable
- * @return the new expression
- */
 Expr *make_variable(const char *n) {
     Expr *e = malloc(sizeof *e);
     if (!e) {
@@ -100,12 +61,6 @@ Expr *make_variable(const char *n) {
     return e;
 }
 
-/**
- * @brief Make a new abstraction expression.
- * @param p the name of the parameter
- * @param b the body of the abstraction
- * @return the new expression
- */
 Expr *make_abstraction(const char *p, Expr *b) {
     Expr *e = malloc(sizeof *e);
     if (!e) {
@@ -119,12 +74,6 @@ Expr *make_abstraction(const char *p, Expr *b) {
     return e;
 }
 
-/**
- * @brief Make a new application expression.
- * @param f the function
- * @param a the argument
- * @return the new expression
- */
 Expr *make_application(Expr *f, Expr *a) {
     Expr *e = malloc(sizeof *e);
     if (!e) {
@@ -138,31 +87,22 @@ Expr *make_application(Expr *f, Expr *a) {
     return e;
 }
 
-/**
- * @brief Free an expression.
- * @param e the expression to free
- */
 void free_expr(Expr *e) {
     if (!e) return;
 
     switch (e->type) {
         case VAR_EXPR: free(e->var_name);
-                       break;
+            break;
         case ABS_EXPR: free(e->abs_param);
-                       free_expr(e->abs_body);
-                       break;
+            free_expr(e->abs_body);
+            break;
         case APP_EXPR: free_expr(e->app_fn);
-                       free_expr(e->app_arg);
-                       break;
+            free_expr(e->app_arg);
+            break;
     }
     free(e);
 }
 
-/**
- * @brief Copy an expression.
- * @param e the expression to copy
- * @return the copied expression
- */
 Expr *copy_expr(Expr *e) {
     if (!e) return NULL;
 
@@ -175,11 +115,6 @@ Expr *copy_expr(Expr *e) {
     return NULL; // unreachable
 }
 
-/**
- * @brief Create a Church numeral.
- * @param n the number
- * @return the Church numeral expression
- */
 Expr *church(int n) {
     Expr *body = make_variable("x");
     for (int i = 0; i < n; i++) {
@@ -191,12 +126,6 @@ Expr *church(int n) {
     return make_abstraction("f", abs_x);
 }
 
-/**
- * @brief Convert an expression to a string.
- * @param e the expression to convert
- * @param buf the buffer to write into
- * @param cap the size of the buffer
- */
 void expr_to_buffer_rec(Expr *e, char *buf, size_t *pos, size_t cap) {
     if (*pos >= cap - 1) return;
 
@@ -245,55 +174,29 @@ void expr_to_buffer_rec(Expr *e, char *buf, size_t *pos, size_t cap) {
     }
 }
 
-/**
- * @brief Convert an expression to a string.
- * @param e the expression to convert
- * @param buf the buffer to write into
- * @param cap the size of the buffer
- */
 void expr_to_buffer(Expr *e, char *buf, size_t cap) {
     size_t pos = 0;
     expr_to_buffer_rec(e, buf, &pos, cap);
     buf[pos < cap ? pos : cap - 1] = '\0';
 }
 
-/**
- * @brief Initialize a variable set.
- * @param s the variable set to initialize
- */
 void vs_init(VarSet *s) {
     s->v = NULL;
     s->c = 0;
 }
 
-/**
- * @brief Check if a variable is in the set.
- * @param s the variable set
- * @param x the variable to check
- * @return true if the variable is in the set, false otherwise
- */
 bool vs_has(VarSet *s, const char *x) {
     for (int i = 0; i < s->c; i++) if (!strcmp(s->v[i], x)) return true;
 
     return false;
 }
 
-/**
- * @brief Add a variable to the set.
- * @param s the variable set
- * @param x the variable to add
- */
 void vs_add(VarSet *s, const char *x) {
     if (vs_has(s, x)) return;
     s->v = realloc(s->v, sizeof(char *) * (s->c + 1));
     s->v[s->c++] = strdup(x);
 }
 
-/**
- * @brief Remove a variable from the set.
- * @param s the variable set
- * @param x the variable to remove
- */
 void vs_rm(VarSet *s, const char *x) {
     for (int i = 0; i < s->c; i++) {
         if (!strcmp(s->v[i], x)) {
@@ -305,20 +208,11 @@ void vs_rm(VarSet *s, const char *x) {
     }
 }
 
-/**
- * @brief Free a variable set.
- * @param s the variable set to free
- */
 void vs_free(VarSet *s) {
     for (int i = 0; i < s->c; i++) free(s->v[i]);
     free(s->v);
 }
 
-/**
- * @brief Recursively find free variables in an expression.
- * @param e the expression to check
- * @param s the variable set to fill
- */
 void free_vars_rec(Expr *e, VarSet *s) {
     if (e->type == VAR_EXPR) vs_add(s, e->var_name);
     else if (e->type == ABS_EXPR) {
@@ -330,11 +224,6 @@ void free_vars_rec(Expr *e, VarSet *s) {
     }
 }
 
-/**
- * @brief Find free variables in an expression.
- * @param e the expression to check
- * @return a variable set containing the free variables
- */
 VarSet free_vars(Expr *e) {
     VarSet s;
     vs_init(&s);
@@ -343,11 +232,6 @@ VarSet free_vars(Expr *e) {
     return s;
 }
 
-/**
- * @brief Create a fresh variable name that is not in the set.
- * @param s the variable set
- * @return a new variable name
- */
 char *fresh_var(VarSet *s) {
     for (char c = 'a'; c <= 'z'; c++) {
         char buf[2] = {c, '\0'};
@@ -364,13 +248,6 @@ char *fresh_var(VarSet *s) {
     }
 }
 
-/**
- * @brief Substitute a variable in an expression with another expression.
- * @param e the expression to substitute in
- * @param v the variable to substitute
- * @param val the value to substitute with
- * @return the new expression
- */
 Expr *substitute(Expr *e, const char *v, Expr *val) {
     if (e->type == VAR_EXPR) {
         if (strcmp(e->var_name, v) == 0) return copy_expr(val);
@@ -426,23 +303,12 @@ static const char *def_src[N_DEFS] = {
         "λx.λy.λf.f x y"};
 static Expr *def_vals[N_DEFS];
 
-/**
- * @brief Find the index of a definition by name.
- * @param s the name of the definition
- * @return the index of the definition, or -1 if not found
- */
 int find_def(const char *s) {
     for (int i = 0; i < N_DEFS; i++) if (!strcmp(def_names[i], s)) return i;
 
     return -1;
 }
 
-/**
- * @brief Delta reduction: replace a variable with its definition.
- * @param e the expression to reduce
- * @param out the reduced expression
- * @return true if a reduction was made, false otherwise
- */
 bool delta_reduce(Expr *e, Expr **out) {
     if (e->type == VAR_EXPR) {
         int i = find_def(e->var_name);
@@ -455,12 +321,6 @@ bool delta_reduce(Expr *e, Expr **out) {
     return false;
 }
 
-/**
- * @brief Beta reduction: apply a function to an argument.
- * @param e the expression to reduce
- * @param out the reduced expression
- * @return true if a reduction was made, false otherwise
- */
 bool beta_reduce(Expr *e, Expr **out) {
     if ((e->type == APP_EXPR) && (e->app_fn->type == ABS_EXPR)) {
         Expr *argcp = copy_expr(e->app_arg);
@@ -472,13 +332,6 @@ bool beta_reduce(Expr *e, Expr **out) {
     return false;
 }
 
-/**
- * @brief Reduce an expression once, either by delta or beta reduction.
- * @param e the expression to reduce
- * @param ne the reduced expression
- * @param rtype the type of reduction made
- * @return true if a reduction was made, false otherwise
- */
 bool reduce_once(Expr *e, Expr **ne, const char **rtype) {
     Expr *tmp;
     if (delta_reduce(e, &tmp)) {
@@ -509,11 +362,6 @@ bool reduce_once(Expr *e, Expr **ne, const char **rtype) {
     return false;
 }
 
-/**
- * @brief Check if an expression is a Church numeral.
- * @param e the expression to check
- * @return true if it is a Church numeral, false otherwise
- */
 bool is_church_numeral(Expr *e) {
     if (e->type != ABS_EXPR) return false;
     Expr *e1 = e->abs_body;
@@ -528,11 +376,6 @@ bool is_church_numeral(Expr *e) {
     return (cur->type == VAR_EXPR) && (!strcmp(cur->var_name, x));
 }
 
-/**
- * @brief Count the number of applications of a Church numeral.
- * @param e the expression to count
- * @return the number of applications
- */
 int count_applications(Expr *e) {
     Expr *cur = e->abs_body->abs_body;
     const char *f = e->abs_param;
@@ -545,11 +388,6 @@ int count_applications(Expr *e) {
     return cnt;
 }
 
-/**
- * @brief Abstract Church numerals in an expression.
- * @param e the expression to abstract
- * @return the abstracted expression
- */
 Expr *abstract_numerals(Expr *e) {
     if (is_church_numeral(e)) {
         int n = count_applications(e);
@@ -563,10 +401,6 @@ Expr *abstract_numerals(Expr *e) {
     return make_variable(e->var_name);
 }
 
-/**
- * @brief Normalize an expression by reducing it to normal form.
- * @param expr the expression to normalize
- */
 void normalize(Expr *expr) {
     sb_reset(&sb);
     expr_to_buffer(expr, sb.data, sb.cap);
@@ -597,12 +431,6 @@ void normalize(Expr *expr) {
     free_expr(expr);
 }
 
-/**
- * @brief Main function: parse input, normalize, and print result.
- * @param argc the number of arguments
- * @param argv the arguments
- * @return 0 on success, 1 on error
- */
 int main(int argc, char *argv[]) {
     // load δ-definitions
     for (int i = 0; i < N_DEFS; i++) {
@@ -639,17 +467,8 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-/**
- * @brief Check if the next character is valid.
- * @param p the parser
- */
 char peek(Parser *p) { return p->i < p->n ? p->src[p->i] : '\0'; }
 
-/**
- * @brief Consume the next character and return it.
- * @param p the parser
- * @return the consumed character
- */
 char consume(Parser *p) {
     if (!peek(p)) return '\0';
 
@@ -662,17 +481,8 @@ char consume(Parser *p) {
     return p->src[p->i++];
 }
 
-/**
- * @brief Skip whitespace characters in the input.
- * @param p the parser
- */
 void skip_whitespace(Parser *p) { while (isspace((uchar)peek(p))) p->i++; }
 
-/**
- * @brief Parse a lambda expression from the input.
- * @param p the parser
- * @return the parsed expression
- */
 Expr *parse(Parser *p) {
     skip_whitespace(p);
     Expr *e = parse_expr(p);
@@ -685,11 +495,6 @@ Expr *parse(Parser *p) {
     return e;
 }
 
-/**
- * @brief Parse an expression from the input.
- * @param p the parser
- * @return the parsed expression
- */
 Expr *parse_expr(Parser *p) {
     skip_whitespace(p);
     // detect λ
@@ -701,11 +506,6 @@ Expr *parse_expr(Parser *p) {
     return parse_app(p);
 }
 
-/**
- * @brief Parse an abstraction from the input.
- * @param p the parser
- * @return the parsed expression
- */
 Expr *parse_abs(Parser *p) {
     p->i += 2; // consume λ
     char *v = parse_varname(p);
@@ -721,11 +521,6 @@ Expr *parse_abs(Parser *p) {
     return ret;
 }
 
-/**
- * @brief Parse an application from the input.
- * @param p the parser
- * @return the parsed expression
- */
 Expr *parse_app(Parser *p) {
     skip_whitespace(p);
     Expr *e = parse_atom(p);
@@ -739,11 +534,6 @@ Expr *parse_app(Parser *p) {
     return e;
 }
 
-/**
- * @brief Parse an atom from the input.
- * @param p the parser
- * @return the parsed expression
- */
 Expr *parse_atom(Parser *p) {
     skip_whitespace(p);
     // λ as atom
@@ -773,11 +563,6 @@ Expr *parse_atom(Parser *p) {
     return v;
 }
 
-/**
- * @brief Parse a number from the input.
- * @param p the parser
- * @return the parsed number
- */
 int parse_number(Parser *p) {
     int v = 0;
     if (!isdigit((uchar)peek(p))) {
@@ -789,11 +574,6 @@ int parse_number(Parser *p) {
     return v;
 }
 
-/**
- * @brief Parse a variable name from the input.
- * @param p the parser
- * @return the parsed variable name
- */
 char *parse_varname(Parser *p) {
     skip_whitespace(p);
     char c = peek(p);
