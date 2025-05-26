@@ -66,11 +66,11 @@ bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; }
 
 void set_config_delta_abstract(bool value) { CONFIG_DELTA_ABSTRACT = value; }
 
-char *rgb(uint8 r, uint8 g, uint8 b) { //FIXME: buffer handling
-    char buf[32];
-    snprintf(buf, 32, "\033[38;2;%d;%d;%dm", r, g, b);
-    return buf;
-}
+//char *rgb(uint8 r, uint8 g, uint8 b) { //FIXME: buffer handling
+//    char buf[32];
+//    snprintf(buf, 32, "\033[38;2;%d;%d;%dm", r, g, b);
+//    return buf;
+//}
 
 void sb_init(strbuf *sb, size_t init_cap) {
     sb->data = malloc(init_cap);
