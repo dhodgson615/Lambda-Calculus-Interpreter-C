@@ -15,6 +15,7 @@
 
 typedef unsigned char uchar;
 typedef unsigned char byte;
+typedef uint8_t       uint8;
 
 /**
  * @brief Parser structure.
@@ -60,6 +61,15 @@ typedef struct strbuf {
     size_t   len;
     size_t   cap;
 } strbuf;
+
+/**
+ * @brief RGB color structure for pretty printing.
+ */
+typedef struct rgb {
+    uint8  r;
+    uint8  g;
+    uint8  b;
+} rgb;
 
 /**
  * @brief Delta definitions.
