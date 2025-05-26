@@ -4,7 +4,7 @@ static strbuf sb;
 
 static bool CONFIG_SHOW_STEP_TYPE = true;
 static bool CONFIG_DELTA_ABSTRACT = true;
-static bool COLOR_PARENS          = true; /* TODO: implement based on the functionality in the Python version */
+//static bool COLOR_PARENS          = true; /* TODO: implement based on the functionality in the Python version */
 
 /* Python functions needed:
 
@@ -65,6 +65,12 @@ void set_config_show_step_type(bool value) { CONFIG_SHOW_STEP_TYPE = value; }
 bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; }
 
 void set_config_delta_abstract(bool value) { CONFIG_DELTA_ABSTRACT = value; }
+
+char *rgb(uint8 r, uint8 g, uint8 b) { //FIXME: buffer handling
+    char buf[32];
+    snprintf(buf, 32, "\033[38;2;%d;%d;%dm", r, g, b);
+    return buf;
+}
 
 void sb_init(strbuf *sb, size_t init_cap) {
     sb->data = malloc(init_cap);
@@ -481,27 +487,58 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < N_DEFS; i++) {
         Parser dp = {def_src[i], 0, strlen(def_src[i])};
         def_vals[i] = parse(&dp);
+        if (!def_vals[i]) {
+            fprintf(stderr, "Failed to parse definition: %s\n", def_src[i]);
+            for (int k = 0; k < i; k++) free_expr(def_vals[k]);
+            sb_destroy(&sb);
+            exit(1);
+        }
     }
     sb_init(&sb, MAX_PRINT_LEN);
     char *input;
-    char buf[2048];
     if (argc > 1) {
         size_t L = 0;
         for (int i = 1; i < argc; i++) L += strlen(argv[i]) + 1;
         input = malloc(L + 1);
+        if (!input) {
+            perror("malloc for input");
+            // Cleanup def_vals
+            for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
+            sb_destroy(&sb);
+            exit(1);
+        }
         input[0] = '\0';
         for (int i = 1; i < argc; i++) {
             strcat(input, argv[i]);
             if (i < argc - 1) strcat(input, " ");
         }
     } else {
+        char buf[2048]; // Declare buf when reading from stdin
         printf("λ-expr> ");
-        if (!fgets(buf, sizeof(buf), stdin)) return 0;
-        buf[strcspn(buf, "\n")] = '\0';
+        if (!fgets(buf, sizeof(buf), stdin)) {
+            for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
+            sb_destroy(&sb);
+            return 1; // Exit if reading from stdin fails
+        }
+        buf[strcspn(buf, "\n")] = '\0'; // Remove newline
         input = strdup(buf);
+        if (!input) {
+            perror("strdup for input");
+            // Cleanup def_vals
+            for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
+            sb_destroy(&sb);
+            exit(1);
+        }
     }
+
     Parser p = {input, 0, strlen(input)};
     expr *e = parse(&p);
+    if (!e) {
+        free(input);
+        for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
+        sb_destroy(&sb);
+        exit(1);
+    }
     normalize(e);
 
     // cleanup

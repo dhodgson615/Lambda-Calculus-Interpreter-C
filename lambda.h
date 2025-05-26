@@ -8,22 +8,25 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_PRINT_LEN   (1024 * 1024)
-#define ALWAYS_INLINE   __attribute__((always_inline))
-#define HOT             __attribute__((hot))
+#define MAX_PRINT_LEN    (1024 * 1024)
+#define ESC              "\x1b["
+#define RESET            ESC "0m"
+#define HIGHLIGHT        ESC "38;2;255;255;0m"
+#define ALWAYS_INLINE    __attribute__((always_inline))
+#define HOT              __attribute__((hot))
 
 
-typedef unsigned char uchar;
-typedef unsigned char byte;
-typedef uint8_t       uint8;
+typedef unsigned char    uchar;
+typedef unsigned char    byte;
+typedef uint8_t          uint8;
 
 /**
  * @brief          Parser structure.
  */
 typedef struct Parser {
-    const char  *src;
-    size_t       i;
-    size_t       n;
+    const char    *src;
+    size_t         i;
+    size_t         n;
 } Parser;
 
 /**
@@ -37,39 +40,39 @@ typedef enum {
  * @brief          Expression structure.
  */
 typedef struct expr {
-    exprType      type;
-    char         *var_name;
-    char         *abs_param;
-    struct expr  *abs_body;
-    struct expr  *app_fn;
-    struct expr  *app_arg;
+    exprType       type;
+    char          *var_name;
+    char          *abs_param;
+    struct expr   *abs_body;
+    struct expr   *app_fn;
+    struct expr   *app_arg;
 } expr;
 
 /**
  * @brief          Variable set structure.
  */
 typedef struct VarSet {
-    char  **v;
-    int     c;
+    char         **v;
+    int            c;
 } VarSet;
 
 /**
  * @brief          String buffer structure.
  */
 typedef struct strbuf {
-    char    *data;
-    size_t   len;
-    size_t   cap;
+    char          *data;
+    size_t         len;
+    size_t         cap;
 } strbuf;
 
 /**
  * @brief          RGB color structure for pretty printing.
  */
-typedef struct rgb {
-    uint8  r;
-    uint8  g;
-    uint8  b;
-} rgb;
+typedef struct color {
+    uint8          r;
+    uint8          g;
+    uint8          b;
+} color;
 
 /**
  * @brief          Delta definitions.
@@ -402,5 +405,14 @@ void sb_reset(strbuf *sb);
  * @param  sb      the string buffer to destroy
  */
 void sb_destroy(strbuf *sb);
+
+/**
+ * @brief          Create a new RGB color.
+ * @param  r       the red component
+ * @param  g       the green component
+ * @param  b       the blue component
+ * @return         the new RGB color
+ */
+char *rgb(uint8 r, uint8 g, uint8 b);
 
 #endif /* LAMBDA_H */
