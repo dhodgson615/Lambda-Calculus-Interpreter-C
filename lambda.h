@@ -86,8 +86,10 @@ static const char *def_src[] = {
 /**
  * @brief          Delta definition names.
  */
-static const char *def_names[N_DEFS] = {"⊤", "⊥", "∧", "∨", "↓", "↑", "+", "*",
-                                        "is_zero", "-", "≤", "pair"};
+static const char *def_names[N_DEFS] = {
+    "⊤", "⊥", "∧", "∨", "↓", "↑", "+", "*", "is_zero", "-", "≤", "pair"
+};
+
 static expr *def_vals[N_DEFS];
 
 /**
