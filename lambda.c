@@ -468,8 +468,7 @@ char consume(Parser *p) {
     if (!peek(p)) return '\0';
 
     // UTF-8 λ = 0xCE 0xBB
-    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) &&
-        ((uchar) p->src[p->i + 1] == 0xBB)) {
+    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) && ((uchar) p->src[p->i + 1] == 0xBB)) {
         p->i += 2;
         return '\0';
     }
@@ -494,8 +493,7 @@ expr *parse(Parser *p) {
 expr *parse_expr(Parser *p) {
     skip_whitespace(p);
     // detect λ
-    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) &&
-        ((uchar) p->src[p->i + 1] == 0xBB)) {
+    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) && ((uchar) p->src[p->i + 1] == 0xBB)) {
         return parse_abs(p);
     }
 
@@ -535,8 +533,7 @@ expr *parse_app(Parser *p) {
 expr *parse_atom(Parser *p) {
     skip_whitespace(p);
     // λ as atom
-    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) &&
-        ((uchar) p->src[p->i + 1] == 0xBB)) {
+    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) && ((uchar) p->src[p->i + 1] == 0xBB)) {
         return parse_abs(p);
     }
     char c = peek(p);
@@ -573,10 +570,9 @@ int parse_number(Parser *p) {
 }
 
 bool is_invalid_char(Parser *p, char c) {
-    return (!c) || (isspace((uchar) c)) || (c == '(') || (c == ')') ||
-            (c == '.') || ((p->i + 1 < p->n) &&
-             ((uchar) p->src[p->i] == 0xCE) &&
-              ((uchar) p->src[p->i + 1] == 0xBB));
+    return (!c) || (c == '(') || (c == ')') || (c == '.') || (isspace((uchar) c)) ||
+            ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) &&
+             ((uchar) p->src[p->i + 1] == 0xBB));
 }
 
 char *parse_varname(Parser *p) {
