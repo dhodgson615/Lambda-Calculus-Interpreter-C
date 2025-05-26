@@ -1,31 +1,27 @@
 # Lambda-Calculus-Interpreter-C
 
-This project is a C implementation of a lambda calculus interpreter that I
-previously made in
-[Python](https://github.com/dhodgson615/Lambda-Calculus-Interpreter). It has
-most of the same features and works largely the same way, including prefix
-math. Sorry.
+This project is a C implementation of a lambda calculus interpreter that I previously made in
+[Python](https://github.com/dhodgson615/Lambda-Calculus-Interpreter). It has most of the same features and
+works largely the same way, including prefix math. Sorry.
 
 ## Features
 
-* Parses lambda expressions, including variables, abstractions (λx.M), and
-  applications (M N).
+* Parses lambda expressions, including variables, abstractions (λx.M), and applications (M N).
 
-* Supports Church numerals: input numbers are automatically converted to their
-  Church numeral representation (e.g., `2` becomes `λf.λx.f (f x)`).
+* Supports Church numerals: input numbers are automatically converted to their Church numeral
+  representation (e.g., `2` becomes `λf.λx.f (f x)`).
 
 * Performs beta reduction: `(λx.M) N → M[x:=N]`
 
-* Performs delta reduction: replaces predefined constants (like `⊤`, `⊥`, `+`,
-  `*`, `is_zero`) with their lambda calculus definitions.
+* Performs delta reduction: replaces predefined constants (like `⊤`, `⊥`, `+`, `*`, `is_zero`) with their
+  lambda calculus definitions.
 
-* Normalizes expressions by repeatedly applying reduction rules until no more
-  reductions are possible.
+* Normalizes expressions by repeatedly applying reduction rules until no more reductions are possible.
 
 * Outputs each step of the reduction process.
 
-* Can abstract Church numerals back to their integer representation in the
-  final output (e.g., `λf.λx.f (f x)` becomes `2`).
+* Can abstract Church numerals back to their integer representation in the final output
+  (e.g., `λf.λx.f (f x)` becomes `2`).
 
 ## Install
 
@@ -68,7 +64,8 @@ Step 9 (β): λf.(λx.f (f x))
 
 You can run the interpreter in two ways:
 
-1.  **Interactive mode:**
+1.  **Without Arguments**
+
     Run the executable without arguments:
     ```bash
     ./lambda
@@ -86,7 +83,8 @@ You can run the interpreter in two ways:
     δ-abstracted: y
     ```
 
-2.  **Command-line argument:**
+2.  **With Arguments**
+
     Pass the lambda expression as a command-line argument:
     ```bash
     ./lambda "(λx.x) y"
@@ -98,15 +96,14 @@ You can run the interpreter in two ways:
 
 ### Configuration
 
-The interpreter has a couple of compile-time (actually, runtime, but set at the
-top of `lambda.c`) configurations that can be modified in `lambda.c`:
+The interpreter has a couple of compile-time (actually, runtime, but set at the top of `lambda.c`)
+configurations that can be modified in `lambda.c`:
 
-* `CONFIG_SHOW_STEP_TYPE`: (Default: `true`) If `true`, shows the type of
-  reduction (β or δ) for each step. If `false`, only shows "Step X: ...".
+* `CONFIG_SHOW_STEP_TYPE`: (Default: `true`) If `true`, shows the type of reduction (β or δ) for each
+  step. If `false`, only shows "Step X: ...".
 
-* `CONFIG_DELTA_ABSTRACT`: (Default: `true`) If `true`, attempts to convert
-  Church numerals in the final normal form back to their integer
-  representation.
+* `CONFIG_DELTA_ABSTRACT`: (Default: `true`) If `true`, attempts to convert Church numerals in the final
+  normal form back to their integer representation.
 
 ## Predefined Constants (δ-reduction)
 
@@ -120,8 +117,7 @@ The interpreter predefines several common constants:
 
 * `∨` (Or): `λp.λq.p p q`
 
-* `↓` (Successor for Church numerals, used in subtraction): `λn.λf.λx.n
-  (λg.λh.h (g f)) (λu.x) (λu.u)` (This is actually the predecessor function)
+* `↓` (Predecessor for Church numerals, used in subtraction): `λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)`
 
 * `↑` (Successor for Church numerals, used in addition): `λn.λf.λx.f (n f x)`
 
@@ -169,8 +165,8 @@ Step 13 (β): λf.(λx.f (f (f x)))
 
 ## Code Structure
 
-* `lambda.h`: Header file defining structures (`Expr`, `Parser`, `VarSet`,
-  `strbuf`), enums (`ExprType`), and function prototypes.
+* `lambda.h`: Header file defining structures (`Expr`, `Parser`, `VarSet`, `strbuf`), enums (`ExprType`),
+  and function prototypes.
 
 * `lambda.c`: Main implementation file containing:
 
@@ -178,23 +174,20 @@ Step 13 (β): λf.(λx.f (f (f x)))
 
     * String buffer utilities (`sb_*`).
 
-    * Expression creation and manipulation functions (`make_*`, `free_expr`,
-      `copy_expr`, `substitute`, etc.).
+    * Expression creation and manipulation functions (`make_*`, `free_expr`, `copy_expr`, `substitute`,
+      etc.).
 
-    * Church numeral functions (`church`, `is_church_numeral`,
-      `count_applications`, `abstract_numerals`).
+    * Church numeral functions (`church`, `is_church_numeral`, `count_applications`, `abstract_numerals`).
 
     * Expression to string conversion (`expr_to_buffer*`).
 
     * Variable set utilities (`vs_*`, `free_vars`, `fresh_var`).
 
-    * Reduction logic (`delta_reduce`, `beta_reduce`, `reduce_once`,
-      `normalize`).
+    * Reduction logic (`delta_reduce`, `beta_reduce`, `reduce_once`, `normalize`).
 
     * Parser logic (`parse*`, `peek`, `consume`, `skip_whitespace`).
 
-    * `main` function: handles input, calls parser and normalizer, and prints
-      results.
+    * `main` function: handles input, calls parser and normalizer, and prints results.
 
 * `Makefile`: For building the project.
 
@@ -221,5 +214,4 @@ make clean
 | Instructions retired         | 39,850,552,397 | 733,017,604,485 |             18.39x |      +1,739.42% |
 | Cycles elapsed               |  8,801,869,644 | 151,602,293,038 |             17.22x |      +1,622.39% |
 
-All of these benchmarks are from my M3 MacBook Air. They're also outdated by a
-couple of versions.
+All of these benchmarks are from my M3 MacBook Air. They're also outdated by a couple of versions.
