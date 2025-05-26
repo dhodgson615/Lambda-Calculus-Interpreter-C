@@ -38,13 +38,13 @@ You should see similar output to this if you paste the above into a Unix termina
 
 ```
 Cloning into 'Lambda-Calculus-Interpreter-C'...
-remote: Enumerating objects: 48, done.
-remote: Counting objects: 100% (48/48), done.
-remote: Compressing objects: 100% (46/46), done.
-remote: Total 48 (delta 18), reused 0 (delta 0), pack-reused 0 (from 0)
-Receiving objects: 100% (48/48), 22.55 KiB | 7.52 MiB/s, done.
-Resolving deltas: 100% (18/18), done.
-cc -std=c17 -Wall -Wextra -Werror -pedantic -O3 lambda.c -o lambda
+remote: Enumerating objects: 148, done.
+remote: Counting objects: 100% (148/148), done.
+remote: Compressing objects: 100% (128/128), done.
+remote: Total 148 (delta 83), reused 38 (delta 18), pack-reused 0 (from 0)
+Receiving objects: 100% (148/148), 52.10 KiB | 2.17 MiB/s, done.
+Resolving deltas: 100% (83/83), done.
+gcc -std=c17 -Wall -Wextra -Werror -pedantic -O3 -march=native -flto -mtune=native -funroll-loops lambda.c -o lambda
 Step 0: + (λf.(λx.f x)) (λf.(λx.f x))
 Step 1 (δ): (λm.(λn.m ↑ n)) (λf.(λx.f x)) (λf.(λx.f x))
 Step 2 (β): (λn.(λf.(λx.f x)) ↑ n) (λf.(λx.f x))
@@ -55,6 +55,7 @@ Step 6 (δ): (λn.(λf.(λx.f (n f x)))) (λf.(λx.f x))
 Step 7 (β): λf.(λx.f ((λf.(λx.f x)) f x))
 Step 8 (β): λf.(λx.f ((λx.f x) x))
 Step 9 (β): λf.(λx.f (f x))
+
 → normal form reached.
 
 δ-abstracted: 2
