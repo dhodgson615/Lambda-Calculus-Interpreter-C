@@ -79,6 +79,7 @@ You can run the interpreter in two ways:
     ```
     Step 0: (λx.x) y
     Step 1 (β): y
+
     → normal form reached.
 
     δ-abstracted: y
