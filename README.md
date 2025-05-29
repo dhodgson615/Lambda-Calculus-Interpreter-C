@@ -160,6 +160,7 @@ Step 10 (β): λf.(λx.f ((λx.f ((λf.(λx.f x)) f x)) x))
 Step 11 (β): λf.(λx.f (f ((λf.(λx.f x)) f x)))
 Step 12 (β): λf.(λx.f (f ((λx.f x) x)))
 Step 13 (β): λf.(λx.f (f (f x)))
+
 → normal form reached.
 
 δ-abstracted: 3
