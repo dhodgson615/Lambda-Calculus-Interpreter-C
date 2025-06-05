@@ -513,17 +513,18 @@ int main(int argc, char *argv[]) {
             if (i < argc - 1) strcat(input, " ");
         }
     } else {
-        char buf[2048]; // Declare buf when reading from stdin
+        char buf[2048];
         printf("λ-expr> ");
         if (!fgets(buf, sizeof(buf), stdin)) {
             for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
             sb_destroy(&sb);
-            return 1; // Exit if reading from stdin fails
+            return 1;
         }
-        buf[strcspn(buf, "\n")] = '\0'; // Remove newline
+        buf[strcspn(buf, "\n")] = '\0';
         input = strdup(buf);
         if (!input) {
             perror("strdup for input");
+            
             // Cleanup def_vals
             for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
             sb_destroy(&sb);
