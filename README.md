@@ -217,4 +217,4 @@ make clean
 | Instructions retired         | 39,850,552,397 | 733,017,604,485 |             18.39x |      +1,739.42% |
 | Cycles elapsed               |  8,801,869,644 | 151,602,293,038 |             17.22x |      +1,622.39% |
 
-All of these benchmarks are from my M3 MacBook Air. They're also outdated by a couple of versions.
+All of these benchmarks are from my M3 MacBook Air for the input `"* 49 49"`. They're also outdated by a couple of versions.
