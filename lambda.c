@@ -299,7 +299,7 @@ VarSet free_vars(expr *e) {
 
 char *fresh_var(VarSet *s) {
     for (char c = 'a'; c <= 'z'; c++) {
-        char buf[2] = {c, '\0'};
+        const char buf[2] = {c, '\0'};
         if (!vs_has(s, buf)) return strdup(buf);
     }
     int idx = 1;
@@ -337,12 +337,11 @@ expr *substitute(expr *e, const char *v, expr *val) {
             vs_free(&forbidden_vars);
             vs_free(&fv_val);
             return result_expr;
-        } else {
-            expr *new_body = substitute(e->abs_body, v, val);
-            expr *result_expr = make_abstraction(e->abs_param, new_body);
-            vs_free(&fv_val);
-            return result_expr;
         }
+        expr *new_body = substitute(e->abs_body, v, val);
+        expr *result_expr = make_abstraction(e->abs_param, new_body);
+        vs_free(&fv_val);
+        return result_expr;
     }
     expr *substituted_fn = substitute(e->app_fn, v, val);
     expr *substituted_arg = substitute(e->app_arg, v, val);
@@ -439,7 +438,7 @@ int count_applications(expr *e) {
 
 expr *abstract_numerals(expr *e) {
     if (is_church_numeral(e)) {
-        int n = count_applications(e);
+        const int n = count_applications(e);
         char buf[32];
         snprintf(buf, sizeof(buf), "%d", n);
         return make_variable(buf);
@@ -482,7 +481,7 @@ void normalize(expr *e) {
     free_expr(e);
 }
 
-int main(int argc, char *argv[]) {
+int main(const int argc, char *argv[]) {
     // load δ-definitions
     for (int i = 0; i < N_DEFS; i++) {
         Parser dp = {def_src[i], 0, strlen(def_src[i])};
@@ -550,10 +549,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-char peek(Parser *p) {
-    if (p->i < p->n) return p->src[p->i];
-    else return '\0';
-}
+char peek(const Parser *p) { return p->i < p->n ? p->src[p->i] : '\0'; }
 
 char consume(Parser *p) {
     if (!peek(p)) return '\0';
@@ -639,7 +635,7 @@ expr *parse_atom(Parser *p) {
         return e;
     }
     if (isdigit((uchar) c)) {
-        int v = parse_number(p);
+        const int v = parse_number(p);
         return church(v);
     }
     char *name = parse_varname(p);
@@ -673,7 +669,7 @@ char *parse_varname(Parser *p) {
         fprintf(stderr, "Invalid var start at %zu\n", p->i);
         exit(1);
     }
-    size_t start = p->i;
+    const size_t start = p->i;
     while (p->i < p->n) {
         c = peek(p);
         if (is_invalid_char(p, c)) break;

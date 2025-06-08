@@ -3,10 +3,7 @@
 
 #include <ctype.h>
 #include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #define MAX_PRINT_LEN    (1024 * 1024)
 #define ESC              "\x1b["
@@ -110,9 +107,9 @@ expr *church(int n);
 bool is_church_numeral(expr *e);
 
 /**
- * @brief          Check if an expression is a Church numeral.
- * @param  e       the expression to check
- * @return         true if the expression is a Church numeral, false otherwise
+ * @brief          Check if a character is a valid variable name character.
+ * @param  c       the character to check
+ * @return         true if the character is valid, false otherwise
  */
 bool is_invalid_char(Parser *p, char c);
 
@@ -221,8 +218,9 @@ void free_expr(expr *e);
 
 /**
  * @brief          Create a new application expression.
- * @param  f       the function expression
- * @param  a       the argument expression
+ * @param  e       the expression to convert
+ * @param  buf     the buffer to write into
+ * @param  cap     the size of the buffer
  * @return         the new application expression
  */
 void expr_to_buffer(expr *e, char *buf, size_t cap);
@@ -237,14 +235,14 @@ void expr_to_buffer(expr *e, char *buf, size_t cap);
 void expr_to_buffer_rec(expr *e, char *buf, size_t *pos, size_t cap);
 
 /**
- * @brief          Check if the next character is a whitespace.
+ * @brief          Peek the next character in the input without consuming it.
  * @param  p       the parser
- * @return         true if the next character is a whitespace, false otherwise
+ * @return         the next character in the input
  */
-char peek(Parser *p);
+char peek(const Parser *p);
 
 /**
- * @brief          Check if the next character is a whitespace.
+ * @brief          Check if the next character is whitespace.
  * @param  p       the parser
  * @return         true if the next character is a whitespace, false otherwise
  */
@@ -258,16 +256,15 @@ char consume(Parser *p);
 void skip_whitespace(Parser *p);
 
 /**
- * @brief          Check if an expression is a delta redex.
- * @param  e       the expression to check
- * @return         true if the expression is a delta redex, false otherwise
+ * @brief          Normalize an expression by abstracting Church numerals.
+ * @param  e       the expression to normalize
  */
 void normalize(expr *e);
 
 /**
- * @brief          Check if an expression is a delta redex.
- * @param  e       the expression to check
- * @return         true if the expression is a delta redex, false otherwise
+ * @brief          Count the number of applications in a Church numeral.
+ * @param  e       the Church numeral expression
+ * @return         the number of applications
  */
 int count_applications(expr *e);
 
@@ -327,10 +324,9 @@ VarSet free_vars(expr *e);
 char *fresh_var(VarSet *s);
 
 /**
- * @brief          Check if a variable is free in an expression.
- * @param  e       the expression
- * @param  v       the variable name
- * @return         true if the variable is free, false otherwise
+ * @brief          Find a delta definition by its name.
+ * @param  s       the string to search for a definition
+ * @return         the index of the definition in the def_names array, or -1 if not found
  */
 int find_def(const char *s);
 
@@ -388,9 +384,9 @@ void set_config_delta_abstract(bool value);
 void sb_init(strbuf *sb, size_t init_cap);
 
 /**
- * @brief          Append a string to the string buffer.
- * @param  sb      the string buffer
- * @param  s       the string to append
+ * @brief          Ensure the string buffer has enough capacity.
+ * @param  sb      the string buffer to ensure
+ * @param  need    the amount of space needed
  */
 void sb_ensure(strbuf *sb, size_t need);
 
