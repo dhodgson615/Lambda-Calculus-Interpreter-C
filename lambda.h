@@ -4,6 +4,9 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdio.h>
 
 #define MAX_PRINT_LEN    (1024 * 1024)
 #define ESC              "\x1b["
@@ -75,10 +78,18 @@ typedef struct color {
  * @brief          Delta definitions.
  */
 static const char *def_src[] = {
-    "λx.λy.x", "λx.λy.y", "λp.λq.p q p", "λp.λq.p p q",
-    "λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)", "λn.λf.λx.f (n f x)",
-    "λm.λn.m ↑ n", "λm.λn.m (+ n) 0", "λn.n (λx.⊥) ⊤", "λm.λn.n ↓ m",
-    "λm.λn.is_zero (- m n)", "λx.λy.λf.f x y"
+    "λx.λy.x",                                     /* true    */
+    "λx.λy.y",                                     /* false   */
+    "λp.λq.p q p",                                 /* and     */
+    "λp.λq.p p q",                                 /* or      */
+    "λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)",    /* down    */
+    "λn.λf.λx.f (n f x)",                          /* up      */
+    "λm.λn.m ↑ n",                                 /* plus    */
+    "λm.λn.m (+ n) 0",                             /* times   */
+    "λn.n (λx.⊥) ⊤",                               /* is_zero */
+    "λm.λn.n ↓ m",                                 /* minus   */
+    "λm.λn.is_zero (- m n)",                       /* <=      */
+    "λx.λy.λf.f x y"                               /* pair    */
 };
 
 #define N_DEFS ((int)(sizeof(def_src) / sizeof(def_src[0])))
@@ -86,9 +97,8 @@ static const char *def_src[] = {
 /**
  * @brief          Delta definition names.
  */
-static const char *def_names[N_DEFS] = {
-    "⊤", "⊥", "∧", "∨", "↓", "↑", "+", "*", "is_zero", "-", "≤", "pair"
-};
+static const char *def_names[N_DEFS] = {"⊤", "⊥", "∧", "∨", "↓", "↑", "+",
+                                        "*", "is_zero", "-", "≤", "pair"};
 
 static expr *def_vals[N_DEFS];
 
@@ -326,7 +336,8 @@ char *fresh_var(VarSet *s);
 /**
  * @brief          Find a delta definition by its name.
  * @param  s       the string to search for a definition
- * @return         the index of the definition in the def_names array, or -1 if not found
+ * @return         the index of the definition in the def_names array, or -1 if
+ *                 not found
  */
 int find_def(const char *s);
 
@@ -403,11 +414,11 @@ void sb_reset(strbuf *sb);
 void sb_destroy(strbuf *sb);
 
 /**
- * @brief          Create a new RGB color.
+ * @brief          Create an ANSI color sequence string for RGB color.
  * @param  r       the red component
  * @param  g       the green component
  * @param  b       the blue component
- * @return         the new RGB color
+ * @return         the ANSI color sequence string
  */
 char *rgb(uint8 r, uint8 g, uint8 b);
 

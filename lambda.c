@@ -4,7 +4,9 @@ static strbuf sb;
 
 static bool CONFIG_SHOW_STEP_TYPE = true;
 static bool CONFIG_DELTA_ABSTRACT = true;
-//static bool COLOR_PARENS          = true; /* TODO: implement based on the functionality in the Python version */
+//static bool COLOR_PARENS        = true;  /* TODO: implement based on the */
+                                           /* functionality in the Python  */
+                                           /* version                      */
 
 /* Python functions needed:
 
@@ -58,13 +60,13 @@ def color_parens(string: str) -> str:
 
  */
 
-bool get_config_show_step_type(void) { return CONFIG_SHOW_STEP_TYPE; }
+inline bool get_config_show_step_type(void) { return CONFIG_SHOW_STEP_TYPE; }
 
-void set_config_show_step_type(bool value) { CONFIG_SHOW_STEP_TYPE = value; }
+inline void set_config_show_step_type(bool value) { CONFIG_SHOW_STEP_TYPE = value; }
 
-bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; }
+inline bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; }
 
-void set_config_delta_abstract(bool value) { CONFIG_DELTA_ABSTRACT = value; }
+inline void set_config_delta_abstract(bool value) { CONFIG_DELTA_ABSTRACT = value; }
 
 //char *rgb(uint8 r, uint8 g, uint8 b) { //FIXME: buffer handling
 //    char buf[32];
@@ -331,16 +333,19 @@ expr *substitute(expr *e, const char *v, expr *val) {
             expr *renamed_body = substitute(e->abs_body, e->abs_param, nv_expr);
             expr *substituted_renamed_body = substitute(renamed_body, v, val);
             expr *result_expr = make_abstraction(nv_name, substituted_renamed_body);
+
             free_expr(nv_expr);
             free(nv_name);
             free_expr(renamed_body);
             vs_free(&forbidden_vars);
             vs_free(&fv_val);
+
             return result_expr;
         }
         expr *new_body = substitute(e->abs_body, v, val);
         expr *result_expr = make_abstraction(e->abs_param, new_body);
         vs_free(&fv_val);
+
         return result_expr;
     }
     expr *substituted_fn = substitute(e->app_fn, v, val);
@@ -502,8 +507,8 @@ int main(const int argc, char *argv[]) {
         if (!input) {
             perror("malloc for input");
             // Cleanup def_vals
-            for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
-            sb_destroy(&sb);
+            //for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
+            //sb_destroy(&sb);
             exit(1);
         }
         input[0] = '\0';
@@ -515,18 +520,18 @@ int main(const int argc, char *argv[]) {
         char buf[2048];
         printf("λ-expr> ");
         if (!fgets(buf, sizeof(buf), stdin)) {
-            for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
-            sb_destroy(&sb);
-            return 1;
+            //for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
+            //sb_destroy(&sb);
+            exit(1);
         }
         buf[strcspn(buf, "\n")] = '\0';
         input = strdup(buf);
         if (!input) {
             perror("strdup for input");
-            
+ 
             // Cleanup def_vals
-            for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
-            sb_destroy(&sb);
+            //for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
+            //sb_destroy(&sb);
             exit(1);
         }
     }
@@ -656,10 +661,11 @@ int parse_number(Parser *p) {
     return v;
 }
 
-bool is_invalid_char(Parser *p, char c) {
-    return (!c) || (c == '(') || (c == ')') || (c == '.') || (isspace((uchar) c)) ||
-            ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) &&
-             ((uchar) p->src[p->i + 1] == 0xBB));
+inline bool is_invalid_char(Parser *p, char c) {
+    return (!c) || (c == '(') || (c == ')') || (c == '.') ||
+            (isspace((uchar) c)) || ((p->i + 1 < p->n) &&
+             ((uchar) p->src[p->i] == 0xCE) &&
+              ((uchar) p->src[p->i + 1] == 0xBB));
 }
 
 char *parse_varname(Parser *p) {
