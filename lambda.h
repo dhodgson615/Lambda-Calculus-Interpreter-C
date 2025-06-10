@@ -121,7 +121,7 @@ bool is_church_numeral(expr *e);
  * @param  c       the character to check
  * @return         true if the character is valid, false otherwise
  */
-bool is_invalid_char(Parser *p, char c);
+bool is_invalid_char(const Parser *p, char c);
 
 /**
  * @brief          Abstract Church numerals in an expression.

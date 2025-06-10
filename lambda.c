@@ -4,61 +4,6 @@ static strbuf sb;
 
 static bool CONFIG_SHOW_STEP_TYPE = true;
 static bool CONFIG_DELTA_ABSTRACT = true;
-//static bool COLOR_PARENS        = true;  /* TODO: implement based on the */
-                                           /* functionality in the Python  */
-                                           /* version                      */
-
-/* Python functions needed:
-
-def rgb(r: int, g: int, b: int) -> str:
-    """Return ANSI SGR sequence for RGB color."""
-    return f"{ESC}38;2;{r};{g};{b}m"
-
-def apply_color(depth: int, max_depth: int, ch: str) -> str:
-    """Apply color to a character based on the current depth and max depth."""
-    if max_depth > 1:
-        ratio: float = (depth - 1) / (max_depth - 1)
-    else:
-        ratio = 0
-
-    r: int = int(0 * (1 - ratio) + 0 * ratio)
-    g: int = int(128 * (1 - ratio) + 255 * ratio)
-    b: int = int(128 * (1 - ratio) + 255 * ratio)
-
-    return rgb(r, g, b) + ch + RESET
-
-
-def color_parens(string: str) -> str:
-    """Color parentheses by nesting level."""
-    if not COLOR_PARENS:
-        return string
-
-    # first pass: find max nesting depth
-    depth: int = 0
-    max_depth: int = 0
-    for char in string:
-        if char == "(":
-            depth += 1
-            max_depth = max(max_depth, depth)
-        elif char == ")":
-            depth -= 1
-
-    # second pass: insert ANSI colors
-    result: str = ""
-    depth = 0
-    for char in string:
-        if char == "(":
-            depth += 1
-            result += apply_color(depth, max_depth, char)
-        elif char == ")":
-            result += apply_color(depth, max_depth, char)
-            depth -= 1
-        else:
-            result += char
-
-    return result
-
- */
 
 inline bool get_config_show_step_type(void) { return CONFIG_SHOW_STEP_TYPE; }
 
@@ -67,12 +12,6 @@ inline void set_config_show_step_type(bool value) { CONFIG_SHOW_STEP_TYPE = valu
 inline bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; }
 
 inline void set_config_delta_abstract(bool value) { CONFIG_DELTA_ABSTRACT = value; }
-
-//char *rgb(uint8 r, uint8 g, uint8 b) { //FIXME: buffer handling
-//    char buf[32];
-//    snprintf(buf, 32, "\033[38;2;%d;%d;%dm", r, g, b);
-//    return buf;
-//}
 
 void sb_init(strbuf *sb, size_t init_cap) {
     sb->data = malloc(init_cap);
@@ -661,7 +600,7 @@ int parse_number(Parser *p) {
     return v;
 }
 
-inline bool is_invalid_char(Parser *p, char c) {
+inline bool is_invalid_char(const Parser *p, char c) {
     return (!c) || (c == '(') || (c == ')') || (c == '.') ||
             (isspace((uchar) c)) || ((p->i + 1 < p->n) &&
              ((uchar) p->src[p->i] == 0xCE) &&
