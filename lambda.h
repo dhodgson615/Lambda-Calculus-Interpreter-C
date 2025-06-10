@@ -242,7 +242,7 @@ void expr_to_buffer(expr *e, char *buf, size_t cap);
  * @param  pos     the current position in the buffer
  * @param  cap     the size of the buffer
  */
-void expr_to_buffer_rec(expr *e, char *buf, size_t *pos, size_t cap);
+void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, size_t cap);
 
 /**
  * @brief          Peek the next character in the input without consuming it.
@@ -289,7 +289,7 @@ void vs_init(VarSet *s);
  * @brief          Initialize a variable set.
  * @param  s       the variable set to initialize
  */
-bool vs_has(VarSet *s, const char *x);
+bool vs_has(const VarSet *s, const char *x);
 
 /**
  * @brief          Add a variable to the set.
@@ -311,27 +311,27 @@ void vs_rm(VarSet *s, const char *x);
  * @param  x       the variable to check
  * @return         true if the variable is in the set, false otherwise
  */
-void vs_free(VarSet *s);
+void vs_free(const VarSet *s);
 
 /**
  * @brief          Free a variable set.
  * @param  s       the variable set to free
  */
-void free_vars_rec(expr *e, VarSet *s);
+void free_vars_rec(const expr *e, VarSet *s);
 
 /**
  * @brief          Get the free variables in an expression.
  * @param  e       the expression
  * @return         the set of free variables
  */
-VarSet free_vars(expr *e);
+VarSet free_vars(const expr *e);
 
 /**
  * @brief          Get a fresh variable name that is not in the set.
  * @param  s       the variable set
  * @return         a fresh variable name
  */
-char *fresh_var(VarSet *s);
+char *fresh_var(const VarSet *s);
 
 /**
  * @brief          Find a delta definition by its name.
@@ -347,7 +347,7 @@ int find_def(const char *s);
  * @param  out     the reduced expression
  * @return         true if the expression is a delta redex, false otherwise
  */
-bool delta_reduce(expr *e, expr **out);
+bool delta_reduce(const expr *e, expr **out);
 
 /**
  * @brief          Check if an expression is a beta redex.
@@ -355,14 +355,14 @@ bool delta_reduce(expr *e, expr **out);
  * @param  out     the reduced expression
  * @return         true if the expression is a beta redex, false otherwise
  */
-bool beta_reduce(expr *e, expr **out);
+bool beta_reduce(const expr *e, expr **out);
 
 /**
  * @brief          Check if an expression is a beta redex.
  * @param  e       the expression to check
  * @return         true if the expression is a beta redex, false otherwise
  */
-bool reduce_once(expr *e, expr **ne, const char **rtype);
+bool reduce_once(const expr *e, expr **ne, const char **rtype);
 
 /**
  * @brief          Get the current configuration values.

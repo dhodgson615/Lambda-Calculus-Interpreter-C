@@ -5,15 +5,15 @@ static strbuf sb;
 static bool CONFIG_SHOW_STEP_TYPE = true;
 static bool CONFIG_DELTA_ABSTRACT = true;
 
-inline bool get_config_show_step_type(void) { return CONFIG_SHOW_STEP_TYPE; }
+bool get_config_show_step_type(void) { return CONFIG_SHOW_STEP_TYPE; }
 
-inline void set_config_show_step_type(bool value) { CONFIG_SHOW_STEP_TYPE = value; }
+void set_config_show_step_type(const bool value) { CONFIG_SHOW_STEP_TYPE = value; }
 
-inline bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; }
+bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; }
 
-inline void set_config_delta_abstract(bool value) { CONFIG_DELTA_ABSTRACT = value; }
+void set_config_delta_abstract(const bool value) { CONFIG_DELTA_ABSTRACT = value; }
 
-void sb_init(strbuf *sb, size_t init_cap) {
+void sb_init(strbuf *sb, const size_t init_cap) {
     sb->data = malloc(init_cap);
     if (!sb->data) {
         perror("malloc");
@@ -24,7 +24,7 @@ void sb_init(strbuf *sb, size_t init_cap) {
     sb->data[0] = '\0';
 }
 
-void sb_ensure(strbuf *sb, size_t need) {
+void sb_ensure(strbuf *sb, const size_t need) {
     if (sb->len + need + 1 > sb->cap) {
         size_t new = sb->cap * 2;
         while (new < sb->len + need + 1) new *= 2;
@@ -121,7 +121,7 @@ expr *copy_expr(expr *e) {
     return NULL; // unreachable
 }
 
-expr *church(int n) {
+expr *church(const int n) {
     expr *body = make_variable("x");
     for (int i = 0; i < n; i++) {
         expr *fv = make_variable("f");
@@ -132,7 +132,7 @@ expr *church(int n) {
     return make_abstraction("f", abs_x);
 }
 
-void expr_to_buffer_rec(expr *e, char *buf, size_t *pos, size_t cap) {
+void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, const size_t cap) {
     if (*pos >= cap - 1) return;
 
     switch (e->type) {
@@ -180,7 +180,7 @@ void expr_to_buffer_rec(expr *e, char *buf, size_t *pos, size_t cap) {
     }
 }
 
-void expr_to_buffer(expr *e, char *buf, size_t cap) {
+void expr_to_buffer(expr *e, char *buf, const size_t cap) {
     size_t pos = 0;
     expr_to_buffer_rec(e, buf, &pos, cap);
     buf[pos < cap ? pos : cap - 1] = '\0';
@@ -191,7 +191,7 @@ void vs_init(VarSet *s) {
     s->c = 0;
 }
 
-bool vs_has(VarSet *s, const char *x) {
+bool vs_has(const VarSet *s, const char *x) {
     for (int i = 0; i < s->c; i++) if (!strcmp(s->v[i], x)) return true;
 
     return false;
@@ -214,12 +214,12 @@ void vs_rm(VarSet *s, const char *x) {
     }
 }
 
-void vs_free(VarSet *s) {
+void vs_free(const VarSet *s) {
     for (int i = 0; i < s->c; i++) free(s->v[i]);
     free(s->v);
 }
 
-void free_vars_rec(expr *e, VarSet *s) {
+void free_vars_rec(const expr *e, VarSet *s) {
     if (e->type == VAR_expr) vs_add(s, e->var_name);
     else if (e->type == ABS_expr) {
         free_vars_rec(e->abs_body, s);
@@ -230,7 +230,7 @@ void free_vars_rec(expr *e, VarSet *s) {
     }
 }
 
-VarSet free_vars(expr *e) {
+VarSet free_vars(const expr *e) {
     VarSet s;
     vs_init(&s);
     free_vars_rec(e, &s);
@@ -238,7 +238,7 @@ VarSet free_vars(expr *e) {
     return s;
 }
 
-char *fresh_var(VarSet *s) {
+char *fresh_var(const VarSet *s) {
     for (char c = 'a'; c <= 'z'; c++) {
         const char buf[2] = {c, '\0'};
         if (!vs_has(s, buf)) return strdup(buf);
@@ -255,13 +255,11 @@ char *fresh_var(VarSet *s) {
 }
 
 expr *substitute(expr *e, const char *v, expr *val) {
-    if (e->type == VAR_expr) {
-        if (strcmp(e->var_name, v) == 0) return copy_expr(val);
-        else return copy_expr(e);
-    }
+    if (e->type == VAR_expr) return copy_expr(strcmp(e->var_name, v) == 0 ? val : e);
+
     if (e->type == ABS_expr) {
         if (strcmp(e->abs_param, v) == 0) return copy_expr(e);
-        VarSet fv_val = free_vars(val);
+        const VarSet fv_val = free_vars(val);
         if (vs_has(&fv_val, e->abs_param)) {
             VarSet forbidden_vars = free_vars(e);
             vs_add(&forbidden_vars, e->abs_param);
@@ -299,7 +297,7 @@ int find_def(const char *s) {
     return -1;
 }
 
-bool delta_reduce(expr *e, expr **out) {
+bool delta_reduce(const expr *e, expr **out) {
     if (e->type == VAR_expr) {
         int i = find_def(e->var_name);
         if (i >= 0) {
@@ -311,7 +309,7 @@ bool delta_reduce(expr *e, expr **out) {
     return false;
 }
 
-bool beta_reduce(expr *e, expr **out) {
+bool beta_reduce(const expr *e, expr **out) {
     if ((e->type == APP_expr) && (e->app_fn->type == ABS_expr)) {
         expr *argcp = copy_expr(e->app_arg);
         *out = substitute(e->app_fn->abs_body, e->app_fn->abs_param, argcp);
@@ -322,7 +320,7 @@ bool beta_reduce(expr *e, expr **out) {
     return false;
 }
 
-bool reduce_once(expr *e, expr **ne, const char **rtype) {
+bool reduce_once(const expr *e, expr **ne, const char **rtype) {
     expr *tmp;
     if (delta_reduce(e, &tmp)) {
         *ne = tmp;
@@ -354,11 +352,11 @@ bool reduce_once(expr *e, expr **ne, const char **rtype) {
 
 bool is_church_numeral(expr *e) {
     if (e->type != ABS_expr) return false;
-    expr *e1 = e->abs_body;
+    const expr *e1 = e->abs_body;
     if (e1->type != ABS_expr) return false;
     const char *f = e->abs_param;
     const char *x = e1->abs_param;
-    expr *cur = e1->abs_body;
+    const expr *cur = e1->abs_body;
     while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr) &&
            (!strcmp(cur->app_fn->var_name, f))) {
         cur = cur->app_arg;
@@ -368,7 +366,7 @@ bool is_church_numeral(expr *e) {
 }
 
 int count_applications(expr *e) {
-    expr *cur = e->abs_body->abs_body;
+    const expr *cur = e->abs_body->abs_body;
     const char *f = e->abs_param;
     int cnt = 0;
     while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr) &&
@@ -387,10 +385,8 @@ expr *abstract_numerals(expr *e) {
         snprintf(buf, sizeof(buf), "%d", n);
         return make_variable(buf);
     }
-    if (e->type == ABS_expr)
-        return make_abstraction(e->abs_param, abstract_numerals(e->abs_body));
-    if (e->type == APP_expr)
-        return make_application(abstract_numerals(e->app_fn), abstract_numerals(e->app_arg));
+    if (e->type == ABS_expr) return make_abstraction(e->abs_param, abstract_numerals(e->abs_body));
+    if (e->type == APP_expr) return make_application(abstract_numerals(e->app_fn), abstract_numerals(e->app_arg));
 
     return make_variable(e->var_name);
 }
@@ -493,9 +489,9 @@ int main(const int argc, char *argv[]) {
     return 0;
 }
 
-char peek(const Parser *p) { return p->i < p->n ? p->src[p->i] : '\0'; }
+HOT ALWAYS_INLINE char peek(const Parser *p) { return (p->i < p->n) ? p->src[p->i] : '\0'; }
 
-char consume(Parser *p) {
+HOT ALWAYS_INLINE char consume(Parser *p) {
     if (!peek(p)) return '\0';
 
     // UTF-8 λ = 0xCE 0xBB
