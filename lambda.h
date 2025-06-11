@@ -3,10 +3,10 @@
 
 #include <ctype.h>
 #include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define MAX_PRINT_LEN    (1024 * 1024)
 #define ESC              "\x1b["
@@ -19,6 +19,15 @@
 typedef unsigned char    uchar;
 typedef unsigned char    byte;
 typedef uint8_t          uint8;
+
+/**
+ * @brief          Arena structure.
+ */
+typedef struct arena {
+    uint8         *buf;
+    size_t        cap;
+    size_t        pos;
+} arena;
 
 /**
  * @brief          Parser structure.
