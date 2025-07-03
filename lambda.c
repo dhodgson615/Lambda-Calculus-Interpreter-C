@@ -292,7 +292,7 @@ expr *substitute(expr *e, const char *v, expr *val) {
 }
 
 /* TODO: This is a hacky way to find definitions. Consider using a
-         lookup table or similar structure for better performance. */
+         different structure for better performance. */
 int find_def(const char *s) {
     for (int i = 0; i < N_DEFS; i++) if (!strcmp(def_names[i], s)) return i;
 
@@ -301,7 +301,7 @@ int find_def(const char *s) {
 
 bool delta_reduce(const expr *e, expr **out) {
     if (e->type == VAR_expr) {
-        int i = find_def(e->var_name);
+        const int i = find_def(e->var_name);
         if (i >= 0) {
             *out = copy_expr(def_vals[i]);
             return true;
@@ -454,15 +454,25 @@ int main(const int argc, char *argv[]) {
             if (i < argc - 1) strcat(input, " ");
         }
     } else {
-        char buf[2048];
+        char *buf = NULL;
+        size_t bufsize = 0;
+
         printf("λ-expr> ");
-        if (!fgets(buf, sizeof(buf), stdin)) {
-            //for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
-            //sb_destroy(&sb);
+        const ssize_t chars_read = getline(&buf, &bufsize, stdin);
+
+        if (chars_read == -1) { // Error
+            /* Cleanup
+                free(buf);
+                for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
+                sb_destroy(&sb);
+            */
             exit(1);
         }
-        buf[strcspn(buf, "\n")] = '\0';
-        input = strdup(buf);
+
+        // Remove trailing newline
+        if ((chars_read > 0) && (buf[chars_read - 1] == '\n')) buf[chars_read - 1] = '\0';
+
+        input = buf; // getline already dynamically allocates memory
         if (!input) {
             perror("strdup for input");
  
@@ -491,9 +501,9 @@ int main(const int argc, char *argv[]) {
     return 0;
 }
 
-HOT ALWAYS_INLINE char peek(const Parser *p) { return (p->i < p->n) ? p->src[p->i] : '\0'; }
+HOT INLINE char peek(const Parser *p) { return (p->i < p->n) ? p->src[p->i] : '\0'; }
 
-HOT ALWAYS_INLINE char consume(Parser *p) {
+HOT INLINE char consume(Parser *p) {
     if (!peek(p)) return '\0';
 
     // UTF-8 λ = 0xCE 0xBB
