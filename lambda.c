@@ -291,6 +291,8 @@ expr *substitute(expr *e, const char *v, expr *val) {
     return make_application(substituted_fn, substituted_arg);
 }
 
+/* TODO: This is a hacky way to find definitions. Consider using a
+         lookup table or similar structure for better performance. */
 int find_def(const char *s) {
     for (int i = 0; i < N_DEFS; i++) if (!strcmp(def_names[i], s)) return i;
 
