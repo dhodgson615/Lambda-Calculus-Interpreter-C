@@ -98,7 +98,7 @@ static const char *def_src[] = {
     "λn.n (λx.⊥) ⊤",                               /* is_zero */
     "λm.λn.n ↓ m",                                 /* minus   */
     "λm.λn.is_zero (- m n)",                       /* <=      */
-    "λx.λy.λf.f x y"                               /* pair    */
+    "λx.λy.λf.f x y",                              /* pair    */
     /* Untested */
     "λm.λn.(≤ m n) ∧ (≤ n m)",                     /* ==      */
     "λm.λn.¬(≤ m n)",                              /* >       */
@@ -117,7 +117,7 @@ static const char *def_src[] = {
  * @brief          Delta definition names.
  */
 static const char *def_names[N_DEFS] = {"⊤", "⊥", "∧", "∨", "↓", "↑", "+",
-                                        "*", "is_zero", "-", "≤", "pair"
+                                        "*", "is_zero", "-", "≤", "pair",
                                         /* Untested */
                                         "==", ">", "<", "≥", "¬", "nand",
                                         "nor", "xor", "xnor"};
