@@ -99,6 +99,16 @@ static const char *def_src[] = {
     "λm.λn.n ↓ m",                                 /* minus   */
     "λm.λn.is_zero (- m n)",                       /* <=      */
     "λx.λy.λf.f x y"                               /* pair    */
+    /* Untested */
+    "λm.λn.(≤ m n) ∧ (≤ n m)",                     /* ==      */
+    "λm.λn.¬(≤ m n)",                              /* >       */
+    "λm.λn.(≤ m n) ∧ ¬(eq m n)",                   /* <       */
+    "λm.λn.≤ n m",                                 /* >=      */
+    "λp.p ⊥ ⊤",                                    /* not     */
+    "λp.λq.¬(p ∧ q)",                              /* nand    */
+    "λp.λq.¬(p ∨ q)",                              /* nor     */
+    "λp.λq.(p ∧ ¬q) ∨ (¬p ∧ q)",                   /* xor     */
+    "λp.λq.¬((p ∧ ¬q) ∨ (¬p ∧ q))",                /* xnor    */
 };
 
 #define N_DEFS ((int)(sizeof(def_src) / sizeof(def_src[0])))
@@ -107,7 +117,11 @@ static const char *def_src[] = {
  * @brief          Delta definition names.
  */
 static const char *def_names[N_DEFS] = {"⊤", "⊥", "∧", "∨", "↓", "↑", "+",
-                                        "*", "is_zero", "-", "≤", "pair"};
+                                        "*", "is_zero", "-", "≤", "pair"
+                                        /* Untested */
+                                        "==", ">", "<", "≥", "¬", "nand",
+                                        "nor", "xor", "xnor"};
+
 
 static expr *def_vals[N_DEFS];
 
