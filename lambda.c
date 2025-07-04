@@ -106,7 +106,7 @@ void free_expr(expr *e) {
     free(e);
 }
 
-expr *copy_expr(expr *e) {
+PURE expr *copy_expr(expr *e) {
     if (!e) return NULL;
 
     switch (e->type) {
@@ -132,7 +132,7 @@ expr *church(const int n) {
     return make_abstraction("f", abs_x);
 }
 
-void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, const size_t cap) {
+HOT void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, const size_t cap) {
     if (*pos >= cap - 1) return;
 
     switch (e->type) {
@@ -186,7 +186,7 @@ void expr_to_buffer(expr *e, char *buf, const size_t cap) {
     buf[pos < cap ? pos : cap - 1] = '\0';
 }
 
-void vs_init(VarSet *s) {
+INLINE void vs_init(VarSet *s) {
     s->v = NULL;
     s->c = 0;
 }
@@ -293,13 +293,13 @@ expr *substitute(expr *e, const char *v, expr *val) {
 
 /* TODO: This is a hacky way to find definitions. Consider using a
          different structure for better performance. */
-int find_def(const char *s) {
+CONST int find_def(const char *s) {
     for (int i = 0; i < N_DEFS; i++) if (!strcmp(def_names[i], s)) return i;
 
     return -1;
 }
 
-bool delta_reduce(const expr *e, expr **out) {
+HOT bool delta_reduce(const expr *e, expr **out) {
     if (e->type == VAR_expr) {
         const int i = find_def(e->var_name);
         if (i >= 0) {
@@ -311,7 +311,7 @@ bool delta_reduce(const expr *e, expr **out) {
     return false;
 }
 
-bool beta_reduce(const expr *e, expr **out) {
+HOT bool beta_reduce(const expr *e, expr **out) {
     if ((e->type == APP_expr) && (e->app_fn->type == ABS_expr)) {
         expr *argcp = copy_expr(e->app_arg);
         *out = substitute(e->app_fn->abs_body, e->app_fn->abs_param, argcp);
@@ -322,7 +322,7 @@ bool beta_reduce(const expr *e, expr **out) {
     return false;
 }
 
-bool reduce_once(const expr *e, expr **ne, const char **rtype) {
+HOT bool reduce_once(const expr *e, expr **ne, const char **rtype) {
     expr *tmp;
     if (delta_reduce(e, &tmp)) {
         *ne = tmp;
@@ -352,7 +352,7 @@ bool reduce_once(const expr *e, expr **ne, const char **rtype) {
     return false;
 }
 
-bool is_church_numeral(expr *e) {
+PURE bool is_church_numeral(expr *e) {
     if (e->type != ABS_expr) return false;
     const expr *e1 = e->abs_body;
     if (e1->type != ABS_expr) return false;
@@ -367,7 +367,7 @@ bool is_church_numeral(expr *e) {
     return (cur->type == VAR_expr) && (!strcmp(cur->var_name, x));
 }
 
-int count_applications(expr *e) {
+PURE int count_applications(expr *e) {
     const expr *cur = e->abs_body->abs_body;
     const char *f = e->abs_param;
     int cnt = 0;
@@ -501,7 +501,7 @@ int main(const int argc, char *argv[]) {
     return 0;
 }
 
-HOT INLINE char peek(const Parser *p) { return (p->i < p->n) ? p->src[p->i] : '\0'; }
+HOT char peek(const Parser *p) { return (p->i < p->n) ? p->src[p->i] : '\0'; }
 
 HOT INLINE char consume(Parser *p) {
     if (!peek(p)) return '\0';
@@ -608,7 +608,7 @@ int parse_number(Parser *p) {
     return v;
 }
 
-inline bool is_invalid_char(const Parser *p, const char c) {
+CONST inline bool is_invalid_char(const Parser *p, const char c) {
     return (!c) || (c == '(') || (c == ')') || (c == '.') ||
             (isspace((uchar) c)) || ((p->i + 1 < p->n) &&
              ((uchar) p->src[p->i] == 0xCE) &&
