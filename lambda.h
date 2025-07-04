@@ -8,35 +8,37 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_PRINT_LEN    (16 * 1024 * 1024)
-#define ESC              "\x1b["
-#define RESET            ESC "0m"
-#define HIGHLIGHT        ESC "38;2;255;255;0m"
-#define HOT              __attribute__((hot))
-#define PURE             __attribute__((pure))
-#define NOINLINE         __attribute__((noinline))
-#define NORETURN         __attribute__((noreturn))
-#define UNUSED           __attribute__((unused))
-#define INLINE           __attribute__((always_inline))
-#define COLD             __attribute__((cold))
-#define CONST            __attribute__((const))
-#define CONSTRUCTOR      __attribute__((constructor))
-#define DESTRUCTOR       __attribute__((destructor))
-#define ALIGNED(n)       __attribute__((aligned(n)))
-#define WARN_UNUSED      __attribute__((warn_unused_result))
-#define WEAK             __attribute__((weak))
-#define INIT_ARENA_SIZE  (1024 * 1024)
+#define MAX_PRINT_LEN      (16 * 1024 * 1024)
+#define ESC                "\x1b["
+#define RESET              ESC "0m"
+#define HIGHLIGHT          ESC "38;2;255;255;0m"
+#define HOT                __attribute__((hot))
+#define PURE               __attribute__((pure))
+#define NOINLINE           __attribute__((noinline))
+#define NORETURN           __attribute__((noreturn))
+#define INLINE             __attribute__((always_inline))
+#define COLD               __attribute__((cold))
+#define CONST              __attribute__((const))
+#define CONSTRUCTOR        __attribute__((constructor))
+#define DESTRUCTOR         __attribute__((destructor))
+#define ALIGNED(n)         __attribute__((aligned(n)))
+#define WARN_UNUSED        __attribute__((warn_unused_result))
+#define WEAK               __attribute__((weak))
+#define INIT_ARENA_SIZE    (1024 * 1024)
+#define DEBUG              false
+#define PROFILE            false
+#define UNUSED             __attribute__((unused))
+#define DEAD               __attribute__((unused))
 
-
-typedef unsigned char    uchar;
-typedef unsigned char    byte;
-typedef uint8_t          uint8;
+typedef unsigned char      uchar;
+typedef unsigned char      byte;
+typedef uint8_t            uint8;
 
 /**
  * @brief              Memory arena structure for temporary allocations.
  */
 typedef struct arena {
-    uint8         *buf;
+    uint8        *buf;
     size_t        cap;
     size_t        pos;
 } arena;
@@ -150,7 +152,7 @@ expr *church(int n);
  * @return             true if the expression is a Church numeral, false
  *                     otherwise
  */
-bool is_church_numeral(expr *e);
+bool is_church_numeral(const expr *e);
 
 /**
  * @brief              Check if a character is a valid variable name character.
@@ -158,14 +160,14 @@ bool is_church_numeral(expr *e);
  * @param  c           the character to check
  * @return             true if the character is valid, false otherwise
  */
-bool is_invalid_char(const Parser *p, char c);
+CONST bool is_invalid_char(const Parser *p, char c);
 
 /**
  * @brief              Abstract Church numerals in an expression.
  * @param  e           the expression to abstract
  * @return             the abstracted expression
  */
-expr *abstract_numerals(expr *e);
+expr *abstract_numerals(const expr *e);
 
 /**
  * @brief              Parse a lambda calculus expression.
@@ -268,7 +270,7 @@ void free_expr(expr *e);
  * @param  cap         the size of the buffer
  * @return             the new application expression
  */
-void expr_to_buffer(expr *e, char *buf, size_t cap);
+void expr_to_buffer(const expr *e, char *buf, size_t cap);
 
 /**
  * @brief              Convert an expression to a string.
@@ -277,7 +279,7 @@ void expr_to_buffer(expr *e, char *buf, size_t cap);
  * @param  pos         the current position in the buffer
  * @param  cap         the size of the buffer
  */
-void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, size_t cap);
+HOT void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, size_t cap);
 
 /**
  * @brief              Peek the next character in the input without consuming
@@ -285,7 +287,7 @@ void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, size_t cap);
  * @param  p           the parser
  * @return             the next character in the input
  */
-char peek(const Parser *p);
+HOT char peek(const Parser *p);
 
 /**
  * @brief              Check if the next character is whitespace.
@@ -293,7 +295,7 @@ char peek(const Parser *p);
  * @return             true if the next character is a whitespace, false
  *                     otherwise
  */
-char consume(Parser *p);
+HOT INLINE char consume(Parser *p);
 
 /**
  * @brief              Check if the next character is whitespace.
@@ -314,7 +316,7 @@ void normalize(expr *e);
  * @param  e           the Church numeral expression
  * @return             the number of applications
  */
-int count_applications(expr *e);
+int count_applications(const expr *e);
 
 /**
  * @brief              Initialize a variable set.
@@ -407,7 +409,7 @@ HOT bool reduce_once(const expr *e, expr **ne, const char **rtype);
  * @brief              Get the current configuration values.
  * @return             the current configuration values
  */
-bool get_config_show_step_type(void);
+UNUSED bool get_config_show_step_type(void);
 
 /**
  * @brief              Set the configuration values.

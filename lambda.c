@@ -5,13 +5,13 @@ static strbuf sb;
 static bool CONFIG_SHOW_STEP_TYPE = true;
 static bool CONFIG_DELTA_ABSTRACT = true;
 
-bool get_config_show_step_type(void) { return CONFIG_SHOW_STEP_TYPE; }
+UNUSED bool get_config_show_step_type(void) { return CONFIG_SHOW_STEP_TYPE; }
 
-void set_config_show_step_type(const bool value) { CONFIG_SHOW_STEP_TYPE = value; }
+UNUSED void set_config_show_step_type(const bool value) { CONFIG_SHOW_STEP_TYPE = value; }
 
-bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; }
+UNUSED bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; }
 
-void set_config_delta_abstract(const bool value) { CONFIG_DELTA_ABSTRACT = value; }
+UNUSED void set_config_delta_abstract(const bool value) { CONFIG_DELTA_ABSTRACT = value; }
 
 void sb_init(strbuf *sb, const size_t init_cap) {
     sb->data = malloc(init_cap);
@@ -180,7 +180,7 @@ HOT void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, const size_t 
     }
 }
 
-void expr_to_buffer(expr *e, char *buf, const size_t cap) {
+void expr_to_buffer(const expr *e, char *buf, const size_t cap) {
     size_t pos = 0;
     expr_to_buffer_rec(e, buf, &pos, cap);
     buf[pos < cap ? pos : cap - 1] = '\0';
@@ -352,7 +352,7 @@ HOT bool reduce_once(const expr *e, expr **ne, const char **rtype) {
     return false;
 }
 
-PURE bool is_church_numeral(expr *e) {
+PURE bool is_church_numeral(const expr *e) {
     if (e->type != ABS_expr) return false;
     const expr *e1 = e->abs_body;
     if (e1->type != ABS_expr) return false;
@@ -367,7 +367,7 @@ PURE bool is_church_numeral(expr *e) {
     return (cur->type == VAR_expr) && (!strcmp(cur->var_name, x));
 }
 
-PURE int count_applications(expr *e) {
+PURE int count_applications(const expr *e) {
     const expr *cur = e->abs_body->abs_body;
     const char *f = e->abs_param;
     int cnt = 0;
@@ -380,7 +380,7 @@ PURE int count_applications(expr *e) {
     return cnt;
 }
 
-expr *abstract_numerals(expr *e) {
+expr *abstract_numerals(const expr *e) {
     if (is_church_numeral(e)) {
         const int n = count_applications(e);
         char buf[32];
@@ -575,7 +575,7 @@ expr *parse_atom(Parser *p) {
     if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) && ((uchar) p->src[p->i + 1] == 0xBB)) {
         return parse_abs(p);
     }
-    char c = peek(p);
+    const char c = peek(p);
     if (c == '(') {
         consume(p);
         expr *e = parse_expr(p);
