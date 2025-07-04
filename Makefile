@@ -18,4 +18,12 @@ clean:
 	rm -f lambda_debug
 	rm -f lambda_profile
 
+run: lambda
+	./lambda
+	rm -f lambda
+
+quick: lambda
+	./lambda "* 20 20"
+	rm -f lambda
+
 .PHONY: all debug profile clean
