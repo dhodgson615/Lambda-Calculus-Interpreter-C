@@ -15,3 +15,5 @@ profile: lambda.c
 
 clean:
 	rm -f lambda
+	rm -f lambda_debug
+	rm -f lambda_profile
