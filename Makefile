@@ -17,3 +17,5 @@ clean:
 	rm -f lambda
 	rm -f lambda_debug
 	rm -f lambda_profile
+
+.PHONY: all debug profile clean
