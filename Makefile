@@ -7,5 +7,11 @@ all: lambda
 lambda: lambda.c
 	$(CC) $(CFLAGS) lambda.c -o lambda
 
+debug: lambda.c
+	$(CC) -std=c17 -Wall -Wextra -pedantic -O0 -g -pg lambda.c -o lambda_debug
+
+profile: lambda.c
+	$(CC) -std=c17 -Wall -Wextra -pedantic -O3 -pg lambda.c -o lambda_profile
+
 clean:
 	rm -f lambda
