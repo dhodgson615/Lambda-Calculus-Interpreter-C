@@ -26,13 +26,17 @@ clean:
 	rm -f *.o
 
 run: lambda
+	make clean
+	make
 	./lambda
 	rm -f lambda
+	rm -f *.o
 
 quick: lambda
 	make clean
 	make
-	./lambda "* 20 20"
+	./lambda "* 5 5"
 	rm -f lambda
+	rm -f *.o
 
 .PHONY: all debug profile clean
