@@ -57,8 +57,8 @@ int main(const int argc, char *argv[]) {
             perror("strdup for input");
 
             // Cleanup def_vals
-            //for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
-            //sb_destroy(&sb);
+            for (int i = 0; i < N_DEFS; i++) free_expr(def_vals[i]);
+            sb_destroy(&sb);
             exit(1);
         }
     }
