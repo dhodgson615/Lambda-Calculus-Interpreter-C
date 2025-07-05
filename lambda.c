@@ -291,8 +291,10 @@ expr *substitute(expr *e, const char *v, expr *val) {
     return make_application(substituted_fn, substituted_arg);
 }
 
-/* TODO: This is a hacky way to find definitions. Consider using a different
-         structure for better performance. */
+/*
+TODO: This is a hacky way to find definitions. Consider using a
+      different structure for better performance.
+*/
 CONST int find_def(const char *s) {
     for (int i = 0; i < N_DEFS; i++) if (!strcmp(def_names[i], s)) return i;
 
