@@ -4,25 +4,34 @@ CFLAGS = -std=c17 -Wall -Wextra -Werror -pedantic -O3 -march=native -flto -mtune
 
 all: lambda
 
-lambda: lambda.c
-	$(CC) $(CFLAGS) lambda.c -o lambda
+lambda: main.o lambda.o
+	$(CC) $(CFLAGS) main.o lambda.o -o lambda
 
-debug: lambda.c
-	$(CC) -std=c17 -Wall -Wextra -pedantic -O0 -g -pg lambda.c -o lambda_debug
+main.o: main.c lambda.h
+	$(CC) $(CFLAGS) -c main.c -o main.o
 
-profile: lambda.c
-	$(CC) -std=c17 -Wall -Wextra -pedantic -O3 -pg lambda.c -o lambda_profile
+lambda.o: lambda.c lambda.h
+	$(CC) $(CFLAGS) -c lambda.c -o lambda.o
+
+debug: main.c lambda.c
+	$(CC) -std=c17 -Wall -Wextra -pedantic -O0 -g -pg main.c lambda.c -o lambda_debug
+
+profile: main.c lambda.c
+	$(CC) -std=c17 -Wall -Wextra -pedantic -O3 -pg main.c lambda.c -o lambda_profile
 
 clean:
 	rm -f lambda
 	rm -f lambda_debug
 	rm -f lambda_profile
+	rm -f *.o
 
 run: lambda
 	./lambda
 	rm -f lambda
 
 quick: lambda
+	make clean
+	make
 	./lambda "* 20 20"
 	rm -f lambda
 

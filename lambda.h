@@ -137,7 +137,7 @@ static const char *def_names[N_DEFS] = {"⊤", "⊥", "∧", "∨", "↓", "↑"
                                         "nor", "xor", "xnor"};
 
 
-static expr *def_vals[N_DEFS];
+expr *def_vals[N_DEFS];
 
 /**
  * @brief              Create a Church numeral.
