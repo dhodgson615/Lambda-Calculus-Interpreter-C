@@ -52,7 +52,7 @@ int main(const int argc, char *argv[]) {
         // Remove trailing newline
         if ((chars_read > 0) && (buf[chars_read - 1] == '\n')) buf[chars_read - 1] = '\0';
 
-        input = buf; // getline already dynamically allocates memory
+        input = buf;
         if (!input) {
             perror("strdup for input");
 
