@@ -6,7 +6,7 @@ extern strbuf sb;
 int main(const int argc, char *argv[]) {
     char *input = NULL;
     expr *e = NULL;
-    int status = 1; // Default to error status
+    int status = 1; // Default to error
 
     // load δ-definitions
     for (int i = 0; i < N_DEFS; i++) {
@@ -62,13 +62,12 @@ int main(const int argc, char *argv[]) {
     normalize(e);
     e = NULL;
 
-    // Success path
     status = 0;
 
     cleanup:
-        if (input) free(input);
-    for (int i = 0; i < N_DEFS; i++)
-        if (def_vals[i]) free_expr(def_vals[i]);
+
+    if (input) free(input);
+    for (int i = 0; i < N_DEFS; i++) if (def_vals[i]) free_expr(def_vals[i]);
     sb_destroy(&sb);
 
     return status;
