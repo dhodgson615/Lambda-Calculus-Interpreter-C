@@ -152,7 +152,7 @@ expr *church(int n);
  * @return             true if the expression is a Church numeral, false
  *                     otherwise
  */
-bool is_church_numeral(const expr *e);
+PURE bool is_church_numeral(const expr *e);
 
 /**
  * @brief              Check if a character is a valid variable name character.
@@ -160,7 +160,7 @@ bool is_church_numeral(const expr *e);
  * @param  c           the character to check
  * @return             true if the character is valid, false otherwise
  */
-CONST bool is_invalid_char(const Parser *p, char c);
+HOT PURE INLINE bool is_invalid_char(const Parser *p, char c);
 
 /**
  * @brief              Abstract Church numerals in an expression.
@@ -232,7 +232,7 @@ expr *substitute(expr *e, const char *v, expr *val);
  * @param  e           the expression to copy
  * @return             the copied expression
  */
-expr *copy_expr(expr *e);
+PURE expr *copy_expr(expr *e);
 
 /**
  * @brief              Create a new variable expression.
@@ -287,7 +287,7 @@ HOT void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, size_t cap);
  * @param  p           the parser
  * @return             the next character in the input
  */
-HOT char peek(const Parser *p);
+HOT PURE INLINE char peek(const Parser *p);
 
 /**
  * @brief              Check if the next character is whitespace.
@@ -303,7 +303,7 @@ HOT INLINE char consume(Parser *p);
  * @return             true if the next character is a whitespace, false
  *                     otherwise
  */
-void skip_whitespace(Parser *p);
+HOT INLINE void skip_whitespace(Parser *p);
 
 /**
  * @brief              Normalize an expression by abstracting Church numerals.
@@ -316,13 +316,13 @@ void normalize(expr *e);
  * @param  e           the Church numeral expression
  * @return             the number of applications
  */
-int count_applications(const expr *e);
+PURE int count_applications(const expr *e);
 
 /**
  * @brief              Initialize a variable set.
  * @param  s           the variable set to initialize
  */
-void vs_init(VarSet *s);
+INLINE void vs_init(VarSet *s);
 
 /**
  * @brief              Initialize a variable set.
@@ -378,7 +378,7 @@ char *fresh_var(const VarSet *s);
  * @return             the index of the definition in the def_names array, or
  *                     -1 if not found
  */
-int find_def(const char *s);
+CONST int find_def(const char *s);
 
 /**
  * @brief              Check if an expression is a delta redex.
