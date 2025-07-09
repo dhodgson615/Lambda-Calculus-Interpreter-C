@@ -442,7 +442,7 @@ HOT INLINE char consume(Parser *p) {
     return p->src[p->i++];
 }
 
-void skip_whitespace(Parser *p) { while (isspace((uchar) peek(p))) p->i++; }
+HOT INLINE void skip_whitespace(Parser *p) { while (isspace((uchar) peek(p))) p->i++; }
 
 expr *parse(Parser *p) {
     skip_whitespace(p);
