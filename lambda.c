@@ -361,7 +361,7 @@ PURE bool is_church_numeral(const expr *e) {
     const char *f = e->abs_param;
     const char *x = e1->abs_param;
     const expr *current_expr = e1->abs_body;
-    /* TODO: Factor out the while condition to be more readable*/
+    /* TODO: Factor out the while condition to be more readable */
     while ((current_expr->type == APP_expr) &&
            (current_expr->app_fn->type == VAR_expr) &&
             (!strcmp(current_expr->app_fn->var_name, f))) {
