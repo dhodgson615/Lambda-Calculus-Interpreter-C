@@ -31,7 +31,7 @@ void sb_ensure(strbuf *sb, const size_t need) {
 
         sb->data = realloc(sb->data, new);
         if (!sb->data) {
-            perror("realloc");
+            perror("realloc for strbuf");
             exit(1);
         }
         sb->cap = new;
