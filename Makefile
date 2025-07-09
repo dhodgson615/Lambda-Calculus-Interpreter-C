@@ -35,7 +35,7 @@ run: lambda
 quick: lambda
 	make clean
 	make
-	./lambda "* 5 5"
+	gtime -v ./lambda "* 50 50"
 	rm -f lambda
 	rm -f *.o
 
