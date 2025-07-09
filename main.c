@@ -39,7 +39,8 @@ int main(const int argc, char *argv[]) {
         printf("λ-expr> ");
         const ssize_t chars_read = getline(&buf, &bufsize, stdin);
 
-        if (chars_read == -1) { // Error
+        if (chars_read == -1) {
+            // Error
             free(buf);
             goto cleanup;
         }
