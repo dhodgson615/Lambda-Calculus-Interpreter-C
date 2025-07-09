@@ -360,26 +360,28 @@ PURE bool is_church_numeral(const expr *e) {
     if (e1->type != ABS_expr) return false;
     const char *f = e->abs_param;
     const char *x = e1->abs_param;
-    const expr *cur = e1->abs_body;
-    while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr) &&
-           (!strcmp(cur->app_fn->var_name, f))) {
-        cur = cur->app_arg;
+    const expr *current_expr = e1->abs_body;
+    /* TODO: Factor out the while condition to be more readable*/
+    while ((current_expr->type == APP_expr) &&
+           (current_expr->app_fn->type == VAR_expr) &&
+            (!strcmp(current_expr->app_fn->var_name, f))) {
+        current_expr = current_expr->app_arg;
     }
 
-    return (cur->type == VAR_expr) && (!strcmp(cur->var_name, x));
+    return (current_expr->type == VAR_expr) && (!strcmp(current_expr->var_name, x));
 }
 
 PURE int count_applications(const expr *e) {
     const expr *cur = e->abs_body->abs_body;
     const char *f = e->abs_param;
-    int cnt = 0;
+    int n = 0;
     while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr) &&
            (!strcmp(cur->app_fn->var_name, f))) {
-        cnt++;
+        n++;
         cur = cur->app_arg;
     }
 
-    return cnt;
+    return n;
 }
 
 expr *abstract_numerals(const expr *e) {
@@ -431,6 +433,7 @@ HOT INLINE char consume(Parser *p) {
     if (!peek(p)) return '\0';
 
     // UTF-8 λ = 0xCE 0xBB
+    /* TODO: Factor this into separate λ detection macros. */
     if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) && ((uchar) p->src[p->i + 1] == 0xBB)) {
         p->i += 2;
         return '\0';
@@ -453,6 +456,7 @@ expr *parse(Parser *p) {
     return e;
 }
 
+/* TODO: Factor out the λ detection logic into a */
 expr *parse_expr(Parser *p) {
     skip_whitespace(p);
     // detect λ
