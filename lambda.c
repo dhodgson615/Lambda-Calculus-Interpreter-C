@@ -428,7 +428,7 @@ void normalize(expr *e) {
 }
 
 HOT PURE INLINE char peek(const Parser *p) {
-    if ((p->i < p->n)) return p->src[p->i];
+    if (p->i < p->n) return p->src[p->i];
     return '\0';
 }
 
