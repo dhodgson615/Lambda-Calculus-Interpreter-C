@@ -16,7 +16,7 @@ UNUSED void set_config_delta_abstract(const bool value) { CONFIG_DELTA_ABSTRACT 
 void sb_init(strbuf *sb, const size_t init_cap) {
     sb->data = malloc(init_cap);
     if (!sb->data) {
-        perror("malloc");
+        perror("malloc for strbuf");
         exit(1);
     }
     sb->cap = init_cap;
