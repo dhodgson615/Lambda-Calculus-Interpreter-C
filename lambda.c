@@ -536,7 +536,7 @@ int parse_number(Parser *p) {
     return v;
 }
 
-CONST inline bool is_invalid_char(const Parser *p, const char c) {
+HOT PURE inline bool is_invalid_char(const Parser *p, const char c) {
     return (!c) || (c == '(') || (c == ')') || (c == '.') ||
             (isspace((uchar) c)) || ((p->i + 1 < p->n) &&
              ((uchar) p->src[p->i] == 0xCE) &&
