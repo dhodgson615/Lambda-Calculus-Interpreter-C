@@ -427,7 +427,10 @@ void normalize(expr *e) {
     free_expr(e);
 }
 
-HOT PURE INLINE char peek(const Parser *p) { return (p->i < p->n) ? p->src[p->i] : '\0'; }
+HOT PURE INLINE char peek(const Parser *p) {
+    if ((p->i < p->n)) return p->src[p->i];
+    return '\0';
+}
 
 HOT INLINE char consume(Parser *p) {
     if (!peek(p)) return '\0';
