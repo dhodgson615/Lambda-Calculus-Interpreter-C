@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_PRINT_LEN      (16 * 1024 * 1024)
+#define MAX_PRINT_LEN      (32 * 1024 * 1024)
 #define ESC                "\x1b["
 #define RESET              ESC "0m"
 #define HIGHLIGHT          ESC "38;2;255;255;0m"
