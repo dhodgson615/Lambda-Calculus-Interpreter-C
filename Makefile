@@ -39,4 +39,12 @@ quick: lambda
 	rm -f lambda
 	rm -f *.o
 
+lldb: debug
+	make clean
+	make debug
+	lldb lambda_debug
+	./lambda_debug
+	rm -f lambda_debug
+	rm -f *.o
+
 .PHONY: all debug profile clean
