@@ -9,9 +9,9 @@
 #include <string.h>
 
 #define MAX_PRINT_LEN      (32 * 1024 * 1024)
-#define ESC                "\x1b["
-#define RESET              ESC "0m"
-#define HIGHLIGHT          ESC "38;2;255;255;0m"
+#define ESC                ("\x1b[")
+#define RESET              (ESC "0m")
+#define HIGHLIGHT          (ESC "38;2;255;255;0m")
 #define HOT                __attribute__((hot))
 #define PURE               __attribute__((pure))
 #define NOINLINE           __attribute__((noinline))
