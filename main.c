@@ -57,9 +57,7 @@ int main(const int argc, char *argv[]) {
 
     Parser p = {input, 0, strlen(input)};
     e = parse(&p);
-    if (!e) {
-        goto cleanup;
-    }
+    if (!e) goto cleanup;
     normalize(e);
     e = NULL;
 
