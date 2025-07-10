@@ -105,24 +105,23 @@ static const char *def_src[] = {
     "λx.λy.y",                                     /* false   */
     "λp.λq.p q p",                                 /* and     */
     "λp.λq.p p q",                                 /* or      */
-    "λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)",    /* down    */
-    "λn.λf.λx.f (n f x)",                          /* up      */
-    "λm.λn.m ↑ n",                                 /* plus    */
+    "λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)",    /* dec     */
+    "λn.λf.λx.f (n f x)",                          /* inc     */
+    "λm.λn.m inc n",                               /* +       */
     "λm.λn.m (+ n) 0",                             /* times   */
-    "λn.n (λx.⊥) ⊤",                               /* is_zero */
-    "λm.λn.n ↓ m",                                 /* minus   */
-    "λm.λn.is_zero (- m n)",                       /* <=      */
+    "λn.n (λx.false) true",                        /* iszero  */
+    "λm.λn.n dec m",                               /* minus   */
+    "λm.λn.iszero (- m n)",                        /* <=      */ /* Untested */
     "λx.λy.λf.f x y",                              /* pair    */
-    /* Untested */
-    "λm.λn.(≤ m n) ∧ (≤ n m)",                     /* ==      */
-    "λm.λn.¬(≤ m n)",                              /* >       */
-    "λm.λn.(≤ m n) ∧ ¬(eq m n)",                   /* <       */
-    "λm.λn.≤ n m",                                 /* >=      */
-    "λp.p ⊥ ⊤",                                    /* not     */
-    "λp.λq.¬(p ∧ q)",                              /* nand    */
-    "λp.λq.¬(p ∨ q)",                              /* nor     */
-    "λp.λq.(p ∧ ¬q) ∨ (¬p ∧ q)",                   /* xor     */
-    "λp.λq.¬((p ∧ ¬q) ∨ (¬p ∧ q))",                /* xnor    */
+    "λm.λn.(<= m n) and (<= n m)",                 /* ==      */ /* Untested */
+    "λm.λn.not(<= m n)",                           /* >       */ /* Untested */
+    "λm.λn.(<= m n) and not(== m n)",              /* <       */ /* Untested */
+    "λm.λn.<= n m",                                /* >=      */ /* Untested */
+    "λp.p false true",                             /* not     */
+    "λp.λq.not(and p q)",                          /* nand    */ /* Untested */
+    "λp.λq.not(p or q)",                           /* nor     */ /* Untested */
+    "λp.λq.or (and p (not q)) (and (not p) q)",    /* xor     */ /* Untested */
+    "λp.λq.not((p and not q) or (not p and q))",   /* xnor    */ /* Untested */
 };
 
 #define N_DEFS ((int)(sizeof(def_src) / sizeof(def_src[0])))
@@ -130,10 +129,10 @@ static const char *def_src[] = {
 /**
  * @brief              Delta definition names.
  */
-static const char *def_names[N_DEFS] = {"⊤", "⊥", "∧", "∨", "↓", "↑", "+",
-                                        "*", "is_zero", "-", "≤", "pair",
+static const char *def_names[N_DEFS] = {"true", "false", "and", "or", "dec", "inc", "+",
+                                        "*", "iszero", "-", "<=", "pair",
                                         /* Untested */
-                                        "==", ">", "<", "≥", "¬", "nand",
+                                        "==", ">", "<", ">=", "not", "nand",
                                         "nor", "xor", "xnor"};
 
 
