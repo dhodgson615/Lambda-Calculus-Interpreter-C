@@ -24,6 +24,7 @@ clean:
 	rm -f lambda_debug
 	rm -f lambda_profile
 	rm -f *.o
+	rm -f *.s
 
 run: lambda
 	make clean
