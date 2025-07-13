@@ -47,4 +47,7 @@ lldb: debug
 	rm -f lambda_debug
 	rm -f *.o
 
+asm: main.c lambda.c
+	$(CC) -std=c17 -S lambda.c -o lambda.s
+
 .PHONY: all debug profile clean
