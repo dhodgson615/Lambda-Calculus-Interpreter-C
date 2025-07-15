@@ -111,8 +111,9 @@ static const char *def_src[] = {
 /**
  * @brief              Delta definition names.
  */
-static const char *def_names[N_DEFS] = {"true", "false", "and", "or", "dec", "inc", "+",
-                                        "*", "iszero", "-", "<=", "pair",
+static const char *def_names[N_DEFS] = {"true", "false", "and", "or", "dec",
+                                        "inc", "+", "*", "iszero", "-", "<=",
+                                        "pair",
                                         /* Untested */
                                         "==", ">", "<", ">=", "not", "nand",
                                         "nor", "xor", "xnor"};
