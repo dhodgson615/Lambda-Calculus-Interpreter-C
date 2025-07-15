@@ -1,4 +1,5 @@
 #include "lambda.h"
+#include "expr.h"
 
 expr *def_vals[N_DEFS];
 extern strbuf sb;

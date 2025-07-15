@@ -1,54 +1,35 @@
-CC := gcc
+CC           := gcc
+CFLAGS       := -std=c17 -Wall -Wextra -Werror -pedantic
+OPTFLAGS     := -O3 -march=native -flto -mtune=native -funroll-loops
+VERBOSE      := false
 
-CFLAGS = -std=c17 -Wall -Wextra -Werror -pedantic -O3 -march=native -flto -mtune=native -funroll-loops
+SRCS         := main.c lambda.c expr.c
+OBJS         := $(SRCS:.c=.o)
+DEPS         := $(SRCS:.c=.d)
+TARGET       := lambda
 
-all: lambda
+.PHONY: all clean run quick debug profile lldb asm
 
-lambda: main.o lambda.o
-	$(CC) $(CFLAGS) main.o lambda.o -o lambda
+all: $(TARGET)
 
-main.o: main.c lambda.h
-	$(CC) $(CFLAGS) -c main.c -o main.o
+-include $(DEPS)
 
-lambda.o: lambda.c lambda.h
-	$(CC) $(CFLAGS) -c lambda.c -o lambda.o
+$(TARGET): $(OBJS)
+	@echo "Linking $@..."
+	$(if $(VERBOSE),$(CC) $(CFLAGS) $(OPTFLAGS) $^ -o $@,@$(CC) $(CFLAGS) $(OPTFLAGS) $^ -o $@)
 
-debug: main.c lambda.c
-	$(CC) -std=c17 -Wall -Wextra -pedantic -O0 -g -pg main.c lambda.c -o lambda_debug
+%.o: %.c
+	@echo "Compiling $<..."
+	$(if $(VERBOSE),$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@,@$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@)
 
-profile: main.c lambda.c
-	$(CC) -std=c17 -Wall -Wextra -pedantic -O3 -pg main.c lambda.c -o lambda_profile
+quick: CFLAGS += -O1
+quick: clean $(TARGET)
+
+run: all
+	./$(TARGET)
 
 clean:
-	rm -f lambda
-	rm -f lambda_debug
-	rm -f lambda_profile
-	rm -f *.o
+	@echo "Cleaning up..."
+	rm -f $(TARGET) $(TARGET)_debug $(TARGET)_profile
+	rm -f $(OBJS) $(DEPS)
 	rm -f *.s
-
-run: lambda
-	make clean
-	make
-	./lambda
-	rm -f lambda
-	rm -f *.o
-
-quick: lambda
-	make clean
-	make
-	gtime -v ./lambda "* 50 50"
-	rm -f lambda
-	rm -f *.o
-
-lldb: debug
-	make clean
-	make debug
-	lldb lambda_debug
-	./lambda_debug
-	rm -f lambda_debug
-	rm -f *.o
-
-asm: main.c lambda.c
-	$(CC) -std=c17 -S lambda.c -o lambda.s
-
-.PHONY: all debug profile clean

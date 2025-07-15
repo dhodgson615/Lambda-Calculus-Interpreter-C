@@ -1,6 +1,7 @@
 #ifndef LAMBDA_H
 #define LAMBDA_H
 
+#include "expr.h"
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -51,25 +52,6 @@ typedef struct Parser {
     size_t         i;
     size_t         n;
 } Parser;
-
-/**
- * @brief              Expression types.
- */
-typedef enum {
-    VAR_expr, ABS_expr, APP_expr
-} exprType;
-
-/**
- * @brief              Expression structure.
- */
-typedef struct expr {
-    exprType       type;
-    char          *var_name;
-    char          *abs_param;
-    struct expr   *abs_body;
-    struct expr   *app_fn;
-    struct expr   *app_arg;
-} expr;
 
 /**
  * @brief              Variable set structure.
