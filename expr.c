@@ -3,7 +3,6 @@
    described below as it is ported from the original lambda.c file.          */
 
 #include <stdio.h>
-
 #include "expr.h"
 #include <stdint.h>
 #include <stdio.h>
