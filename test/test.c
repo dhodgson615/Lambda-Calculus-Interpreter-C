@@ -87,7 +87,6 @@ TEST(expr_copy) {
     free_expr(copy);
 }
 
-// Test parsing
 TEST(parsing) {
     // Test variable
     const char *input1 = "x";
