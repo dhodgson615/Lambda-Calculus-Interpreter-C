@@ -81,6 +81,10 @@ $(TEST_TARGET): $(TEST_OBJS) $(COMMON_OBJS)
 	@echo "Linking $@..."
 	$Q$(CC) $(CFLAGS) $(OPTFLAGS) $(LDFLAGS) $^ -o $@
 
+test: build_dirs $(TEST_TARGET) clean_empty
+	@echo "Running tests..."
+	$Q$(TEST_TARGET)
+
 $(ASM_DIR)/%.s: $(SRC_DIR)/%.c
 	$Qmkdir -p $(dir $@)
 	@echo "Generating assembly for $<..."
