@@ -124,7 +124,6 @@ TEST(church_numerals) {
     }
 }
 
-// Test variable sets
 TEST(var_sets) {
     VarSet s;
     vs_init(&s);
