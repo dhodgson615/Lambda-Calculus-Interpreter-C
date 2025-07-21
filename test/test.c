@@ -160,7 +160,6 @@ TEST(free_vars) {
     free_expr(abs);
 }
 
-// Test substitution
 TEST(substitution) {
     // Test (λx.x)[y := z] = λx.x (no substitution)
     expr *id = make_abstraction("x", make_variable("x"));
