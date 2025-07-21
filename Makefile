@@ -39,7 +39,6 @@ COMMON_SRCS := $(filter-out $(SRC_DIR)/main.c,$(SRCS))
 COMMON_OBJS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(COMMON_SRCS))
 TEST_TARGET := $(BUILD_DIR)/test
 
-# Assembly files
 ASM_FILES   := $(patsubst $(SRC_DIR)/%.c,$(ASM_DIR)/%.s,$(SRCS))
 
 .PHONY: all clean run quick debug profile lldb asm test dirs build_dirs clean_empty
