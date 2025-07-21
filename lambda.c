@@ -5,7 +5,7 @@ strbuf sb;
 static bool CONFIG_SHOW_STEP_TYPE = true;
 static bool CONFIG_DELTA_ABSTRACT = true;
 
-UNUSED bool get_config_show_step_type(void) { return CONFIG_SHOW_STEP_TYPE; }
+/* UNUSED bool get_config_show_step_type(void) { return CONFIG_SHOW_STEP_TYPE; } */
 
 UNUSED void set_config_show_step_type(const bool value) { CONFIG_SHOW_STEP_TYPE = value; }
 
