@@ -29,7 +29,7 @@ static bool expr_equal(const expr *e1, const expr *e2) {
         case ABS_expr: return (strcmp(e1->abs_param, e2->abs_param) == 0) && (expr_equal(e1->abs_body, e2->abs_body));
         case APP_expr: return (expr_equal(e1->app_fn, e2->app_fn)) && (expr_equal(e1->app_arg, e2->app_arg));
     }
-    
+
     return false;
 }
 
