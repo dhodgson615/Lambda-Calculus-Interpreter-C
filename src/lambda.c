@@ -259,12 +259,7 @@ HOT PURE INLINE bool is_lambda(const Parser *p) {
 
 expr *parse_expr(Parser *p) {
     skip_whitespace(p);
-    // detect λ
-    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) && ((uchar) p->src[p->i + 1] == 0xBB)) {
-        return parse_abs(p);
-    }
-
-    return parse_app(p);
+    return is_lambda(p) ? parse_abs(p) : parse_app(p);
 }
 
 expr *parse_abs(Parser *p) {
