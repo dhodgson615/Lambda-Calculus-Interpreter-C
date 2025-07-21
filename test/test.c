@@ -235,7 +235,6 @@ TEST(expr_to_buffer) {
     free_expr(var);
 }
 
-// Integration test for normalization
 TEST(normalization) {
     sb_init(&sb, 1024);
     setup_delta_defs();
