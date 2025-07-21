@@ -2,7 +2,6 @@
 #define LAMBDA_H
 
 #include "expr.h"
-#include <ctype.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
