@@ -226,7 +226,6 @@ TEST(string_buffer) {
     sb_destroy(&buffer);
 }
 
-// Test expression to string conversion
 TEST(expr_to_buffer) {
     expr *var = make_variable("x");
     char buf[100];
