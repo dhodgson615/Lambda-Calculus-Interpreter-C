@@ -419,36 +419,6 @@ UNUSED bool get_config_delta_abstract(void);
 UNUSED void set_config_delta_abstract(bool value);
 
 /**
- * @brief              Initialize a string buffer.
- * @param  sb          the string buffer to initialize
- * @param  init_cap    the initial capacity of the string buffer
- */
-// TODO: move to strbuf.h
-void sb_init(strbuf *sb, size_t init_cap);
-
-/**
- * @brief              Ensure the string buffer has enough capacity.
- * @param  sb          the string buffer to ensure
- * @param  need        the amount of space needed
- */
-// TODO: move to strbuf.h
-void sb_ensure(strbuf *sb, size_t need);
-
-/**
- * @brief              Reset the string buffer.
- * @param  sb          the string buffer to reset
- */
-// TODO: move to strbuf.h
-void sb_reset(strbuf *sb);
-
-/**
- * @brief              Destroy the string buffer.
- * @param  sb          the string buffer to destroy
- */
-// TODO: move to strbuf.h
-void sb_destroy(strbuf *sb);
-
-/**
  * @brief              Create an ANSI color sequence string for RGB color.
  * @param  r           the red component
  * @param  g           the green component
