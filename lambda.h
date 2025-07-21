@@ -404,19 +404,19 @@ UNUSED bool get_config_show_step_type(void);
  * @brief              Set the configuration values.
  * @param  value       the new configuration values
  */
-void set_config_show_step_type(bool value);
+UNUSED void set_config_show_step_type(bool value);
 
 /**
  * @brief              Get the current configuration values.
  * @return             the current configuration values
  */
-bool get_config_delta_abstract(void);
+UNUSED bool get_config_delta_abstract(void);
 
 /**
  * @brief              Set the configuration values.
  * @param  value       the new configuration values
  */
-void set_config_delta_abstract(bool value);
+UNUSED void set_config_delta_abstract(bool value);
 
 /**
  * @brief              Initialize a string buffer.
