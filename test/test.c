@@ -451,7 +451,7 @@ int main(void) {
     RUN_TEST(alpha_renaming);               /* TODO: verify test is complete */
     RUN_TEST(church_arithmetic);            /* TODO: verify test is complete */
     RUN_TEST(fresh_variable);               /* TODO: verify test is complete */
-    RUN_TEST(abstract_numerals_function);   /* TODO: verify test is complete */
+    RUN_TEST(abstract_numerals);            /* TODO: verify test is complete */
     RUN_TEST(church_booleans);              /* TODO: verify test is complete */
 
     printf("\n==== All tests passed successfully. ====\n\n");
