@@ -351,7 +351,6 @@ TEST(church_arithmetic) {
     sb_destroy(&sb);
 }
 
-// Test fresh variable generation
 TEST(fresh_variable) {
     VarSet s;
     vs_init(&s);
