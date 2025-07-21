@@ -1,8 +1,8 @@
 # Compiler settings
 CC          := gcc
 CFLAGS      := -std=c23 -Wall -Wextra -Werror -pedantic
-OPTFLAGS    := -O3 -march=native -flto -mtune=native -funroll-loops \
-               -fomit-frame-pointer -pipe -ffast-math \
+OPTFLAGS    := -O3 -march=native -flto -mtune=native -funroll-loops           \
+               -fomit-frame-pointer -pipe -ffast-math                         \
                -ffunction-sections -fdata-sections
 
 # Platform-specific settings
