@@ -1,3 +1,4 @@
+#include "strbuf.h"
 #include "lambda.h"
 #include "expr.h"
 #include <stdio.h>
