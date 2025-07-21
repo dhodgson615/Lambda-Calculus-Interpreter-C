@@ -316,7 +316,6 @@ TEST(alpha_renaming) {
     free_expr(result);
 }
 
-// Test Church arithmetic
 TEST(church_arithmetic) {
     setup_delta_defs();
     sb_init(&sb, 1024);
