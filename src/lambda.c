@@ -20,46 +20,6 @@ static bool CONFIG_DELTA_ABSTRACT = true;
 
 /* UNUSED void set_config_delta_abstract(const bool value) { CONFIG_DELTA_ABSTRACT = value; } */
 
-// TODO: move to strbuf.h
-void sb_init(strbuf *sb, const size_t init_cap) {
-    sb->data = malloc(init_cap);
-    if (!sb->data) {
-        perror("malloc for strbuf");
-        exit(1);
-    }
-    sb->cap = init_cap;
-    sb->len = 0;
-    sb->data[0] = '\0';
-}
-
-// TODO: move to strbuf.h
-void sb_ensure(strbuf *sb, const size_t need) {
-    if (sb->len + need + 1 > sb->cap) {
-        size_t new = sb->cap * 2;
-        while (new < sb->len + need + 1) new *= 2;
-
-        sb->data = realloc(sb->data, new);
-        if (!sb->data) {
-            perror("realloc for strbuf");
-            exit(1);
-        }
-        sb->cap = new;
-    }
-}
-
-// TODO: move to strbuf.h
-void sb_reset(strbuf *sb) {
-    sb->len = 0;
-    sb->data[0] = '\0';
-}
-
-// TODO: move to strbuf.h
-void sb_destroy(strbuf *sb) {
-    free(sb->data);
-    sb->data = NULL;
-    sb->cap = sb->len = 0;
-}
-
 INLINE void vs_init(VarSet *s) {
     s->v = NULL;
     s->c = 0;
