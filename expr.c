@@ -5,6 +5,10 @@
 #include <stdio.h>
 
 #include "expr.h"
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 expr *make_variable(const char *n) {
     expr *e = malloc(sizeof *e);
