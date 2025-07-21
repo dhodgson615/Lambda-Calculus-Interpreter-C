@@ -296,7 +296,6 @@ TEST(complex_parsing) {
     free_expr(e2);
 }
 
-// Test alpha renaming during substitution
 TEST(alpha_renaming) {
     // Test (λy.x)[x := y] - should alpha rename to avoid variable capture
     expr *x_var = make_variable("x");
