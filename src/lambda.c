@@ -290,7 +290,7 @@ expr *parse(Parser *p) {
     return e;
 }
 
-/* TODO: Factor out the λ detection logic into a */
+/* TODO: Factor out the λ detection logic into a separate function */
 expr *parse_expr(Parser *p) {
     skip_whitespace(p);
     // detect λ
