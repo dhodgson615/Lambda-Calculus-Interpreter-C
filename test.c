@@ -295,6 +295,6 @@ int main(void) {
     RUN_TEST(expr_to_buffer);
     RUN_TEST(normalization);
 
-    printf("\nAll tests passed successfully!\n");
+    printf("\nAll tests passed successfully!\n\n");
     return 0;
 }
