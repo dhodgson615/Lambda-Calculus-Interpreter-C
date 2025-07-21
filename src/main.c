@@ -1,4 +1,7 @@
 #include "expr.h"
+#include "lambda.h"
+#include "strbuf.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
