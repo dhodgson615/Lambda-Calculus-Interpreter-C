@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <assert.h>
 #include "test.h"
 #include "../src/expr.h"
 #include "../src/lambda.h"
