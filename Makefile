@@ -110,7 +110,6 @@ asm: dirs clean_empty
 	@echo "Assembly files generated in $(ASM_DIR)/"
 	@echo "Full program assembly available at $(ASM_DIR)/program.s"
 
-# Build variations
 quick: CFLAGS += -O1
 quick: clean all
 
