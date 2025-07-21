@@ -252,7 +252,11 @@ expr *parse(Parser *p) {
     return e;
 }
 
-/* TODO: Factor out the λ detection logic into a separate function */
+HOT PURE INLINE bool is_lambda(const Parser *p) {
+    return (p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) &&
+            ((uchar) p->src[p->i + 1] == 0xBB);
+}
+
 expr *parse_expr(Parser *p) {
     skip_whitespace(p);
     // detect λ
