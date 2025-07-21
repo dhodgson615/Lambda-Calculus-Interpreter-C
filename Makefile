@@ -58,7 +58,6 @@ build_dirs:
 	@mkdir -p $(BUILD_DIRS)
 	@echo "Creating build directories: $(BUILD_DIRS)"
 
-# Remove empty directories
 clean_empty:
 	@echo "Removing empty directories..."
 	@for dir in $(DIRS); do \
