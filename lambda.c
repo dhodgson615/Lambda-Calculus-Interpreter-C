@@ -1,4 +1,10 @@
 #include "lambda.h"
+#include "expr.h"
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 strbuf sb;
 
