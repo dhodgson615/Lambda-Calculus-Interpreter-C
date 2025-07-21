@@ -274,7 +274,6 @@ TEST(normalization) {
     sb_destroy(&sb);
 }
 
-// Test parsing of complex expressions
 TEST(complex_parsing) {
     // Nested abstraction test
     const char *input1 = "λx.λy.λz.x y z";
