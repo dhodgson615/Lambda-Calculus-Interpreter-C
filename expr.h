@@ -39,4 +39,10 @@ HOT void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, const size_t 
 
 void expr_to_buffer(const expr *e, char *buf, const size_t cap);
 
+PURE bool is_church_numeral(const expr *e);
+
+PURE int count_applications(const expr *e);
+
+expr *abstract_numerals(const expr *e);
+
 #endif /* EXPR_H */
