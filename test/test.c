@@ -368,8 +368,7 @@ TEST(fresh_variable) {
     vs_free(&s);
 }
 
-// Test abstract_numerals function
-TEST(abstract_numerals_function) {
+TEST(abstract_numerals) {
     expr *num3 = church(3);
     expr *abstracted = abstract_numerals(num3);
 
