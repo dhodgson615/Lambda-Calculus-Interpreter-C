@@ -435,24 +435,24 @@ TEST(church_booleans) {
 int main(void) {
     printf("\n==== Lambda Calculus Test Suite ====\n\n");
 
-    RUN_TEST(expr_creation);              /* TODO: verify test is complete */
-    RUN_TEST(expr_copy);                  /* TODO: verify test is complete */
-    RUN_TEST(parsing);                    /* TODO: verify test is complete */
-    RUN_TEST(church_numerals);            /* TODO: verify test is complete */
-    RUN_TEST(var_sets);                   /* TODO: verify test is complete */
-    RUN_TEST(free_vars);                  /* TODO: verify test is complete */
-    RUN_TEST(substitution);               /* TODO: verify test is complete */
-    RUN_TEST(beta_reduction);             /* TODO: verify test is complete */
-    RUN_TEST(delta_reduction);            /* TODO: verify test is complete */
-    RUN_TEST(string_buffer);              /* TODO: verify test is complete */
-    RUN_TEST(expr_to_buffer);             /* TODO: verify test is complete */
-    RUN_TEST(normalization);              /* TODO: verify test is complete */
-    RUN_TEST(complex_parsing);            /* TODO: verify test is complete */
-    RUN_TEST(alpha_renaming);             /* TODO: verify test is complete */
-    RUN_TEST(church_arithmetic);          /* TODO: verify test is complete */
-    RUN_TEST(fresh_variable);             /* TODO: verify test is complete */
-    RUN_TEST(abstract_numerals_function); /* TODO: verify test is complete */
-    RUN_TEST(church_booleans);            /* TODO: verify test is complete */
+    RUN_TEST(expr_creation);                /* TODO: verify test is complete */
+    RUN_TEST(expr_copy);                    /* TODO: verify test is complete */
+    RUN_TEST(parsing);                      /* TODO: verify test is complete */
+    RUN_TEST(church_numerals);              /* TODO: verify test is complete */
+    RUN_TEST(var_sets);                     /* TODO: verify test is complete */
+    RUN_TEST(free_vars);                    /* TODO: verify test is complete */
+    RUN_TEST(substitution);                 /* TODO: verify test is complete */
+    RUN_TEST(beta_reduction);               /* TODO: verify test is complete */
+    RUN_TEST(delta_reduction);              /* TODO: verify test is complete */
+    RUN_TEST(string_buffer);                /* TODO: verify test is complete */
+    RUN_TEST(expr_to_buffer);               /* TODO: verify test is complete */
+    RUN_TEST(normalization);                /* TODO: verify test is complete */
+    RUN_TEST(complex_parsing);              /* TODO: verify test is complete */
+    RUN_TEST(alpha_renaming);               /* TODO: verify test is complete */
+    RUN_TEST(church_arithmetic);            /* TODO: verify test is complete */
+    RUN_TEST(fresh_variable);               /* TODO: verify test is complete */
+    RUN_TEST(abstract_numerals_function);   /* TODO: verify test is complete */
+    RUN_TEST(church_booleans);              /* TODO: verify test is complete */
 
     printf("\n==== All tests passed successfully. ====\n\n");
     return 0;
