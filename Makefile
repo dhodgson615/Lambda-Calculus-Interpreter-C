@@ -96,8 +96,17 @@ $(ASM_DIR)/%.s: $(SRC_DIR)/%.c
 	@echo "Generating assembly for $<..."
 	$Q$(CC) $(CFLAGS) $(OPTFLAGS) -S -o $@ $<
 
-# Build targets
-asm: dirs $(ASM_FILES) clean_empty
+# Enhanced assembly target
+asm: CFLAGS += -g -fverbose-asm
+asm: dirs clean_empty
+	@echo "Generating individual assembly files..."
+	$(MAKE) $(ASM_FILES)
+	@echo "Generating combined program assembly..."
+	$Qmkdir -p $(ASM_DIR)
+	@echo "Creating combined source file..."
+	$Q(for src in $(SRCS); do echo "/* ---- $$src ---- */"; cat "$$src"; echo; done) > $(ASM_DIR)/combined_source.c
+	$Q$(CC) $(CFLAGS) $(OPTFLAGS) -I$(SRC_DIR) -S $(ASM_DIR)/combined_source.c -o $(ASM_DIR)/program.s
+	$Q$(RM) $(ASM_DIR)/combined_source.c
 	@echo "Assembly files generated in $(ASM_DIR)/"
 
 test: dirs $(TEST_TARGET) clean_empty
