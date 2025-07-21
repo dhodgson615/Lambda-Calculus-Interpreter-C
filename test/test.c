@@ -8,14 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 
-// Test framework
-#define TEST(name) static void test_##name(void)
-#define RUN_TEST(name) do { \
-    printf("Running %-32s", #name); \
-    test_##name(); \
-    printf("[ PASS ]\n"); \
-} while(0)
-
 // Global variables needed by the main program
 expr *def_vals[N_DEFS];
 strbuf sb;
