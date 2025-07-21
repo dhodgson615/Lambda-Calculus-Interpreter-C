@@ -143,7 +143,6 @@ TEST(var_sets) {
     vs_free(&s);
 }
 
-// Test free variables calculation
 TEST(free_vars) {
     // λx.y x has free variable y
     expr *var_y = make_variable("y");
