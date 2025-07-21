@@ -70,7 +70,6 @@ clean_empty:
 # Include generated dependencies
 -include $(DEPS)
 
-# Compilation rules
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@echo "Compiling $<..."
 	$Qmkdir -p $(dir $@)
