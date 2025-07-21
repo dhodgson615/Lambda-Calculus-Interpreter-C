@@ -9,7 +9,7 @@ static bool CONFIG_DELTA_ABSTRACT = true;
 
 /* UNUSED void set_config_show_step_type(const bool value) { CONFIG_SHOW_STEP_TYPE = value; } */
 
-UNUSED bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; }
+/* UNUSED bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; } */
 
 UNUSED void set_config_delta_abstract(const bool value) { CONFIG_DELTA_ABSTRACT = value; }
 
