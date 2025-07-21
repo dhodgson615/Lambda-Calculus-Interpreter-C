@@ -212,7 +212,6 @@ TEST(delta_reduction) {
     cleanup_delta_defs();
 }
 
-// Test string buffer functionality
 TEST(string_buffer) {
     strbuf buffer;
     sb_init(&buffer, 10);
