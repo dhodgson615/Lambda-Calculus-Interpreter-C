@@ -67,7 +67,6 @@ clean_empty:
 		fi; \
 	done
 
-# Include generated dependencies
 -include $(DEPS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
