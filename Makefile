@@ -53,7 +53,6 @@ dirs:
 	@mkdir -p $(DIRS)
 	@echo "Creating directories: $(DIRS)"
 
-# Create only directories needed for build
 build_dirs:
 	@mkdir -p $(BUILD_DIRS)
 	@echo "Creating build directories: $(BUILD_DIRS)"
