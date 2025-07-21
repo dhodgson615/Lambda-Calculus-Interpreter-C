@@ -48,7 +48,6 @@ ASM_FILES   := $(patsubst $(SRC_DIR)/%.c,$(ASM_DIR)/%.s,$(SRCS))
 all: build_dirs $(TARGET) clean_empty
 	@echo "Build complete: $(TARGET)"
 
-# Create all directories
 dirs:
 	@mkdir -p $(DIRS)
 	@echo "Creating directories: $(DIRS)"
