@@ -4,8 +4,7 @@
          components. This file is not meant to be used as a header
          file for the project, but rather as a temporary solution to
          allow the project to compile and run with the current
-         structure of the codebase.
-*/
+         structure of the codebase.                                  */
 
 #ifndef LAMBDA_H
 #define LAMBDA_H
