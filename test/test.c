@@ -195,7 +195,6 @@ TEST(beta_reduction) {
     free_expr(result);
 }
 
-// Test delta reduction
 TEST(delta_reduction) {
     setup_delta_defs();
 
