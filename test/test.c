@@ -114,7 +114,6 @@ TEST(parsing) {
     free_expr(e3);
 }
 
-// Test Church numerals
 TEST(church_numerals) {
     for (int i = 0; i < 5; i++) {
         expr *c = church(i);
