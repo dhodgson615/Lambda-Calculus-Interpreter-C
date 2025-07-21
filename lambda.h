@@ -33,6 +33,9 @@
 
 typedef unsigned char      uchar;
 typedef unsigned char      byte;
+typedef unsigned short     word;
+typedef unsigned int       dword;
+typedef unsigned long long qword;
 typedef uint8_t            uint8;
 
 /**
