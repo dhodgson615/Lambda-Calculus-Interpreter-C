@@ -13,7 +13,12 @@
 expr *def_vals[N_DEFS];
 strbuf sb;
 
-// Helper to compare expressions for equality
+/**
+ * @brief              Check if two expressions are equal.
+ * @param  e1          the first expression
+ * @param  e2          the second expression
+ * @return             true if they are equal, false otherwise
+ */
 static bool expr_equal(const expr *e1, const expr *e2) {
     if (!e1 && !e2) return true;
     if (!e1 || !e2) return false;
