@@ -1,10 +1,10 @@
-/*
-NOTE: The contents of this file are meant to act as a placeholder before
-      all of the files of the actual project are factored out in order
-      to modularize the build system and isolate components. This file
-      is not meant to be used as a header file for the project, but
-      rather as a temporary solution to allow the project to compile and
-      run with the current structure.
+/* NOTE: The contents of this file are meant to act as a placeholder
+         before all of the files of the actual project are factored out
+         in order to modularize the build system and isolate the
+         components. This file is not meant to be used as a header
+         file for the project, but rather as a temporary solution to
+         allow the project to compile and run with the current
+         structure of the codebase.
 */
 
 #ifndef LAMBDA_H
