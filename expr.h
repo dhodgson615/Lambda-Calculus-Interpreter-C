@@ -1,6 +1,7 @@
 #ifndef EXPR_H
 #define EXPR_H
 
+#include <stdbool.h>
 #include <stdio.h>
 
 
