@@ -1,7 +1,3 @@
-/* This file has not been implemented, and is included as an intermediate
-   version of the code that will be used to contain all the functionality
-   described below as it is ported from the original lambda.c file.          */
-
 #include <stdio.h>
 #include "expr.h"
 #include <stdint.h>
