@@ -177,7 +177,6 @@ TEST(substitution) {
     free_expr(result);
 }
 
-// Test beta reduction
 TEST(beta_reduction) {
     // (λx.x) y -> y
     expr *id = make_abstraction("x", make_variable("x"));
