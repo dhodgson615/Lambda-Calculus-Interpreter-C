@@ -266,6 +266,8 @@ expr *abstract_numerals(const expr *e) {
     return make_variable(e->var_name);
 }
 
+******************************************************************************/
+
 void normalize(expr *e) {
     sb_reset(&sb);
     expr_to_buffer(e, sb.data, sb.cap);
