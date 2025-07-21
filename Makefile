@@ -40,8 +40,8 @@ $(TARGET): $(OBJS)
 	@echo "Linking $@..."
 	$(if $(VERBOSE),$(CC) $(CFLAGS) $(OPTFLAGS) $^ -o $@,@$(CC) $(CFLAGS) $(OPTFLAGS) $^ -o $@)
 
-# Compile source files in src directory
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+# Explicit object file targets with dependencies
+$(OBJ_DIR)/main.o: $(SRC_DIR)/main.c $(SRC_DIR)/strbuf.h $(SRC_DIR)/lambda.h $(SRC_DIR)/expr.h
 	@echo "Compiling $<..."
 	@mkdir -p $(dir $@)
 	$(if $(VERBOSE),$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@,@$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@)
