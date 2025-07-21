@@ -96,7 +96,6 @@ $(ASM_DIR)/%.s: $(SRC_DIR)/%.c
 	@echo "Generating assembly for $<..."
 	$Q$(CC) $(CFLAGS) $(OPTFLAGS) -S -o $@ $<
 
-# Enhanced assembly target
 asm: CFLAGS += -g -fverbose-asm
 asm: dirs clean_empty
 	@echo "Generating individual assembly files..."
