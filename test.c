@@ -2,6 +2,11 @@
 #include <assert.h>
 #include "expr.h"
 #include "lambda.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // Test framework
 #define TEST(name) static void test_##name(void)
