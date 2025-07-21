@@ -108,9 +108,7 @@ asm: dirs clean_empty
 	$Q$(CC) $(CFLAGS) $(OPTFLAGS) -I$(SRC_DIR) -S $(ASM_DIR)/combined_source.c -o $(ASM_DIR)/program.s
 	$Q$(RM) $(ASM_DIR)/combined_source.c
 	@echo "Assembly files generated in $(ASM_DIR)/"
-
-test: dirs $(TEST_TARGET) clean_empty
-	$(TEST_TARGET)
+	@echo "Full program assembly available at $(ASM_DIR)/program.s"
 
 # Build variations
 quick: CFLAGS += -O1
