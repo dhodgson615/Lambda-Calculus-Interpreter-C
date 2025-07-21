@@ -1,5 +1,5 @@
 CC           := gcc
-CFLAGS       := -std=c17 -Wall -Wextra -Werror -pedantic
+CFLAGS       := -std=c23 -Wall -Wextra -Werror -pedantic
 OPTFLAGS     := -O3 -march=native -flto -mtune=native -funroll-loops
 VERBOSE      := false
 
