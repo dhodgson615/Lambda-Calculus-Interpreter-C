@@ -19,6 +19,7 @@ static bool CONFIG_DELTA_ABSTRACT = true;
 
 /* UNUSED void set_config_delta_abstract(const bool value) { CONFIG_DELTA_ABSTRACT = value; } */
 
+// TODO: move to strbuf.h
 void sb_init(strbuf *sb, const size_t init_cap) {
     sb->data = malloc(init_cap);
     if (!sb->data) {
@@ -30,6 +31,7 @@ void sb_init(strbuf *sb, const size_t init_cap) {
     sb->data[0] = '\0';
 }
 
+// TODO: move to strbuf.h
 void sb_ensure(strbuf *sb, const size_t need) {
     if (sb->len + need + 1 > sb->cap) {
         size_t new = sb->cap * 2;
@@ -44,11 +46,13 @@ void sb_ensure(strbuf *sb, const size_t need) {
     }
 }
 
+// TODO: move to strbuf.h
 void sb_reset(strbuf *sb) {
     sb->len = 0;
     sb->data[0] = '\0';
 }
 
+// TODO: move to strbuf.h
 void sb_destroy(strbuf *sb) {
     free(sb->data);
     sb->data = NULL;

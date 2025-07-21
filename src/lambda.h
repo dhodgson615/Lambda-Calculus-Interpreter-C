@@ -10,6 +10,7 @@
 #define LAMBDA_H
 
 #include "expr.h"
+#include "strbuf.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -75,15 +76,6 @@ typedef struct VarSet {
     char         **v;
     int            c;
 } VarSet;
-
-/**
- * @brief              String buffer structure.
- */
-typedef struct strbuf {
-    char          *data;
-    size_t         len;
-    size_t         cap;
-} strbuf;
 
 /**
  * @brief              RGB color structure for pretty printing.
@@ -431,6 +423,7 @@ UNUSED void set_config_delta_abstract(bool value);
  * @param  sb          the string buffer to initialize
  * @param  init_cap    the initial capacity of the string buffer
  */
+// TODO: move to strbuf.h
 void sb_init(strbuf *sb, size_t init_cap);
 
 /**
@@ -438,18 +431,21 @@ void sb_init(strbuf *sb, size_t init_cap);
  * @param  sb          the string buffer to ensure
  * @param  need        the amount of space needed
  */
+// TODO: move to strbuf.h
 void sb_ensure(strbuf *sb, size_t need);
 
 /**
  * @brief              Reset the string buffer.
  * @param  sb          the string buffer to reset
  */
+// TODO: move to strbuf.h
 void sb_reset(strbuf *sb);
 
 /**
  * @brief              Destroy the string buffer.
  * @param  sb          the string buffer to destroy
  */
+// TODO: move to strbuf.h
 void sb_destroy(strbuf *sb);
 
 /**
