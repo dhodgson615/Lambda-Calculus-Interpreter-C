@@ -223,51 +223,6 @@ HOT bool reduce_once(const expr *e, expr **ne, const char **rtype) {
     return false;
 }
 
-PURE bool is_church_numeral(const expr *e) {
-    if (e->type != ABS_expr) return false;
-    const expr *e1 = e->abs_body;
-    if (e1->type != ABS_expr) return false;
-    const char *f = e->abs_param;
-    const char *x = e1->abs_param;
-    const expr *current_expr = e1->abs_body;
-    /* TODO: Factor out the while condition to be more readable */
-    while ((current_expr->type == APP_expr) &&
-           (current_expr->app_fn->type == VAR_expr) &&
-            (!strcmp(current_expr->app_fn->var_name, f))) {
-        current_expr = current_expr->app_arg;
-    }
-
-    return current_expr->type == VAR_expr && !strcmp(current_expr->var_name, x);
-}
-
-PURE int count_applications(const expr *e) {
-    const expr *cur = e->abs_body->abs_body;
-    const char *f = e->abs_param;
-    int n = 0;
-    while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr) &&
-           (!strcmp(cur->app_fn->var_name, f))) {
-        n++;
-        cur = cur->app_arg;
-    }
-
-    return n;
-}
-
-expr *abstract_numerals(const expr *e) {
-    if (is_church_numeral(e)) {
-        const int n = count_applications(e);
-        char buf[32];
-        snprintf(buf, sizeof(buf), "%d", n);
-        return make_variable(buf);
-    }
-    if (e->type == ABS_expr) return make_abstraction(e->abs_param, abstract_numerals(e->abs_body));
-    if (e->type == APP_expr) return make_application(abstract_numerals(e->app_fn), abstract_numerals(e->app_arg));
-
-    return make_variable(e->var_name);
-}
-
-******************************************************************************/
-
 void normalize(expr *e) {
     sb_reset(&sb);
     expr_to_buffer(e, sb.data, sb.cap);
