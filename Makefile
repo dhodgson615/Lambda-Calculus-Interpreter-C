@@ -10,8 +10,8 @@ OBJ_DIR      := objects
 BUILD_DIR    := build
 
 # Source files
-SRCS         := $(SRC_DIR)/main.c $(SRC_DIR)/lambda.c $(SRC_DIR)/expr.c
-TEST_SRCS    := $(TEST_DIR)/test.c $(SRC_DIR)/lambda.c $(SRC_DIR)/expr.c
+SRCS         := $(SRC_DIR)/main.c $(SRC_DIR)/lambda.c $(SRC_DIR)/expr.c $(SRC_DIR)/strbuf.c
+TEST_SRCS    := $(TEST_DIR)/test.c $(SRC_DIR)/lambda.c $(SRC_DIR)/expr.c $(SRC_DIR)/strbuf.c
 
 # Object files with directory prefix
 OBJS         := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))
