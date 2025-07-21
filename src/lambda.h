@@ -10,7 +10,6 @@
 #define LAMBDA_H
 
 #include "expr.h"
-#include "strbuf.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
