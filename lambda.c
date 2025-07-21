@@ -11,7 +11,7 @@ static bool CONFIG_DELTA_ABSTRACT = true;
 
 /* UNUSED bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; } */
 
-UNUSED void set_config_delta_abstract(const bool value) { CONFIG_DELTA_ABSTRACT = value; }
+/* UNUSED void set_config_delta_abstract(const bool value) { CONFIG_DELTA_ABSTRACT = value; } */
 
 void sb_init(strbuf *sb, const size_t init_cap) {
     sb->data = malloc(init_cap);
