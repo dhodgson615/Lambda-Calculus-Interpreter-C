@@ -27,7 +27,9 @@ static bool expr_equal(const expr *e1, const expr *e2) {
     return false;
 }
 
-// Initialize delta definitions
+/**
+ * @brief              Setup delta definitions for testing.
+ */
 static void setup_delta_defs(void) {
     for (int i = 0; i < N_DEFS; i++) {
         Parser dp = {def_src[i], 0, strlen(def_src[i])};
