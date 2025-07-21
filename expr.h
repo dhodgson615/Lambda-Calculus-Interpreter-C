@@ -35,7 +35,7 @@ expr *church(int n);
 
 HOT void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, size_t cap);
 
-void expr_to_buffer(const expr *e, char *buf, const size_t cap);
+void expr_to_buffer(const expr *e, char *buf, size_t cap);
 
 PURE bool is_church_numeral(const expr *e);
 
