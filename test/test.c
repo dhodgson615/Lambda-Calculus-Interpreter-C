@@ -36,7 +36,9 @@ static void setup_delta_defs(void) {
     }
 }
 
-// Cleanup delta definitions
+/**
+ * @brief              Cleanup delta definitions.
+ */
 static void cleanup_delta_defs(void) {
     for (int i = 0; i < N_DEFS; i++) {
         if (def_vals[i]) {
