@@ -76,7 +76,6 @@ TEST(expr_creation) {
     free_expr(app); // This frees fn and arg too
 }
 
-// Test copying expressions
 TEST(expr_copy) {
     expr *var = make_variable("x");
     expr *copy = copy_expr(var);
