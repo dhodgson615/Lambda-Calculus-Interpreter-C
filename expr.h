@@ -1,9 +1,7 @@
 #ifndef EXPR_H
 #define EXPR_H
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdio.h>
 
 
 #define HOT                __attribute__((hot))
