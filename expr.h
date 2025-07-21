@@ -33,7 +33,7 @@ PURE expr *copy_expr(expr *e);
 
 expr *church(int n);
 
-HOT void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, const size_t cap);
+HOT void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, size_t cap);
 
 void expr_to_buffer(const expr *e, char *buf, const size_t cap);
 
