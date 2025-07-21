@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
-#include "expr.h"
-#include "lambda.h"
+#include "../src/expr.h"
+#include "../src/lambda.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
