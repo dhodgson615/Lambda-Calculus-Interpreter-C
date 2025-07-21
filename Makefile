@@ -46,8 +46,22 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	$(if $(VERBOSE),$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@,@$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@)
 
-# Compile test files in test directory
-$(OBJ_DIR)/%.o: $(TEST_DIR)/%.c
+$(OBJ_DIR)/lambda.o: $(SRC_DIR)/lambda.c $(SRC_DIR)/lambda.h $(SRC_DIR)/expr.h $(SRC_DIR)/strbuf.h
+	@echo "Compiling $<..."
+	@mkdir -p $(dir $@)
+	$(if $(VERBOSE),$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@,@$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@)
+
+$(OBJ_DIR)/expr.o: $(SRC_DIR)/expr.c $(SRC_DIR)/expr.h
+	@echo "Compiling $<..."
+	@mkdir -p $(dir $@)
+	$(if $(VERBOSE),$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@,@$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@)
+
+$(OBJ_DIR)/strbuf.o: $(SRC_DIR)/strbuf.c $(SRC_DIR)/strbuf.h
+	@echo "Compiling $<..."
+	@mkdir -p $(dir $@)
+	$(if $(VERBOSE),$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@,@$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@)
+
+$(OBJ_DIR)/test.o: $(TEST_DIR)/test.c $(SRC_DIR)/expr.h $(SRC_DIR)/lambda.h $(SRC_DIR)/strbuf.h
 	@echo "Compiling $<..."
 	@mkdir -p $(dir $@)
 	$(if $(VERBOSE),$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@,@$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@)
