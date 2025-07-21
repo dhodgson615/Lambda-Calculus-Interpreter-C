@@ -126,7 +126,6 @@ lldb: debug
 run: all
 	$(TARGET)
 
-# Cleanup
 clean:
 	@echo "Cleaning up..."
 	$(RM) -r $(OBJ_DIR) $(BUILD_DIR) $(ASM_DIR)
