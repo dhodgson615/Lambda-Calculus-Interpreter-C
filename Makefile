@@ -81,7 +81,6 @@ $(OBJ_DIR)/%.o: $(TEST_DIR)/%.c
 	$Qmkdir -p $(dir $@)
 	$Q$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@
 
-# Linking rules
 $(TARGET): $(OBJS)
 	@echo "Linking $@..."
 	$Q$(CC) $(CFLAGS) $(OPTFLAGS) $(LDFLAGS) $^ -o $@
