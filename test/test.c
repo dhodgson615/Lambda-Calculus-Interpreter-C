@@ -46,7 +46,6 @@ static void cleanup_delta_defs(void) {
     }
 }
 
-// Test expression creation and manipulation
 TEST(expr_creation) {
     // Test variable
     expr *var = make_variable("x");
