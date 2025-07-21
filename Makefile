@@ -44,7 +44,6 @@ ASM_FILES   := $(patsubst $(SRC_DIR)/%.c,$(ASM_DIR)/%.s,$(SRCS))
 
 .PHONY: all clean run quick debug profile lldb asm test dirs build_dirs clean_empty
 
-# Default target
 all: build_dirs $(TARGET) clean_empty
 	@echo "Build complete: $(TARGET)"
 
