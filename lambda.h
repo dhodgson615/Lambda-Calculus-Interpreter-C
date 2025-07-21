@@ -444,6 +444,6 @@ void sb_destroy(strbuf *sb);
  * @param  b           the blue component
  * @return             the ANSI color sequence string
  */
-char *rgb(uint8 r, uint8 g, uint8 b);
+UNUSED char *rgb(uint8 r, uint8 g, uint8 b);
 
 #endif /* LAMBDA_H */
