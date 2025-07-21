@@ -274,6 +274,164 @@ TEST(normalization) {
     sb_destroy(&sb);
 }
 
+// Test parsing of complex expressions
+TEST(complex_parsing) {
+    // Nested abstraction test
+    const char *input1 = "λx.λy.λz.x y z";
+    Parser p1 = {input1, 0, strlen(input1)};
+    expr *e1 = parse(&p1);
+    assert(e1 != NULL);
+    assert(e1->type == ABS_expr);
+    assert(e1->abs_body->type == ABS_expr);
+    assert(e1->abs_body->abs_body->type == ABS_expr);
+
+    // Parenthesized expression test
+    const char *input2 = "(λx.x x) (λy.y)";
+    Parser p2 = {input2, 0, strlen(input2)};
+    expr *e2 = parse(&p2);
+    assert(e2 != NULL);
+    assert(e2->type == APP_expr);
+
+    free_expr(e1);
+    free_expr(e2);
+}
+
+// Test alpha renaming during substitution
+TEST(alpha_renaming) {
+    // Test (λy.x)[x := y] - should alpha rename to avoid variable capture
+    expr *x_var = make_variable("x");
+    expr *abs = make_abstraction("y", x_var);
+    expr *y_var = make_variable("y");
+
+    expr *result = substitute(abs, "x", y_var);
+
+    // The parameter should be renamed to avoid being captured
+    assert(result->type == ABS_expr);
+    assert(strcmp(result->abs_param, "y") != 0); // Should be renamed
+    assert(result->abs_body->type == VAR_expr);
+    assert(strcmp(result->abs_body->var_name, "y") == 0);
+
+    free_expr(abs);
+    free_expr(y_var);
+    free_expr(result);
+}
+
+// Test Church arithmetic
+TEST(church_arithmetic) {
+    setup_delta_defs();
+    sb_init(&sb, 1024);
+
+    // Test 2 + 3 = 5
+    expr *two = church(2);
+    expr *three = church(3);
+    expr *plus = make_variable("+");
+    expr *plus_two = make_application(plus, two);
+    expr *plus_two_three = make_application(plus_two, three);
+
+    // Reduce and check result
+    const char *rtype;
+    expr *result = plus_two_three;
+    bool reduced = true;
+
+    // Perform reduction steps until normal form
+    while (reduced) {
+        expr *next;
+        reduced = reduce_once(result, &next, &rtype);
+        if (reduced) {
+            free_expr(result);
+            result = next;
+        }
+    }
+
+    assert(is_church_numeral(result));
+    assert(count_applications(result) == 5);
+
+    free_expr(result);
+    cleanup_delta_defs();
+    sb_destroy(&sb);
+}
+
+// Test fresh variable generation
+TEST(fresh_variable) {
+    VarSet s;
+    vs_init(&s);
+
+    vs_add(&s, "x");
+    vs_add(&s, "y");
+    vs_add(&s, "z");
+
+    char *fresh = fresh_var(&s);
+    assert(fresh != NULL);
+    assert(!vs_has(&s, fresh));
+
+    free(fresh);
+    vs_free(&s);
+}
+
+// Test abstract_numerals function
+TEST(abstract_numerals_function) {
+    expr *num3 = church(3);
+    expr *abstracted = abstract_numerals(num3);
+
+    assert(abstracted != NULL);
+    assert(abstracted->type == VAR_expr);
+    assert(strcmp(abstracted->var_name, "3") == 0);
+
+    free_expr(num3);
+    free_expr(abstracted);
+
+    // Test with non-numeral expression
+    expr *var = make_variable("x");
+    expr *abs_var = abstract_numerals(var);
+
+    assert(abs_var != NULL);
+    assert(abs_var->type == VAR_expr);
+    assert(strcmp(abs_var->var_name, "x") == 0);
+
+    free_expr(var);
+    free_expr(abs_var);
+}
+
+// Test boolean operations with Church encodings
+TEST(church_booleans) {
+    setup_delta_defs();
+
+    // true and false -> false
+    expr *true_var = make_variable("true");
+    expr *false_var = make_variable("false");
+    expr *and_var = make_variable("and");
+
+    expr *and_true = make_application(and_var, true_var);
+    expr *and_true_false = make_application(and_true, false_var);
+
+    const char *rtype;
+    expr *result = and_true_false;
+    bool reduced = true;
+
+    // Reduce until normal form
+    while (reduced) {
+        expr *next;
+        reduced = reduce_once(result, &next, &rtype);
+        if (reduced) {
+            free_expr(result);
+            result = next;
+        }
+    }
+
+    // Compare with false Church encoding
+    expr *expected = make_variable("false");
+    expr *expected_val;
+    bool delta_reduced = delta_reduce(expected, &expected_val);
+    assert(delta_reduced);
+
+    assert(expr_equal(result, expected_val));
+
+    free_expr(result);
+    free_expr(expected);
+    free_expr(expected_val);
+    cleanup_delta_defs();
+}
+
 int main(void) {
     printf("\n==== Lambda Calculus Test Suite ====\n\n");
 
