@@ -331,9 +331,7 @@ int parse_number(Parser *p) {
 
 HOT PURE INLINE bool is_invalid_char(const Parser *p, const char c) {
     return (!c) || (c == '(') || (c == ')') || (c == '.') ||
-            (isspace((uchar) c)) || ((p->i + 1 < p->n) &&
-             ((uchar) p->src[p->i] == 0xCE) &&
-              ((uchar) p->src[p->i + 1] == 0xBB));
+            (isspace((uchar) c)) || is_lambda(p);
 }
 
 char *parse_varname(Parser *p) {
