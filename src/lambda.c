@@ -295,9 +295,7 @@ expr *parse_app(Parser *p) {
 expr *parse_atom(Parser *p) {
     skip_whitespace(p);
     // λ as atom
-    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) && ((uchar) p->src[p->i + 1] == 0xBB)) {
-        return parse_abs(p);
-    }
+    if (is_lambda(p)) return parse_abs(p);
     const char c = peek(p);
     if (c == '(') {
         consume(p);
