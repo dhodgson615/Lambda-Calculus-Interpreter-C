@@ -26,7 +26,7 @@ expr *make_abstraction(const char *p, const expr *b) {
     }
     e->type = ABS_expr;
     e->abs_param = strdup(p);
-    e->abs_body = b;
+    e->abs_body = (expr *)b;
 
     return e;
 }
