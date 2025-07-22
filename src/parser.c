@@ -55,7 +55,7 @@ expr *parse(Parser *p) {
     return e;
 }
 
-expr *parse_expr(Parser *p) {
+HOT INLINE expr *parse_expr(Parser *p) {
     skip_whitespace(p);
     return is_lambda(p) ? parse_abs(p) : parse_app(p);
 }
