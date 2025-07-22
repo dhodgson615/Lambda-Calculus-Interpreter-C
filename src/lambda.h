@@ -37,6 +37,7 @@
 #define PROFILE                false
 #define UNUSED                 __attribute__((unused))
 #define DEAD                   __attribute__((unused))
+#define UNREACHABLE            __attribute__((unreachable))
 
 typedef unsigned char          uchar;
 typedef unsigned char          byte;
