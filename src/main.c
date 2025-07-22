@@ -7,7 +7,7 @@
 #include <string.h>
 
 expr *def_vals[N_DEFS];
-extern strbuf sb;
+strbuf sb;
 
 int main(const int argc, char *argv[]) {
     char *input = NULL;
