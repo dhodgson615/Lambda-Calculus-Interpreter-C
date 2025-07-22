@@ -10,8 +10,8 @@ expr *def_vals[N_DEFS];
 strbuf sb;
 
 int main(const int argc, char *argv[]) {
-    char *input = NULL;
-    expr *e = NULL;
+    char *input = nullptr;
+    //expr *e = nullptr;
     int status = 1; // Default to error
 
     // load δ-definitions
