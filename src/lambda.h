@@ -160,55 +160,6 @@ HOT PURE INLINE bool is_invalid_char(const Parser *p, char c);
 expr *abstract_numerals(const expr *e);
 
 /**
- * @brief              Parse a lambda calculus expression.
- * @param  p           the parser
- * @return             the parsed expression
- */
-expr *parse(Parser *p);
-
-/**
- * @brief              Parse a variable name from the input.
- * @param  p           the parser
- * @return             the parsed variable name
- */
-expr *parse_expr(Parser *p);
-
-/**
- * @brief              Parse an abstraction from the input.
- * @param  p           the parser
- * @return             the parsed expression
- */
-expr *parse_abs(Parser *p);
-
-/**
- * @brief              Parse an application from the input.
- * @param  p           the parser
- * @return             the parsed expression
- */
-expr *parse_app(Parser *p);
-
-/**
- * @brief              Parse an atom from the input.
- * @param  p           the parser
- * @return             the parsed expression
- */
-expr *parse_atom(Parser *p);
-
-/**
- * @brief              Parse a number from the input.
- * @param  p           the parser
- * @return             the parsed number
- */
-int parse_number(Parser *p);
-
-/**
- * @brief              Parse a variable name from the input.
- * @param  p           the parser
- * @return             the parsed variable name
- */
-char *parse_varname(Parser *p);
-
-/**
  * @brief              Substitute a variable in an expression with a value.
  * @param  e           the expression
  * @param  v           the variable name
