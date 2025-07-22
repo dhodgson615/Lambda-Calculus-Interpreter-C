@@ -90,7 +90,7 @@ expr *parse_app(Parser *p) {
     return e;
 }
 
-expr *parse_atom(Parser *p) {
+HOT INLINE expr *parse_atom(Parser *p) {
     skip_whitespace(p);
     // Check for lambda as atom
     if (is_lambda(p)) return parse_abs(p);
