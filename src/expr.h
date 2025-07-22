@@ -23,7 +23,7 @@ typedef struct expr {
 
 expr *make_variable(const char *n);
 
-expr *make_abstraction(const char *p, expr *b);
+expr *make_abstraction(const char *p, const expr *b);
 
 expr *make_application(expr *f, expr *a);
 
