@@ -394,37 +394,4 @@ HOT bool beta_reduce(const expr *e, expr **out);
  */
 HOT bool reduce_once(const expr *e, expr **ne, const char **rtype);
 
-/**
- * @brief              Get the current configuration values.
- * @return             the current configuration values
- */
-UNUSED bool get_config_show_step_type(void);
-
-/**
- * @brief              Set the configuration values.
- * @param  value       the new configuration values
- */
-UNUSED void set_config_show_step_type(bool value);
-
-/**
- * @brief              Get the current configuration values.
- * @return             the current configuration values
- */
-UNUSED bool get_config_delta_abstract(void);
-
-/**
- * @brief              Set the configuration values.
- * @param  value       the new configuration values
- */
-UNUSED void set_config_delta_abstract(bool value);
-
-/**
- * @brief              Create an ANSI color sequence string for RGB color.
- * @param  r           the red component
- * @param  g           the green component
- * @param  b           the blue component
- * @return             the ANSI color sequence string
- */
-UNUSED char *rgb(uint8 r, uint8 g, uint8 b);
-
 #endif /* LAMBDA_H */
