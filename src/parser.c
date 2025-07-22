@@ -24,7 +24,13 @@ HOT INLINE char consume(Parser *p) {
 }
 
 HOT INLINE void skip_whitespace(Parser *p) {
-    while (isspace((unsigned char) peek(p))) p->i++;
+    const char *src = p->src;
+    size_t i = p->i;
+    const size_t n = p->n;
+
+    while (i < n && isspace((unsigned char)src[i])) i++;
+
+    p->i = i;
 }
 
 HOT PURE INLINE bool is_lambda(const Parser *p) {
