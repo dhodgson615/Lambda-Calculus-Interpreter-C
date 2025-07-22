@@ -130,7 +130,7 @@ int parse_number(Parser *p) {
 
 HOT INLINE char *parse_varname(Parser *p) {
     skip_whitespace(p);
-    const size_t start = p->i;
+    const unsigned int start = p->i;
     while (p->i < p->n && !is_invalid_char(p, peek(p))) p->i++;
     size_t len = p->i - start;
     if (len == 0) {
