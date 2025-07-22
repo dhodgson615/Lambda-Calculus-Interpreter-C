@@ -75,7 +75,7 @@ expr *parse_abs(Parser *p) {
     return ret;
 }
 
-expr *parse_app(Parser *p) {
+HOT INLINE expr *parse_app(Parser *p) {
     skip_whitespace(p);
     expr *e = parse_atom(p);
     skip_whitespace(p);
