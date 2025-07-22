@@ -11,7 +11,7 @@ strbuf sb;
 
 int main(const int argc, char *argv[]) {
     char *input = nullptr;
-    //expr *e = nullptr;
+    expr *e = nullptr;
     int status = 1; // Default to error
 
     // load δ-definitions
