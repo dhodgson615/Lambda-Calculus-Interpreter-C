@@ -132,7 +132,7 @@ HOT INLINE char *parse_varname(Parser *p) {
     skip_whitespace(p);
     const unsigned int start = p->i;
     while (p->i < p->n && !is_invalid_char(p, peek(p))) p->i++;
-    size_t len = p->i - start;
+    unsigned int len = p->i - start;
     if (len == 0) {
         fprintf(stderr, "Invalid var start at %zu\n", p->i);
         exit(1);
