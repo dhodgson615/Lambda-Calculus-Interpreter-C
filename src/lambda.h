@@ -180,7 +180,7 @@ expr *make_variable(const char *n);
  * @param  b           the body expression
  * @return             the new abstraction expression
  */
-expr *make_abstraction(const char *p, expr *b);
+expr *make_abstraction(const char *p, const expr *b);
 
 /**
  * @brief              Create a new application expression.
