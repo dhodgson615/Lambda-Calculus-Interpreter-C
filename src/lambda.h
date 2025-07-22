@@ -62,15 +62,6 @@ typedef struct arena {
 } arena;
 
 /**
- * @brief              Parser structure.
- */
-typedef struct Parser {
-    const char    *src;
-    size_t         i;
-    size_t         n;
-} Parser;
-
-/**
  * @brief              Variable set structure.
  */
 typedef struct VarSet {
