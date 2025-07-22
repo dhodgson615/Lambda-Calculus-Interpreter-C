@@ -65,7 +65,7 @@ int main(const int argc, char *argv[]) {
     e = parse(&p);
     if (!e) goto cleanup;
     normalize(e);
-    e = NULL;
+    e = nullptr;  // TODO: Does this actually need to be set to nullptr?
 
     status = 0;
 
