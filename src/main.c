@@ -1,6 +1,6 @@
-#include "expr.h"
-#include "lambda.h"
-#include "strbuf.h"
+#include "../include/expr.h"
+#include "../include/lambda.h"
+#include "../include/strbuf.h"
 
 #include <stdio.h>
 #include <stdlib.h>
