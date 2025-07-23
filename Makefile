@@ -115,6 +115,9 @@ profile: clean all
 
 lldb: debug
 
+rebuild: clean all
+	@echo "Project rebuild complete."
+
 run: all
 	$(TARGET)
 
