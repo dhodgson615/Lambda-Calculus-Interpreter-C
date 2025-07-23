@@ -2,6 +2,7 @@
 #define PARSER_H
 
 #include "expr.h"
+#include "macros.h"
 
 #include <stdbool.h>
 
