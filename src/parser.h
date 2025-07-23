@@ -6,10 +6,6 @@
 
 #include <stdbool.h>
 
-#define HOT                    __attribute__((hot))
-#define PURE                   __attribute__((pure))
-#define INLINE                 __attribute__((always_inline))
-
 /**
  * @brief              Parser structure.
  */
