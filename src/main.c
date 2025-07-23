@@ -39,7 +39,7 @@ int main(const int argc, char *argv[]) {
             if (i < argc - 1) strcat(input, " ");
         }
     } else {
-        char *buf = NULL;
+        char *buf = nullptr;
         size_t bufsize = 0;
 
         printf("λ-expr> ");
