@@ -11,6 +11,7 @@
 
 #include "expr.h"
 #include "parser.h"
+#include "types.h"
 
 #include <stdbool.h>
 #include <stdint.h>
