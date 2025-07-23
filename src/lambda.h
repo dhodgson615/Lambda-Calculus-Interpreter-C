@@ -12,6 +12,7 @@
 #include "expr.h"
 #include "parser.h"
 #include "types.h"
+#include "macros.h"
 
 #include <stdbool.h>
 
