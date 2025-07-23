@@ -1,6 +1,6 @@
 #include "parser.h"
 
-#include "expr.h"
+#include "../include/expr.h"
 
 #include <ctype.h>
 #include <stdio.h>
