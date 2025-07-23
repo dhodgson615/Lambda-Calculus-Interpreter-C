@@ -6,7 +6,7 @@
          allow the project to compile and run with the current
          structure of the codebase.                                  */
 
-#include "lambda.h"
+#include "../include/lambda.h"
 
 #include "expr.h"
 #include "strbuf.h"
