@@ -1,8 +1,8 @@
 #include "test.h"
 
-#include "../src/expr.h"
-#include "../src/lambda.h"
-#include "../src/strbuf.h"
+#include "../include/expr.h"
+#include "../include/lambda.h"
+#include "../include/strbuf.h"
 
 #include <assert.h>
 #include <stdbool.h>
