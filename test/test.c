@@ -248,7 +248,7 @@ TEST(normalization) {
     FILE *temp = tmpfile();
     stdout = temp;
 
-    normalize(e); // note: this frees e
+    normalize(e); // This frees e
 
     // Restore stdout
     fflush(stdout);
