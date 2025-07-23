@@ -1,10 +1,10 @@
 #include "expr.h"
 
-#include <stdio.h>
+#include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 expr *make_variable(const char *n) {
     expr *e = malloc(sizeof *e);
