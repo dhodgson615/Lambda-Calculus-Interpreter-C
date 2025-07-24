@@ -22,7 +22,6 @@
 #define DEBUG              false
 #define PROFILE            false
 
-/* ANSI escape codes */
 #define ESC                ("\x1b[")
 #define RESET              (ESC "0m")
 #define HIGHLIGHT          (ESC "38;2;255;255;0m")
