@@ -5,7 +5,6 @@
 #include "types.h"
 
 #include <stdbool.h>
-#include <stdio.h>
 
 typedef enum {
     VAR_expr, ABS_expr, APP_expr
