@@ -2,6 +2,7 @@
 #define TEST_H
 
 #include "../include/expr.h"
+#include "../include/types.h"
 
 #include <stdbool.h>
 
