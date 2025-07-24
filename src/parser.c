@@ -29,7 +29,7 @@ HOT INLINE char consume(Parser *p) {
          for performance. Calls to this function should also be
          consolidated together to reduce redundant computation. */
 HOT INLINE void skip_whitespace(Parser *p) {
-    const char *src = p->src;
+    cchar *src = p->src;
     size_t i = p->i;
     const size_t n = p->n;
 
