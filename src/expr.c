@@ -19,7 +19,7 @@ expr *make_variable(cchar *n) {
     return e;
 }
 
-expr *make_abstraction(const char *p, const expr *b) {
+expr *make_abstraction(cchar *p, cexpr *b) {
     expr *e = malloc(sizeof *e);
     if (!e) {
         perror("malloc");
