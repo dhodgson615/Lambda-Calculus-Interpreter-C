@@ -399,7 +399,7 @@ TEST(church_booleans) {
     expr *and_true = make_application(and_var, true_var);
     expr *and_true_false = make_application(and_true, false_var);
 
-    const char *rtype;
+    cchar *rtype;
     expr *result = and_true_false;
     bool reduced = true;
 
