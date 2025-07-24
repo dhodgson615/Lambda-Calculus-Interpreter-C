@@ -4,7 +4,6 @@
 #include "../include/expr.h"
 
 #include <stdbool.h>
-#include <string.h>
 
 #define TEST(name) static void test_##name(void)
 #define RUN_TEST(name) do {     \
