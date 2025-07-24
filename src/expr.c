@@ -62,7 +62,14 @@ void free_expr(expr *e) {
     }
     free(e);
 }
-
+/* TODO: This is an inefficient implementation, as it does not handle
+         variable capture and does not optimize for performance.
+         Consider using a more efficient algorithm for copying
+         expressions, such as a hash table to store already copied
+         expressions. This is a simple implementation that works for
+         most cases but may not be optimal for large or complex
+         expressions.
+ */
 PURE expr *copy_expr(expr *e) {
     if (!e) return NULL;
 
