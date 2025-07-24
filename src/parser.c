@@ -73,7 +73,7 @@ HOT INLINE expr *parse_abs(Parser *p) {
         fprintf(stderr, "Expected '.' after λ\n");
         exit(1);
     }
-    expr *body = parse_expr(p);
+    const expr *body = parse_expr(p);
     expr *ret = make_abstraction(v, body);
     free(v);
 
