@@ -52,7 +52,6 @@ static const char *def_names[N_DEFS] = {"true", "false", "and", "or", "dec",
                                         "==", ">", "<", ">=", "not", "nand",
                                         "nor", "xor", "xnor"};
 
-
 expr *def_vals[N_DEFS];
 
 /**
