@@ -203,7 +203,7 @@ void normalize(expr *e) {
     int step = 1;
     while (true) {
         expr *next;
-        const char *rtype;
+        cchar *rtype;
         if (!reduce_once(e, &next, &rtype)) {
             printf("\n→ normal form reached.\n");
             break;
