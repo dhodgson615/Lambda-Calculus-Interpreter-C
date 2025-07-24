@@ -121,7 +121,7 @@ expr *substitute(expr *e, const char *v, expr *val) {
 
             return result_expr;
         }
-        expr *new_body = substitute(e->abs_body, v, val);
+        const expr *new_body = substitute(e->abs_body, v, val);
         expr *result_expr = make_abstraction(e->abs_param, new_body);
         vs_free(&fv_val);
 
