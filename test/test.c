@@ -21,7 +21,7 @@ strbuf sb;
  * @param  e2          the second expression
  * @return             true if they are equal, false otherwise
  */
-static bool expr_equal(const expr *e1, const expr *e2) {
+static bool expr_equal(cexpr *e1, cexpr *e2) {
     if (!e1 && !e2) return true;
     if (!e1 || !e2) return false;
     if (e1->type != e2->type) return false;
