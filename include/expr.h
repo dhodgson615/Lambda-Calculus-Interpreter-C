@@ -2,6 +2,7 @@
 #define EXPR_H
 
 #include "macros.h"
+#include "types.h"
 
 #include <stdbool.h>
 #include <stdio.h>
