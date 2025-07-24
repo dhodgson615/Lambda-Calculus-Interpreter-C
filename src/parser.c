@@ -24,6 +24,9 @@ HOT INLINE char consume(Parser *p) {
     return p->src[p->i++];
 }
 
+/* TODO: This function is called very often, so it should be optimized
+         for performance. Calls to this function should also be
+         consolidated together to reduce redundant computation. */
 HOT INLINE void skip_whitespace(Parser *p) {
     const char *src = p->src;
     size_t i = p->i;
