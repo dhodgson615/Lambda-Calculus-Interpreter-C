@@ -10,7 +10,7 @@
  * @brief              Parser structure.
  */
 typedef struct Parser {
-    const char    *src;
+    cchar         *src;
     size_t         i;
     size_t         n;
 } Parser;
