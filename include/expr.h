@@ -6,10 +6,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define HOT                __attribute__((hot))
-#define PURE               __attribute__((pure))
-#define UNUSED             __attribute__((unused))
-
 typedef enum {
     VAR_expr, ABS_expr, APP_expr
 } exprType;
