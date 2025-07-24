@@ -188,7 +188,7 @@ HOT bool reduce_once(const expr *e, expr **ne, const char **rtype) {
             return true;
         }
     }
-    if (e->type == ABS_expr && reduce_once(e->abs_body, &tmp, rtype)) {
+    if ((e->type == ABS_expr) && (reduce_once(e->abs_body, &tmp, rtype))) {
         *ne = make_abstraction(e->abs_param, tmp);
         return true;
     }
