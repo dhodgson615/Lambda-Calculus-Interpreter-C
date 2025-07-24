@@ -155,7 +155,7 @@ HOT bool delta_reduce(cexpr *e, expr **out) {
     return false;
 }
 
-HOT bool beta_reduce(const expr *e, expr **out) {
+HOT bool beta_reduce(cexpr *e, expr **out) {
     if ((e->type == APP_expr) && (e->app_fn->type == ABS_expr)) {
         expr *argcp = copy_expr(e->app_arg);
         *out = substitute(e->app_fn->abs_body, e->app_fn->abs_param, argcp);
