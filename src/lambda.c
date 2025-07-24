@@ -61,7 +61,7 @@ void vs_free(const VarSet *s) {
     free(s->v);
 }
 
-void free_vars_rec(const expr *e, VarSet *s) {
+void free_vars_rec(cexpr *e, VarSet *s) {
     if (e->type == VAR_expr) vs_add(s, e->var_name);
     else if (e->type == ABS_expr) {
         free_vars_rec(e->abs_body, s);
