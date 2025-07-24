@@ -106,7 +106,7 @@ TEST(parsing) {
     assert(strcmp(e1->var_name, "x") == 0);
 
     // Test abstraction (lambda x.x)
-    const char *input2 = "λx.x";
+    cchar *input2 = "λx.x";
     Parser p2 = {input2, 0, strlen(input2)};
     expr *e2 = parse(&p2);
     assert(e2->type == ABS_expr);
