@@ -143,7 +143,7 @@ CONST int find_def(const char *s) {
     return -1;
 }
 
-HOT bool delta_reduce(const expr *e, expr **out) {
+HOT bool delta_reduce(cexpr *e, expr **out) {
     if (e->type == VAR_expr) {
         const int i = find_def(e->var_name);
         if (i >= 0) {
