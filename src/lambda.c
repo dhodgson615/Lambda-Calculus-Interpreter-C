@@ -87,7 +87,7 @@ char *fresh_var(const VarSet *s) {
     }
     int idx = 1;
     while (true) {
-        for (char c = 'a'; c <= 'z'; c++) {
+        for (int c = 'a'; c <= 'z'; c++) {
             char buf[8];
             snprintf(buf, sizeof(buf), "%c%d", c, idx);
             if (!vs_has(s, buf)) return strdup(buf);
