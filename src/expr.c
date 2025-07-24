@@ -95,7 +95,7 @@ expr *church(const int n) {
     return make_abstraction("f", abs_x);
 }
 
-HOT void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, const size_t cap) {
+HOT void expr_to_buffer_rec(cexpr *e, char *buf, size_t *pos, const size_t cap) {
     if (*pos >= cap - 1) return;
 
     switch (e->type) {
