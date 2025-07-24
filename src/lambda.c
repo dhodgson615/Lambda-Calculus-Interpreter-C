@@ -27,7 +27,7 @@ INLINE void vs_init(VarSet *s) {
     s->c = 0;
 }
 
-bool vs_has(const VarSet *s, const char *x) {
+bool vs_has(const VarSet *s, cchar *x) {
     for (int i = 0; i < s->c; i++) if (!strcmp(s->v[i], x)) return true;
 
     return false;
