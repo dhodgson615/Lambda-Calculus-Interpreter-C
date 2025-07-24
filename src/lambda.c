@@ -98,7 +98,7 @@ char *fresh_var(const VarSet *s) {
 
 /* TODO: This is inefficient because of recursive copying. Consider
          using a more efficient copying method, or using an arena. */
-expr *substitute(expr *e, const char *v, expr *val) {
+expr *substitute(expr *e, cchar *v, expr *val) {
     if (e->type == VAR_expr) return copy_expr(strcmp(e->var_name, v) == 0 ? val : e);
 
     if (e->type == ABS_expr) {
