@@ -81,7 +81,7 @@ VarSet free_vars(const expr *e) {
 }
 
 char *fresh_var(const VarSet *s) {
-    for (int c = 'a'; c <= 'z'; c++) {
+    for (char c = 'a'; (int)c <= 'z'; c++) {
         const char buf[2] = {c, '\0'};
         if (!vs_has(s, buf)) return strdup(buf);
     }
