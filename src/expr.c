@@ -179,7 +179,7 @@ PURE int count_applications(const expr *e) {
     return n;
 }
 
-expr *abstract_numerals(const expr *e) {
+expr *abstract_numerals(cexpr *e) {
     if (is_church_numeral(e)) {
         const int n = count_applications(e);
         char buf[32];
