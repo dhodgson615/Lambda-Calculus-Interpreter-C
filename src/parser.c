@@ -43,7 +43,7 @@ HOT PURE INLINE bool is_lambda(const Parser *p) {
                              && ((uchar) p->src[p->i + 1] == 0xBB);
 }
 
-HOT PURE INLINE bool is_invalid_char(const Parser *p, const char c) {
+HOT PURE INLINE bool is_invalid_char(const Parser *p, cchar c) {
     return (!c) || (c == '(')
                 || (c == ')')
                 || (c == '.')
