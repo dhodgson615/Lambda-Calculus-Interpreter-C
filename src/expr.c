@@ -170,8 +170,8 @@ PURE int count_applications(cexpr *e) {
     cexpr *cur = e->abs_body->abs_body;
     cchar *f = e->abs_param;
     int n = 0;
-    while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr) &&
-           (!strcmp(cur->app_fn->var_name, f))) {
+    while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr)
+                                   && (!strcmp(cur->app_fn->var_name, f))) {
         n++;
         cur = cur->app_arg;
     }
