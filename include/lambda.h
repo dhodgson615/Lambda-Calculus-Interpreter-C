@@ -9,8 +9,6 @@
 #ifndef LAMBDA_H
 #define LAMBDA_H
 
-#include "expr.h"
-#include "parser.h"
 #include "types.h"
 
 /**
