@@ -1,7 +1,6 @@
 #ifndef MACROS_H
 #define MACROS_H
 
-/* Attribute macros */
 #define HOT                __attribute__((hot))
 #define PURE               __attribute__((pure))
 #define NOINLINE           __attribute__((noinline))
