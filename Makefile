@@ -1,7 +1,7 @@
 # Compiler settings
 CC          := gcc
 CFLAGS      := -std=c23 -Wall -Wextra -Werror -pedantic -Iinclude
-OPTFLAGS    := -O3 -march=native -flto -mtune=native -funroll-loops           \
+OFLAGS      := -O3 -march=native -flto -mtune=native -funroll-loops           \
                -fomit-frame-pointer -pipe -ffast-math                         \
                -ffunction-sections -fdata-sections
 
@@ -66,20 +66,20 @@ clean_empty:
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@echo "Compiling $<..."
 	$Qmkdir -p $(dir $@)
-	$Q$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@
+	$Q$(CC) $(CFLAGS) $(OFLAGS) -MMD -MP -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(TEST_DIR)/%.c
 	@echo "Compiling $<..."
 	$Qmkdir -p $(dir $@)
-	$Q$(CC) $(CFLAGS) $(OPTFLAGS) -MMD -MP -c $< -o $@
+	$Q$(CC) $(CFLAGS) $(OFLAGS) -MMD -MP -c $< -o $@
 
 $(TARGET): $(OBJS)
 	@echo "Linking $@..."
-	$Q$(CC) $(CFLAGS) $(OPTFLAGS) $(LDFLAGS) $^ -o $@
+	$Q$(CC) $(CFLAGS) $(OFLAGS) $(LDFLAGS) $^ -o $@
 
 $(TEST_TARGET): $(TEST_OBJS) $(COMMON_OBJS)
 	@echo "Linking $@..."
-	$Q$(CC) $(CFLAGS) $(OPTFLAGS) $(LDFLAGS) $^ -o $@
+	$Q$(CC) $(CFLAGS) $(OFLAGS) $(LDFLAGS) $^ -o $@
 
 test: build_dirs $(TEST_TARGET) clean_empty
 	@echo "Running tests..."
@@ -88,7 +88,7 @@ test: build_dirs $(TEST_TARGET) clean_empty
 $(ASM_DIR)/%.s: $(SRC_DIR)/%.c
 	$Qmkdir -p $(dir $@)
 	@echo "Generating assembly for $<..."
-	$Q$(CC) $(CFLAGS) $(OPTFLAGS) -S -o $@ $<
+	$Q$(CC) $(CFLAGS) $(OFLAGS) -S -o $@ $<
 
 asm: CFLAGS += -g -fverbose-asm
 asm: dirs clean_empty
@@ -98,22 +98,17 @@ asm: dirs clean_empty
 	$Qmkdir -p $(ASM_DIR)
 	@echo "Creating combined source file..."
 	$Q(for src in $(SRCS); do echo "/* ---- $$src ---- */"; cat "$$src"; echo; done) > $(ASM_DIR)/combined_source.c
-	$Q$(CC) $(CFLAGS) $(OPTFLAGS) -I$(SRC_DIR) -S $(ASM_DIR)/combined_source.c -o $(ASM_DIR)/program.s
+	$Q$(CC) $(CFLAGS) $(OFLAGS) -I$(SRC_DIR) -S $(ASM_DIR)/combined_source.c -o $(ASM_DIR)/program.s
 	$Q$(RM) $(ASM_DIR)/combined_source.c
 	@echo "Assembly files generated in $(ASM_DIR)/"
 	@echo "Full program assembly available at $(ASM_DIR)/program.s"
 
-quick: CFLAGS += -O1
-quick: clean all
-
 debug: CFLAGS += -g -O0
 debug: clean all
 
-profile: CFLAGS += -pg
-profile: LDFLAGS += -pg
-profile: clean all
-
 lldb: debug
+	@echo "Starting LLDB..."
+	@lldb $(TARGET)
 
 rebuild: clean all
 	@echo "Project rebuild complete."
