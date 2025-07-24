@@ -110,7 +110,7 @@ expr *substitute(expr *e, const char *v, expr *val) {
             char *nv_name = fresh_var(&forbidden_vars);
             expr *nv_expr = make_variable(nv_name);
             expr *renamed_body = substitute(e->abs_body, e->abs_param, nv_expr);
-            expr *substituted_renamed_body = substitute(renamed_body, v, val);
+            const expr *substituted_renamed_body = substitute(renamed_body, v, val);
             expr *result_expr = make_abstraction(nv_name, substituted_renamed_body);
 
             free_expr(nv_expr);
