@@ -137,7 +137,7 @@ expr *substitute(expr *e, cchar *v, expr *val) {
 
 /* TODO: This is a hacky way to find definitions. Consider using a
          different structure for better performance. */
-CONST int find_def(const char *s) {
+CONST int find_def(cchar *s) {
     for (int i = 0; i < N_DEFS; i++) if (!strcmp(def_names[i], s)) return i;
 
     return -1;
