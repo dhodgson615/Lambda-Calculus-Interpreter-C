@@ -111,7 +111,7 @@ HOT INLINE expr *parse_atom(Parser *p) {
         }
         return e;
     }
-    if (isdigit((unsigned char) c)) {
+    if (isdigit((uchar) c)) {
         const int v = parse_number(p);
         return church(v);
     }
