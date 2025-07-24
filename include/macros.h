@@ -17,7 +17,6 @@
 #define DEAD               __attribute__((unused))
 #define UNREACHABLE        __attribute__((unreachable))
 
-/* Constants */
 #define MAX_PRINT_LEN      (32 * 1024 * 1024)
 #define INIT_ARENA_SIZE    (1024 * 1024)
 #define DEBUG              false
