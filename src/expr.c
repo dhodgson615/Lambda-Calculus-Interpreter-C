@@ -151,7 +151,7 @@ void expr_to_buffer(cexpr *e, char *buf, const size_t cap) {
 
 PURE bool is_church_numeral(cexpr *e) {
     if (e->type != ABS_expr) return false;
-    const expr *e1 = e->abs_body;
+    cexpr *e1 = e->abs_body;
     if (e1->type != ABS_expr) return false;
     const char *f = e->abs_param;
     const char *x = e1->abs_param;
