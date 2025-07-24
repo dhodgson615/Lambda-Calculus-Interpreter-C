@@ -166,7 +166,7 @@ HOT bool beta_reduce(const expr *e, expr **out) {
     return false;
 }
 
-HOT bool reduce_once(const expr *e, expr **ne, const char **rtype) {
+HOT bool reduce_once(cexpr *e, expr **ne, cchar **rtype) {
     expr *tmp;
     if (delta_reduce(e, &tmp)) {
         *ne = tmp;
