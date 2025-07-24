@@ -6,19 +6,6 @@
 
 #include <stdbool.h>
 
-typedef enum {
-    VAR_expr, ABS_expr, APP_expr
-} exprType;
-
-typedef struct expr {
-    exprType       type;
-    char          *var_name;
-    char          *abs_param;
-    struct expr   *abs_body;
-    struct expr   *app_fn;
-    struct expr   *app_arg;
-} expr;
-
 expr *make_variable(const char *n);
 
 expr *make_abstraction(const char *p, const expr *b);
