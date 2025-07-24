@@ -33,7 +33,7 @@ HOT INLINE void skip_whitespace(Parser *p) {
     size_t i = p->i;
     const size_t n = p->n;
 
-    while (i < n && isspace((unsigned char)src[i])) i++;
+    while (i < n && isspace((uchar)src[i])) i++;
 
     p->i = i;
 }
