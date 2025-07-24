@@ -44,8 +44,11 @@ HOT PURE INLINE bool is_lambda(const Parser *p) {
 }
 
 HOT PURE INLINE bool is_invalid_char(const Parser *p, const char c) {
-    return (!c) || (c == '(') || (c == ')') || (c == '.')
-                || (isspace((uchar) c)) || is_lambda(p);
+    return (!c) || (c == '(')
+                || (c == ')')
+                || (c == '.')
+                || (isspace((uchar) c))
+                || is_lambda(p);
 }
 
 expr *parse(Parser *p) {
