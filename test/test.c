@@ -99,7 +99,7 @@ TEST(expr_copy) {
 
 TEST(parsing) {
     // Test variable
-    const char *input1 = "x";
+    cchar *input1 = "x";
     Parser p1 = {input1, 0, strlen(input1)};
     expr *e1 = parse(&p1);
     assert(e1->type == VAR_expr);
