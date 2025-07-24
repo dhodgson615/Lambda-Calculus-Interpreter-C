@@ -45,7 +45,7 @@ void vs_add(VarSet *s, cchar *x) {
     s->v[s->c++] = strdup(x);
 }
 
-void vs_rm(VarSet *s, const char *x) {
+void vs_rm(VarSet *s, cchar *x) {
     for (int i = 0; i < s->c; i++) {
         if (!strcmp(s->v[i], x)) {
             free(s->v[i]);
