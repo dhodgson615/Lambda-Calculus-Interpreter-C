@@ -43,7 +43,7 @@ static cchar *def_src[] = {
 /**
  * @brief              Delta definition names.
  */
-static const char *def_names[N_DEFS] = {"true", "false", "and", "or", "dec",
+static cchar *def_names[N_DEFS] = {"true", "false", "and", "or", "dec",
                                         "inc", "+", "*", "iszero", "-", "<=",
                                         "pair",
                                         /* Untested */
