@@ -39,8 +39,8 @@ HOT INLINE void skip_whitespace(Parser *p) {
 }
 
 HOT PURE INLINE bool is_lambda(const Parser *p) {
-    return (p->i + 1 < p->n) && ((unsigned char) p->src[p->i] == 0xCE) &&
-            ((unsigned char) p->src[p->i + 1] == 0xBB);
+    return (p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) &&
+            ((uchar) p->src[p->i + 1] == 0xBB);
 }
 
 HOT PURE INLINE bool is_invalid_char(const Parser *p, const char c) {
