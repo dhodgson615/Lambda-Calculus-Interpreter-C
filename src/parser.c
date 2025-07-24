@@ -128,7 +128,7 @@ int parse_number(Parser *p) {
         fprintf(stderr, "Expected digit at %zu\n", p->i);
         exit(1);
     }
-    while (isdigit((unsigned char) peek(p))) v = v * 10 + (consume(p) - '0');
+    while (isdigit((uchar) peek(p))) v = v * 10 + (consume(p) - '0');
 
     return v;
 }
