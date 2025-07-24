@@ -90,7 +90,7 @@ expr *church(const int n) {
         expr *fv = make_variable("f");
         body = make_application(fv, body);
     }
-    expr *abs_x = make_abstraction("x", body);
+    cexpr *abs_x = make_abstraction("x", body);
 
     return make_abstraction("f", abs_x);
 }
