@@ -285,7 +285,7 @@ TEST(complex_parsing) {
     assert(e1->abs_body->abs_body->type == ABS_expr);
 
     // Parenthesized expression test
-    const char *input2 = "(λx.x x) (λy.y)";
+    cchar *input2 = "(λx.x x) (λy.y)";
     Parser p2 = {input2, 0, strlen(input2)};
     expr *e2 = parse(&p2);
     assert(e2 != NULL);
