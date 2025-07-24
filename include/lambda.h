@@ -14,7 +14,7 @@
 /**
  * @brief              Delta definitions.
  */
-static const char *def_src[] = {
+static cchar *def_src[] = {
     "λx.λy.x",                                     /* true   */
     "λx.λy.y",                                     /* false  */
     "λp.λq.p q p",                                 /* and    */
