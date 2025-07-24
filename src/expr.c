@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-expr *make_variable(const char *n) {
+expr *make_variable(cchar *n) {
     expr *e = malloc(sizeof *e);
     if (!e) {
         perror("malloc");
