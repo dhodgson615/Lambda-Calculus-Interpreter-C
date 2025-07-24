@@ -276,7 +276,7 @@ TEST(normalization) {
 
 TEST(complex_parsing) {
     // Nested abstraction test
-    const char *input1 = "λx.λy.λz.x y z";
+    cchar *input1 = "λx.λy.λz.x y z";
     Parser p1 = {input1, 0, strlen(input1)};
     expr *e1 = parse(&p1);
     assert(e1 != NULL);
