@@ -5,7 +5,6 @@
 #include "../include/strbuf.h"
 #include "../include/types.h"
 #include "../include/parser.h"
-#include "../include/macros.h"
 
 #include <assert.h>
 #include <stdbool.h>
