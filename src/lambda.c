@@ -33,6 +33,9 @@ bool vs_has(const VarSet *s, const char *x) {
     return false;
 }
 
+/* TODO: Consider using a hash table for better performance. This is a
+         simple implementation that grows in chunks of 8 and uses
+         linear search. */
 void vs_add(VarSet *s, const char *x) {
     if (vs_has(s, x)) return;
     if (s->c % 8 == 0) { // Grow in chunks of 8
