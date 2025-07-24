@@ -124,7 +124,7 @@ HOT INLINE expr *parse_atom(Parser *p) {
 
 int parse_number(Parser *p) {
     int v = 0;
-    if (!isdigit((unsigned char) peek(p))) {
+    if (!isdigit((uchar) peek(p))) {
         fprintf(stderr, "Expected digit at %zu\n", p->i);
         exit(1);
     }
