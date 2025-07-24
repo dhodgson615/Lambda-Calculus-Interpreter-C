@@ -35,7 +35,10 @@ bool vs_has(const VarSet *s, const char *x) {
 
 void vs_add(VarSet *s, const char *x) {
     if (vs_has(s, x)) return;
-    s->v = realloc(s->v, sizeof(char *) * (s->c + 1));
+    if (s->c % 8 == 0) { // Grow in chunks of 8
+        s->v = realloc(s->v, sizeof(char *) * (s->c + 8));
+        if (!s->v) { perror("realloc"); exit(1); }
+    }
     s->v[s->c++] = strdup(x);
 }
 
