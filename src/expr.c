@@ -143,7 +143,7 @@ HOT void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, const size_t 
     }
 }
 
-void expr_to_buffer(const expr *e, char *buf, const size_t cap) {
+void expr_to_buffer(cexpr *e, char *buf, const size_t cap) {
     size_t pos = 0;
     expr_to_buffer_rec(e, buf, &pos, cap);
     buf[pos < cap ? pos : cap - 1] = '\0';
