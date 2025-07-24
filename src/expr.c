@@ -166,9 +166,9 @@ PURE bool is_church_numeral(const expr *e) {
     return current_expr->type == VAR_expr && !strcmp(current_expr->var_name, x);
 }
 
-PURE int count_applications(const expr *e) {
-    const expr *cur = e->abs_body->abs_body;
-    const char *f = e->abs_param;
+PURE int count_applications(cexpr *e) {
+    cexpr *cur = e->abs_body->abs_body;
+    cchar *f = e->abs_param;
     int n = 0;
     while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr) &&
            (!strcmp(cur->app_fn->var_name, f))) {
