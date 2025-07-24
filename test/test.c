@@ -241,7 +241,7 @@ TEST(normalization) {
     setup_delta_defs();
 
     // Test (λx.x) y -> y
-    const char *input = "(λx.x) y";
+    cchar *input = "(λx.x) y";
     Parser p = {input, 0, strlen(input)};
     expr *e = parse(&p);
 
