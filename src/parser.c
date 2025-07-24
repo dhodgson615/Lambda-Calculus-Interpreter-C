@@ -103,7 +103,7 @@ HOT INLINE expr *parse_atom(Parser *p) {
     // Check for lambda as atom
     if (is_lambda(p)) return parse_abs(p);
     
-    const char c = peek(p);
+    cchar c = peek(p);
     if (c == '(') {
         consume(p);
         expr *e = parse_expr(p);
