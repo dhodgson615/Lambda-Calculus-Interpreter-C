@@ -67,8 +67,7 @@ void free_expr(expr *e) {
          algorithm for copying expressions, such as a hash table to
          store already copied expressions. This is a simple
          implementation that works for most cases but is not optimal
-         for large or complex expressions.
- */
+         for large or complex expressions. */
 PURE expr *copy_expr(expr *e) {
     if (!e) return NULL;
 
