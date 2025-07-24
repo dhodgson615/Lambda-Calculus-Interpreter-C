@@ -2,6 +2,7 @@
 
 #include "../include/expr.h"
 #include "../include/macros.h"
+#include "../include/types.h"
 
 #include <ctype.h>
 #include <stdio.h>
