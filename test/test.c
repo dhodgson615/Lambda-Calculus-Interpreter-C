@@ -113,7 +113,7 @@ TEST(parsing) {
     assert(strcmp(e2->abs_param, "x") == 0);
 
     // Test application (f x)
-    const char *input3 = "f x";
+    cchar *input3 = "f x";
     Parser p3 = {input3, 0, strlen(input3)};
     expr *e3 = parse(&p3);
     assert(e3->type == APP_expr);
