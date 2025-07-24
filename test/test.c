@@ -326,7 +326,7 @@ TEST(church_arithmetic) {
     expr *plus_two_three = make_application(plus_two, three);
 
     // Reduce and check result
-    const char *rtype;
+    cchar *rtype;
     expr *result = plus_two_three;
     bool reduced = true;
 
