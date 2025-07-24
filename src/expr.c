@@ -149,7 +149,7 @@ void expr_to_buffer(cexpr *e, char *buf, const size_t cap) {
     buf[pos < cap ? pos : cap - 1] = '\0';
 }
 
-PURE bool is_church_numeral(const expr *e) {
+PURE bool is_church_numeral(cexpr *e) {
     if (e->type != ABS_expr) return false;
     const expr *e1 = e->abs_body;
     if (e1->type != ABS_expr) return false;
