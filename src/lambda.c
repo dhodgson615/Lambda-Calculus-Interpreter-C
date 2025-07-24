@@ -72,7 +72,7 @@ void free_vars_rec(cexpr *e, VarSet *s) {
     }
 }
 
-VarSet free_vars(const expr *e) {
+VarSet free_vars(cexpr *e) {
     VarSet s;
     vs_init(&s);
     free_vars_rec(e, &s);
