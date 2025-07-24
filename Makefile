@@ -8,7 +8,7 @@ OFLAGS      := -O3 -march=native -flto -mtune=native -funroll-loops           \
 # Platform-specific settings
 UNAME_S     := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
- LDFLAGS := -Wl,-dead_strip
+ LDFLAGS    := -Wl,-dead_strip
 else
  LDFLAGS := -Wl,--gc-sections -Wl,-O1
 endif
