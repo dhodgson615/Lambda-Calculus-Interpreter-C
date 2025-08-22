@@ -38,7 +38,4 @@ void sb_reset(strbuf *sb);
  */
 void sb_destroy(strbuf *sb);
 
-/* Global strbuf instance used across the application */
-extern strbuf sb;
-
 #endif /* STRBUF_H */

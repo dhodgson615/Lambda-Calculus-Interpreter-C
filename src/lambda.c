@@ -1,6 +1,16 @@
-#include "lambda.h"
-#include "expr.h"
-#include "strbuf.h"
+/* NOTE: The contents of this file are meant to act as a placeholder
+         before all of the files of the actual project are factored out
+         in order to modularize the build system and isolate the
+         components. This file is not meant to be used as a library
+         file for the project, but rather as a temporary solution to
+         allow the project to compile and run with the current
+         structure of the codebase.                                  */
+
+#include "../include/lambda.h"
+
+#include "../include/expr.h"
+#include "../include/strbuf.h"
+
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -12,32 +22,30 @@ strbuf sb;
 static bool CONFIG_SHOW_STEP_TYPE = true;
 static bool CONFIG_DELTA_ABSTRACT = true;
 
-/* UNUSED bool get_config_show_step_type(void) { return CONFIG_SHOW_STEP_TYPE; } */
-
-/* UNUSED void set_config_show_step_type(const bool value) { CONFIG_SHOW_STEP_TYPE = value; } */
-
-/* UNUSED bool get_config_delta_abstract(void) { return CONFIG_DELTA_ABSTRACT; } */
-
-/* UNUSED void set_config_delta_abstract(const bool value) { CONFIG_DELTA_ABSTRACT = value; } */
-
 INLINE void vs_init(VarSet *s) {
     s->v = NULL;
     s->c = 0;
 }
 
-bool vs_has(const VarSet *s, const char *x) {
+bool vs_has(const VarSet *s, cchar *x) {
     for (int i = 0; i < s->c; i++) if (!strcmp(s->v[i], x)) return true;
 
     return false;
 }
 
-void vs_add(VarSet *s, const char *x) {
+/* TODO: Consider using a hash table for better performance. This is a
+         simple implementation that grows in chunks of 8 and uses
+         linear search. */
+void vs_add(VarSet *s, cchar *x) {
     if (vs_has(s, x)) return;
-    s->v = realloc(s->v, sizeof(char *) * (s->c + 1));
+    if (s->c % 8 == 0) { // Grow in chunks of 8
+        s->v = realloc(s->v, sizeof(char *) * (s->c + 8));
+        if (!s->v) { perror("realloc"); exit(1); }
+    }
     s->v[s->c++] = strdup(x);
 }
 
-void vs_rm(VarSet *s, const char *x) {
+void vs_rm(VarSet *s, cchar *x) {
     for (int i = 0; i < s->c; i++) {
         if (!strcmp(s->v[i], x)) {
             free(s->v[i]);
@@ -53,7 +61,7 @@ void vs_free(const VarSet *s) {
     free(s->v);
 }
 
-void free_vars_rec(const expr *e, VarSet *s) {
+void free_vars_rec(cexpr *e, VarSet *s) {
     if (e->type == VAR_expr) vs_add(s, e->var_name);
     else if (e->type == ABS_expr) {
         free_vars_rec(e->abs_body, s);
@@ -64,7 +72,7 @@ void free_vars_rec(const expr *e, VarSet *s) {
     }
 }
 
-VarSet free_vars(const expr *e) {
+VarSet free_vars(cexpr *e) {
     VarSet s;
     vs_init(&s);
     free_vars_rec(e, &s);
@@ -73,13 +81,13 @@ VarSet free_vars(const expr *e) {
 }
 
 char *fresh_var(const VarSet *s) {
-    for (char c = 'a'; c <= 'z'; c++) {
-        const char buf[2] = {c, '\0'};
+    for (char c = 'a'; (int)c <= 'z'; c++) {
+        cchar buf[2] = {c, '\0'};
         if (!vs_has(s, buf)) return strdup(buf);
     }
     int idx = 1;
     while (true) {
-        for (char c = 'a'; c <= 'z'; c++) {
+        for (int c = 'a'; c <= 'z'; c++) {
             char buf[8];
             snprintf(buf, sizeof(buf), "%c%d", c, idx);
             if (!vs_has(s, buf)) return strdup(buf);
@@ -88,7 +96,9 @@ char *fresh_var(const VarSet *s) {
     }
 }
 
-expr *substitute(expr *e, const char *v, expr *val) {
+/* TODO: This is inefficient because of recursive copying. Consider
+         using a more efficient copying method, or using an arena. */
+expr *substitute(expr *e, cchar *v, expr *val) {
     if (e->type == VAR_expr) return copy_expr(strcmp(e->var_name, v) == 0 ? val : e);
 
     if (e->type == ABS_expr) {
@@ -102,7 +112,7 @@ expr *substitute(expr *e, const char *v, expr *val) {
             char *nv_name = fresh_var(&forbidden_vars);
             expr *nv_expr = make_variable(nv_name);
             expr *renamed_body = substitute(e->abs_body, e->abs_param, nv_expr);
-            expr *substituted_renamed_body = substitute(renamed_body, v, val);
+            cexpr *substituted_renamed_body = substitute(renamed_body, v, val);
             expr *result_expr = make_abstraction(nv_name, substituted_renamed_body);
 
             free_expr(nv_expr);
@@ -113,7 +123,7 @@ expr *substitute(expr *e, const char *v, expr *val) {
 
             return result_expr;
         }
-        expr *new_body = substitute(e->abs_body, v, val);
+        cexpr *new_body = substitute(e->abs_body, v, val);
         expr *result_expr = make_abstraction(e->abs_param, new_body);
         vs_free(&fv_val);
 
@@ -125,17 +135,15 @@ expr *substitute(expr *e, const char *v, expr *val) {
     return make_application(substituted_fn, substituted_arg);
 }
 
-/*
-TODO: This is a hacky way to find definitions. Consider using a
-      different structure for better performance.
-*/
-CONST int find_def(const char *s) {
+/* TODO: This is a hacky way to find definitions. Consider using a
+         different structure for better performance. */
+CONST int find_def(cchar *s) {
     for (int i = 0; i < N_DEFS; i++) if (!strcmp(def_names[i], s)) return i;
 
     return -1;
 }
 
-HOT bool delta_reduce(const expr *e, expr **out) {
+HOT bool delta_reduce(cexpr *e, expr **out) {
     if (e->type == VAR_expr) {
         const int i = find_def(e->var_name);
         if (i >= 0) {
@@ -147,7 +155,7 @@ HOT bool delta_reduce(const expr *e, expr **out) {
     return false;
 }
 
-HOT bool beta_reduce(const expr *e, expr **out) {
+HOT bool beta_reduce(cexpr *e, expr **out) {
     if ((e->type == APP_expr) && (e->app_fn->type == ABS_expr)) {
         expr *argcp = copy_expr(e->app_arg);
         *out = substitute(e->app_fn->abs_body, e->app_fn->abs_param, argcp);
@@ -158,7 +166,7 @@ HOT bool beta_reduce(const expr *e, expr **out) {
     return false;
 }
 
-HOT bool reduce_once(const expr *e, expr **ne, const char **rtype) {
+HOT bool reduce_once(cexpr *e, expr **ne, cchar **rtype) {
     expr *tmp;
     if (delta_reduce(e, &tmp)) {
         *ne = tmp;
@@ -180,7 +188,7 @@ HOT bool reduce_once(const expr *e, expr **ne, const char **rtype) {
             return true;
         }
     }
-    if (e->type == ABS_expr && reduce_once(e->abs_body, &tmp, rtype)) {
+    if ((e->type == ABS_expr) && (reduce_once(e->abs_body, &tmp, rtype))) {
         *ne = make_abstraction(e->abs_param, tmp);
         return true;
     }
@@ -195,7 +203,7 @@ void normalize(expr *e) {
     int step = 1;
     while (true) {
         expr *next;
-        const char *rtype;
+        cchar *rtype;
         if (!reduce_once(e, &next, &rtype)) {
             printf("\n→ normal form reached.\n");
             break;
@@ -216,148 +224,4 @@ void normalize(expr *e) {
         free_expr(abs);
     }
     free_expr(e);
-}
-
-HOT PURE INLINE char peek(const Parser *p) {
-    if (p->i < p->n) return p->src[p->i];
-    return '\0';
-}
-
-HOT INLINE char consume(Parser *p) {
-    if (!peek(p)) return '\0';
-
-    // UTF-8 λ = 0xCE 0xBB
-    /* TODO: Factor this into separate λ detection macros. */
-    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) && ((uchar) p->src[p->i + 1] == 0xBB)) {
-        p->i += 2;
-        return '\0';
-    }
-
-    return p->src[p->i++];
-}
-
-HOT INLINE void skip_whitespace(Parser *p) { while (isspace((uchar) peek(p))) p->i++; }
-
-expr *parse(Parser *p) {
-    skip_whitespace(p);
-    expr *e = parse_expr(p);
-    skip_whitespace(p);
-    if (peek(p)) {
-        fprintf(stderr, "Unexpected '%c' at %zu\n", peek(p), p->i);
-        exit(1);
-    }
-
-    return e;
-}
-
-/* TODO: Factor out the λ detection logic into a separate function */
-expr *parse_expr(Parser *p) {
-    skip_whitespace(p);
-    // detect λ
-    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) && ((uchar) p->src[p->i + 1] == 0xBB)) {
-        return parse_abs(p);
-    }
-
-    return parse_app(p);
-}
-
-expr *parse_abs(Parser *p) {
-    p->i += 2; // consume λ
-    char *v = parse_varname(p);
-    skip_whitespace(p);
-    if (consume(p) != '.') {
-        fprintf(stderr, "Expected '.' after λ\n");
-        exit(1);
-    }
-    expr *body = parse_expr(p);
-    expr *ret = make_abstraction(v, body);
-    free(v);
-
-    return ret;
-}
-
-expr *parse_app(Parser *p) {
-    skip_whitespace(p);
-    expr *e = parse_atom(p);
-    skip_whitespace(p);
-    char c = peek(p);
-    while (c && c != ')' && c != '.') {
-        expr *a = parse_atom(p);
-        e = make_application(e, a);
-        skip_whitespace(p);
-        c = peek(p);
-    }
-
-    return e;
-}
-
-expr *parse_atom(Parser *p) {
-    skip_whitespace(p);
-    // λ as atom
-    if ((p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE) && ((uchar) p->src[p->i + 1] == 0xBB)) {
-        return parse_abs(p);
-    }
-    const char c = peek(p);
-    if (c == '(') {
-        consume(p);
-        expr *e = parse_expr(p);
-        skip_whitespace(p);
-        if (consume(p) != ')') {
-            fprintf(stderr, "Expected ')'\n");
-            exit(1);
-        }
-        return e;
-    }
-    if (isdigit((uchar) c)) {
-        const int v = parse_number(p);
-        return church(v);
-    }
-    char *name = parse_varname(p);
-    expr *v = make_variable(name);
-    free(name);
-
-    return v;
-}
-
-int parse_number(Parser *p) {
-    int v = 0;
-    if (!isdigit((uchar) peek(p))) {
-        fprintf(stderr, "Expected digit at %zu\n", p->i);
-        exit(1);
-    }
-    while (isdigit((uchar) peek(p))) v = v * 10 + (consume(p) - '0');
-
-    return v;
-}
-
-HOT PURE INLINE bool is_invalid_char(const Parser *p, const char c) {
-    return (!c) || (c == '(') || (c == ')') || (c == '.') ||
-            (isspace((uchar) c)) || ((p->i + 1 < p->n) &&
-             ((uchar) p->src[p->i] == 0xCE) &&
-              ((uchar) p->src[p->i + 1] == 0xBB));
-}
-
-char *parse_varname(Parser *p) {
-    skip_whitespace(p);
-    char c = peek(p);
-    if (is_invalid_char(p, c)) {
-        fprintf(stderr, "Invalid var start at %zu\n", p->i);
-        exit(1);
-    }
-    const size_t start = p->i;
-    while (p->i < p->n) {
-        c = peek(p);
-        if (is_invalid_char(p, c)) break;
-        p->i++;
-    }
-    size_t len = p->i - start;
-    char *out = malloc(len + 1);
-    if (!out) {
-        perror("malloc");
-        exit(1);
-    }
-    memcpy(out, p->src + start, len);
-    out[len] = '\0';
-
-    return out;
 }

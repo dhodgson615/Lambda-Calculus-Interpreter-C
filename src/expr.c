@@ -1,12 +1,13 @@
-#include <stdio.h>
-#include "expr.h"
-#include <stdint.h>
+#include "../include/expr.h"
+
+#include "../include/types.h"
+
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
-expr *make_variable(const char *n) {
+expr *make_variable(cchar *n) {
     expr *e = malloc(sizeof *e);
     if (!e) {
         perror("malloc");
@@ -18,7 +19,7 @@ expr *make_variable(const char *n) {
     return e;
 }
 
-expr *make_abstraction(const char *p, expr *b) {
+expr *make_abstraction(cchar *p, cexpr *b) {
     expr *e = malloc(sizeof *e);
     if (!e) {
         perror("malloc");
@@ -26,7 +27,7 @@ expr *make_abstraction(const char *p, expr *b) {
     }
     e->type = ABS_expr;
     e->abs_param = strdup(p);
-    e->abs_body = b;
+    e->abs_body = (expr *)b;
 
     return e;
 }
@@ -62,7 +63,12 @@ void free_expr(expr *e) {
     }
     free(e);
 }
-
+/* TODO: This is an inefficient implementation, as it does not handle
+         optimize for performance. Consider using a more efficient
+         algorithm for copying expressions, such as a hash table to
+         store already copied expressions. This is a simple
+         implementation that works for most cases but is not optimal
+         for large or complex expressions. */
 PURE expr *copy_expr(expr *e) {
     if (!e) return NULL;
 
@@ -84,12 +90,12 @@ expr *church(const int n) {
         expr *fv = make_variable("f");
         body = make_application(fv, body);
     }
-    expr *abs_x = make_abstraction("x", body);
+    cexpr *abs_x = make_abstraction("x", body);
 
     return make_abstraction("f", abs_x);
 }
 
-HOT void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, const size_t cap) {
+HOT void expr_to_buffer_rec(cexpr *e, char *buf, size_t *pos, const size_t cap) {
     if (*pos >= cap - 1) return;
 
     switch (e->type) {
@@ -137,19 +143,19 @@ HOT void expr_to_buffer_rec(const expr *e, char *buf, size_t *pos, const size_t 
     }
 }
 
-void expr_to_buffer(const expr *e, char *buf, const size_t cap) {
+void expr_to_buffer(cexpr *e, char *buf, const size_t cap) {
     size_t pos = 0;
     expr_to_buffer_rec(e, buf, &pos, cap);
     buf[pos < cap ? pos : cap - 1] = '\0';
 }
 
-PURE bool is_church_numeral(const expr *e) {
+PURE bool is_church_numeral(cexpr *e) {
     if (e->type != ABS_expr) return false;
-    const expr *e1 = e->abs_body;
+    cexpr *e1 = e->abs_body;
     if (e1->type != ABS_expr) return false;
-    const char *f = e->abs_param;
-    const char *x = e1->abs_param;
-    const expr *current_expr = e1->abs_body;
+    cchar *f = e->abs_param;
+    cchar *x = e1->abs_param;
+    cexpr *current_expr = e1->abs_body;
     
     while ((current_expr->type == APP_expr) &&
            (current_expr->app_fn->type == VAR_expr) &&
@@ -160,12 +166,12 @@ PURE bool is_church_numeral(const expr *e) {
     return current_expr->type == VAR_expr && !strcmp(current_expr->var_name, x);
 }
 
-PURE int count_applications(const expr *e) {
-    const expr *cur = e->abs_body->abs_body;
-    const char *f = e->abs_param;
+PURE int count_applications(cexpr *e) {
+    cexpr *cur = e->abs_body->abs_body;
+    cchar *f = e->abs_param;
     int n = 0;
-    while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr) &&
-           (!strcmp(cur->app_fn->var_name, f))) {
+    while ((cur->type == APP_expr) && (cur->app_fn->type == VAR_expr)
+                                   && (!strcmp(cur->app_fn->var_name, f))) {
         n++;
         cur = cur->app_arg;
     }
@@ -173,7 +179,7 @@ PURE int count_applications(const expr *e) {
     return n;
 }
 
-expr *abstract_numerals(const expr *e) {
+expr *abstract_numerals(cexpr *e) {
     if (is_church_numeral(e)) {
         const int n = count_applications(e);
         char buf[32];

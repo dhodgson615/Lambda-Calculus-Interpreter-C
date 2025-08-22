@@ -1,16 +1,18 @@
-#include "strbuf.h"
-#include "lambda.h"
-#include "expr.h"
+#include "../include/expr.h"
+#include "../include/lambda.h"
+#include "../include/strbuf.h"
+#include "../include/types.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 expr *def_vals[N_DEFS];
-extern strbuf sb;
+strbuf sb;
 
-int main(const int argc, char *argv[]) {
-    char *input = NULL;
-    expr *e = NULL;
+int main(cint argc, char *argv[]) {
+    char *input = nullptr;
+    expr *e = nullptr;
     int status = 1; // Default to error
 
     // load δ-definitions
@@ -38,7 +40,7 @@ int main(const int argc, char *argv[]) {
             if (i < argc - 1) strcat(input, " ");
         }
     } else {
-        char *buf = NULL;
+        char *buf = nullptr;
         size_t bufsize = 0;
 
         printf("λ-expr> ");
@@ -51,7 +53,8 @@ int main(const int argc, char *argv[]) {
         }
 
         // Remove trailing newline
-        if ((chars_read > 0) && (buf[chars_read - 1] == '\n')) buf[chars_read - 1] = '\0';
+        if ((chars_read > 0) && (buf[chars_read - 1] == '\n'))
+            buf[chars_read - 1] = '\0';
 
         input = buf;
         if (!input) {
@@ -64,7 +67,7 @@ int main(const int argc, char *argv[]) {
     e = parse(&p);
     if (!e) goto cleanup;
     normalize(e);
-    e = NULL;
+    e = nullptr;  // TODO: Does this actually need to be set to nullptr?
 
     status = 0;
 

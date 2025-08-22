@@ -1,26 +1,27 @@
-#include <stdio.h>
+#include "test.h"
+
+#include "../include/expr.h"
+#include "../include/lambda.h"
+#include "../include/strbuf.h"
+#include "../include/types.h"
+#include "../include/parser.h"
+
 #include <assert.h>
-#include "../src/expr.h"
-#include "../src/lambda.h"
-#include "../src/strbuf.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-
-// Test framework
-#define TEST(name) static void test_##name(void)
-#define RUN_TEST(name) do { \
-    printf("Running %-32s", #name); \
-    test_##name(); \
-    printf("[ PASS ]\n"); \
-} while(0)
 
 // Global variables needed by the main program
 expr *def_vals[N_DEFS];
 strbuf sb;
 
-// Helper to compare expressions for equality
-static bool expr_equal(const expr *e1, const expr *e2) {
+/**
+ * @brief              Check if two expressions are equal.
+ * @param  e1          the first expression
+ * @param  e2          the second expression
+ * @return             true if they are equal, false otherwise
+ */
+static bool expr_equal(cexpr *e1, cexpr *e2) {
     if (!e1 && !e2) return true;
     if (!e1 || !e2) return false;
     if (e1->type != e2->type) return false;
@@ -30,10 +31,13 @@ static bool expr_equal(const expr *e1, const expr *e2) {
         case ABS_expr: return (strcmp(e1->abs_param, e2->abs_param) == 0) && (expr_equal(e1->abs_body, e2->abs_body));
         case APP_expr: return (expr_equal(e1->app_fn, e2->app_fn)) && (expr_equal(e1->app_arg, e2->app_arg));
     }
+
     return false;
 }
 
-// Initialize delta definitions
+/**
+ * @brief              Setup delta definitions for testing.
+ */
 static void setup_delta_defs(void) {
     for (int i = 0; i < N_DEFS; i++) {
         Parser dp = {def_src[i], 0, strlen(def_src[i])};
@@ -42,7 +46,9 @@ static void setup_delta_defs(void) {
     }
 }
 
-// Cleanup delta definitions
+/**
+ * @brief              Cleanup delta definitions.
+ */
 static void cleanup_delta_defs(void) {
     for (int i = 0; i < N_DEFS; i++) {
         if (def_vals[i]) {
@@ -52,7 +58,6 @@ static void cleanup_delta_defs(void) {
     }
 }
 
-// Test expression creation and manipulation
 TEST(expr_creation) {
     // Test variable
     expr *var = make_variable("x");
@@ -82,7 +87,6 @@ TEST(expr_creation) {
     free_expr(app); // This frees fn and arg too
 }
 
-// Test copying expressions
 TEST(expr_copy) {
     expr *var = make_variable("x");
     expr *copy = copy_expr(var);
@@ -93,24 +97,23 @@ TEST(expr_copy) {
     free_expr(copy);
 }
 
-// Test parsing
 TEST(parsing) {
     // Test variable
-    const char *input1 = "x";
+    cchar *input1 = "x";
     Parser p1 = {input1, 0, strlen(input1)};
     expr *e1 = parse(&p1);
     assert(e1->type == VAR_expr);
     assert(strcmp(e1->var_name, "x") == 0);
 
     // Test abstraction (lambda x.x)
-    const char *input2 = "λx.x";
+    cchar *input2 = "λx.x";
     Parser p2 = {input2, 0, strlen(input2)};
     expr *e2 = parse(&p2);
     assert(e2->type == ABS_expr);
     assert(strcmp(e2->abs_param, "x") == 0);
 
     // Test application (f x)
-    const char *input3 = "f x";
+    cchar *input3 = "f x";
     Parser p3 = {input3, 0, strlen(input3)};
     expr *e3 = parse(&p3);
     assert(e3->type == APP_expr);
@@ -120,7 +123,6 @@ TEST(parsing) {
     free_expr(e3);
 }
 
-// Test Church numerals
 TEST(church_numerals) {
     for (int i = 0; i < 5; i++) {
         expr *c = church(i);
@@ -130,7 +132,6 @@ TEST(church_numerals) {
     }
 }
 
-// Test variable sets
 TEST(var_sets) {
     VarSet s;
     vs_init(&s);
@@ -149,7 +150,6 @@ TEST(var_sets) {
     vs_free(&s);
 }
 
-// Test free variables calculation
 TEST(free_vars) {
     // λx.y x has free variable y
     expr *var_y = make_variable("y");
@@ -166,7 +166,6 @@ TEST(free_vars) {
     free_expr(abs);
 }
 
-// Test substitution
 TEST(substitution) {
     // Test (λx.x)[y := z] = λx.x (no substitution)
     expr *id = make_abstraction("x", make_variable("x"));
@@ -183,7 +182,6 @@ TEST(substitution) {
     free_expr(result);
 }
 
-// Test beta reduction
 TEST(beta_reduction) {
     // (λx.x) y -> y
     expr *id = make_abstraction("x", make_variable("x"));
@@ -201,7 +199,6 @@ TEST(beta_reduction) {
     free_expr(result);
 }
 
-// Test delta reduction
 TEST(delta_reduction) {
     setup_delta_defs();
 
@@ -218,7 +215,6 @@ TEST(delta_reduction) {
     cleanup_delta_defs();
 }
 
-// Test string buffer functionality
 TEST(string_buffer) {
     strbuf buffer;
     sb_init(&buffer, 10);
@@ -232,7 +228,6 @@ TEST(string_buffer) {
     sb_destroy(&buffer);
 }
 
-// Test expression to string conversion
 TEST(expr_to_buffer) {
     expr *var = make_variable("x");
     char buf[100];
@@ -241,13 +236,12 @@ TEST(expr_to_buffer) {
     free_expr(var);
 }
 
-// Integration test for normalization
 TEST(normalization) {
     sb_init(&sb, 1024);
     setup_delta_defs();
 
     // Test (λx.x) y -> y
-    const char *input = "(λx.x) y";
+    cchar *input = "(λx.x) y";
     Parser p = {input, 0, strlen(input)};
     expr *e = parse(&p);
 
@@ -256,7 +250,7 @@ TEST(normalization) {
     FILE *temp = tmpfile();
     stdout = temp;
 
-    normalize(e); // note: this frees e
+    normalize(e); // This frees e
 
     // Restore stdout
     fflush(stdout);
@@ -280,21 +274,180 @@ TEST(normalization) {
     sb_destroy(&sb);
 }
 
+TEST(complex_parsing) {
+    // Nested abstraction test
+    cchar *input1 = "λx.λy.λz.x y z";
+    Parser p1 = {input1, 0, strlen(input1)};
+    expr *e1 = parse(&p1);
+    assert(e1 != NULL);
+    assert(e1->type == ABS_expr);
+    assert(e1->abs_body->type == ABS_expr);
+    assert(e1->abs_body->abs_body->type == ABS_expr);
+
+    // Parenthesized expression test
+    cchar *input2 = "(λx.x x) (λy.y)";
+    Parser p2 = {input2, 0, strlen(input2)};
+    expr *e2 = parse(&p2);
+    assert(e2 != NULL);
+    assert(e2->type == APP_expr);
+
+    free_expr(e1);
+    free_expr(e2);
+}
+
+TEST(alpha_renaming) {
+    // Test (λy.x)[x := y] - should alpha rename to avoid variable capture
+    expr *x_var = make_variable("x");
+    expr *abs = make_abstraction("y", x_var);
+    expr *y_var = make_variable("y");
+
+    expr *result = substitute(abs, "x", y_var);
+
+    // The parameter should be renamed to avoid being captured
+    assert(result->type == ABS_expr);
+    assert(strcmp(result->abs_param, "y") != 0); // Should be renamed
+    assert(result->abs_body->type == VAR_expr);
+    assert(strcmp(result->abs_body->var_name, "y") == 0);
+
+    free_expr(abs);
+    free_expr(y_var);
+    free_expr(result);
+}
+
+TEST(church_arithmetic) {
+    setup_delta_defs();
+    sb_init(&sb, 1024);
+
+    // Test 2 + 3 = 5
+    expr *two = church(2);
+    expr *three = church(3);
+    expr *plus = make_variable("+");
+    expr *plus_two = make_application(plus, two);
+    expr *plus_two_three = make_application(plus_two, three);
+
+    // Reduce and check result
+    cchar *rtype;
+    expr *result = plus_two_three;
+    bool reduced = true;
+
+    // Perform reduction steps until normal form
+    while (reduced) {
+        expr *next;
+        reduced = reduce_once(result, &next, &rtype);
+        if (reduced) {
+            free_expr(result);
+            result = next;
+        }
+    }
+
+    assert(is_church_numeral(result));
+    assert(count_applications(result) == 5);
+
+    free_expr(result);
+    cleanup_delta_defs();
+    sb_destroy(&sb);
+}
+
+TEST(fresh_variable) {
+    VarSet s;
+    vs_init(&s);
+
+    vs_add(&s, "x");
+    vs_add(&s, "y");
+    vs_add(&s, "z");
+
+    char *fresh = fresh_var(&s);
+    assert(fresh != NULL);
+    assert(!vs_has(&s, fresh));
+
+    free(fresh);
+    vs_free(&s);
+}
+
+TEST(abstract_numerals) {
+    expr *num3 = church(3);
+    expr *abstracted = abstract_numerals(num3);
+
+    assert(abstracted != NULL);
+    assert(abstracted->type == VAR_expr);
+    assert(strcmp(abstracted->var_name, "3") == 0);
+
+    free_expr(num3);
+    free_expr(abstracted);
+
+    // Test with non-numeral expression
+    expr *var = make_variable("x");
+    expr *abs_var = abstract_numerals(var);
+
+    assert(abs_var != NULL);
+    assert(abs_var->type == VAR_expr);
+    assert(strcmp(abs_var->var_name, "x") == 0);
+
+    free_expr(var);
+    free_expr(abs_var);
+}
+
+// Test boolean operations with Church encodings
+TEST(church_booleans) {
+    setup_delta_defs();
+
+    // true and false -> false
+    expr *true_var = make_variable("true");
+    expr *false_var = make_variable("false");
+    expr *and_var = make_variable("and");
+
+    expr *and_true = make_application(and_var, true_var);
+    expr *and_true_false = make_application(and_true, false_var);
+
+    cchar *rtype;
+    expr *result = and_true_false;
+    bool reduced = true;
+
+    // Reduce until normal form
+    while (reduced) {
+        expr *next;
+        reduced = reduce_once(result, &next, &rtype);
+        if (reduced) {
+            free_expr(result);
+            result = next;
+        }
+    }
+
+    // Compare with false Church encoding
+    expr *expected = make_variable("false");
+    expr *expected_val;
+    bool delta_reduced = delta_reduce(expected, &expected_val);
+    assert(delta_reduced);
+
+    assert(expr_equal(result, expected_val));
+
+    free_expr(result);
+    free_expr(expected);
+    free_expr(expected_val);
+    cleanup_delta_defs();
+}
+
 int main(void) {
     printf("\n==== Lambda Calculus Test Suite ====\n\n");
 
-    RUN_TEST(expr_creation);
-    RUN_TEST(expr_copy);
-    RUN_TEST(parsing);
-    RUN_TEST(church_numerals);
-    RUN_TEST(var_sets);
-    RUN_TEST(free_vars);
-    RUN_TEST(substitution);
-    RUN_TEST(beta_reduction);
-    RUN_TEST(delta_reduction);
-    RUN_TEST(string_buffer);
-    RUN_TEST(expr_to_buffer);
-    RUN_TEST(normalization);
+    RUN_TEST(expr_creation);      /* TODO: verify test is complete */
+    RUN_TEST(expr_copy);          /* TODO: verify test is complete */
+    RUN_TEST(parsing);            /* TODO: verify test is complete */
+    RUN_TEST(church_numerals);    /* TODO: verify test is complete */
+    RUN_TEST(var_sets);           /* TODO: verify test is complete */
+    RUN_TEST(free_vars);          /* TODO: verify test is complete */
+    RUN_TEST(substitution);       /* TODO: verify test is complete */
+    RUN_TEST(beta_reduction);     /* TODO: verify test is complete */
+    RUN_TEST(delta_reduction);    /* TODO: verify test is complete */
+    RUN_TEST(string_buffer);      /* TODO: verify test is complete */
+    RUN_TEST(expr_to_buffer);     /* TODO: verify test is complete */
+    RUN_TEST(normalization);      /* TODO: verify test is complete */
+    RUN_TEST(complex_parsing);    /* TODO: verify test is complete */
+    RUN_TEST(alpha_renaming);     /* TODO: verify test is complete */
+    RUN_TEST(church_arithmetic);  /* TODO: verify test is complete */
+    RUN_TEST(fresh_variable);     /* TODO: verify test is complete */
+    RUN_TEST(abstract_numerals);  /* TODO: verify test is complete */
+    RUN_TEST(church_booleans);    /* TODO: verify test is complete */
 
     printf("\n==== All tests passed successfully. ====\n\n");
     return 0;
