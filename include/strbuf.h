@@ -12,6 +12,8 @@ typedef struct strbuf {
     size_t         cap;
 } strbuf;
 
+extern strbuf sb;
+
 /**
  * @brief              Initialize a string buffer.
  * @param  sb          the string buffer to initialize

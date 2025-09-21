@@ -28,4 +28,9 @@ PURE int count_applications(const expr *e);
 
 expr *abstract_numerals(const expr *e);
 
+/* Include enhanced output module if enabled */
+#ifdef ENABLE_ENHANCED_OUTPUT
+#include "enhanced_wrapper.h"
+#endif
+
 #endif /* EXPR_H */
