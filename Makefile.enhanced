@@ -1,0 +1,23 @@
+# Enhanced Output Module Makefile Extension
+# Add these targets to the main Makefile for easy building with enhanced output
+
+# Enhanced output builds
+enhanced-colored: CFLAGS += -DENABLE_ENHANCED_OUTPUT -DENHANCED_OUTPUT_MODE=1
+enhanced-colored: all
+
+enhanced-compact: CFLAGS += -DENABLE_ENHANCED_OUTPUT -DENHANCED_OUTPUT_MODE=2  
+enhanced-compact: all
+
+enhanced-both: CFLAGS += -DENABLE_ENHANCED_OUTPUT -DENHANCED_OUTPUT_MODE=3
+enhanced-both: all
+
+# Test targets for enhanced output
+test-enhanced: build_dirs
+	@echo "Building enhanced output test..."
+	$(Q)$(CC) $(CFLAGS) -c src/enhanced_output.c -o $(OBJ_DIR)/enhanced_output.o
+	$(Q)$(CC) $(CFLAGS) -c test/test_enhanced_simple.c -o $(OBJ_DIR)/test_enhanced_simple.o
+	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) $(OBJ_DIR)/test_enhanced_simple.o $(OBJ_DIR)/enhanced_output.o $(OBJ_DIR)/expr.o $(OBJ_DIR)/strbuf.o -o $(BUILD_DIR)/test_enhanced
+	@echo "Running enhanced output test..."
+	$(Q)$(BUILD_DIR)/test_enhanced
+
+.PHONY: enhanced-colored enhanced-compact enhanced-both test-enhanced
