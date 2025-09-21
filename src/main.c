@@ -1,5 +1,6 @@
 #include "../include/expr.h"
 #include "../include/lambda.h"
+#include "../include/parser.h"
 #include "../include/strbuf.h"
 #include "../include/types.h"
 
@@ -7,12 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-expr *def_vals[N_DEFS];
-strbuf sb;
-
 int main(cint argc, char *argv[]) {
-    char *input = nullptr;
-    expr *e = nullptr;
+    char *input = NULL;
+    expr *e = NULL;
     int status = 1; // Default to error
 
     // load δ-definitions
@@ -40,7 +38,7 @@ int main(cint argc, char *argv[]) {
             if (i < argc - 1) strcat(input, " ");
         }
     } else {
-        char *buf = nullptr;
+        char *buf = NULL;
         size_t bufsize = 0;
 
         printf("λ-expr> ");
@@ -67,7 +65,7 @@ int main(cint argc, char *argv[]) {
     e = parse(&p);
     if (!e) goto cleanup;
     normalize(e);
-    e = nullptr;  // TODO: Does this actually need to be set to nullptr?
+    e = NULL;  // TODO: Does this actually need to be set to NULL?
 
     status = 0;
 

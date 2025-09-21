@@ -50,7 +50,7 @@ static cchar *def_names[N_DEFS] = {"true", "false", "and", "or", "dec",
                                         "==", ">", "<", ">=", "not", "nand",
                                         "nor", "xor", "xnor"};
 
-expr *def_vals[N_DEFS];
+extern expr *def_vals[N_DEFS];
 
 /**
  * @brief              Normalize an expression by abstracting Church numerals.

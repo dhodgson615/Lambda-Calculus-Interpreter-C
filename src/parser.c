@@ -9,66 +9,41 @@
 #include <stdlib.h>
 #include <string.h>
 
-HOT PURE INLINE char peek(const Parser *p) {
+char peek(const Parser *p) {
     if (p->i < p->n) return p->src[p->i];
     return '\0';
 }
 
-HOT INLINE char consume(Parser *p) {
-    if (!peek(p)) return '\0';
-
-    if (is_lambda(p)) {
-        p->i += 2;
-        return '\0';
-    }
-
-    return p->src[p->i++];
+char consume(Parser *p) {
+    if (p->i < p->n) return p->src[p->i++];
+    return '\0';
 }
 
-/* TODO: This function is called very often, so it should be optimized
-         for performance. Calls to this function should also be
-         consolidated together to reduce redundant computation. */
-HOT INLINE void skip_whitespace(Parser *p) {
-    cchar *src = p->src;
-    size_t i = p->i;
-    const size_t n = p->n;
-
-    while (i < n && isspace((uchar)src[i])) i++;
-
-    p->i = i;
+void skip_whitespace(Parser *p) {
+    while (p->i < p->n && isspace(p->src[p->i])) p->i++;
 }
 
-HOT PURE INLINE bool is_lambda(const Parser *p) {
-    return (p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE)
-                             && ((uchar) p->src[p->i + 1] == 0xBB);
+bool is_lambda(const Parser *p) {
+    return (p->i + 1 < p->n) && (p->src[p->i] == 0xCE) && (p->src[p->i + 1] == 0xBB);
 }
 
-HOT PURE INLINE bool is_invalid_char(const Parser *p, cchar c) {
-    return (!c) || (c == '(')
-                || (c == ')')
-                || (c == '.')
-                || (isspace((uchar) c))
-                || is_lambda(p);
+bool is_invalid_char(const Parser *p, char c) {
+    return c != '(' && c != ')' && c != '.' && c != ' ' && c != '\t' && c != '\n'
+        && c != '\r' && !isalnum(c) && !is_lambda(p);
 }
 
-expr *parse(Parser *p) {
-    skip_whitespace(p);
-    expr *e = parse_expr(p);
-    skip_whitespace(p);
-    if (peek(p)) {
-        fprintf(stderr, "Unexpected '%c' at %zu\n", peek(p), p->i);
-        exit(1);
-    }
+expr *parse_expr(Parser *p);
+expr *parse_abs(Parser *p);
+expr *parse_app(Parser *p);
+expr *parse_atom(Parser *p);
+char *parse_varname(Parser *p);
 
-    return e;
-}
-
-HOT INLINE expr *parse_expr(Parser *p) {
+expr *parse_expr(Parser *p) {
     skip_whitespace(p);
     return is_lambda(p) ? parse_abs(p) : parse_app(p);
 }
 
-HOT INLINE expr *parse_abs(Parser *p) {
+expr *parse_abs(Parser *p) {
     p->i += 2; // consume λ
     char *v = parse_varname(p);
     skip_whitespace(p);
@@ -76,36 +51,31 @@ HOT INLINE expr *parse_abs(Parser *p) {
         fprintf(stderr, "Expected '.' after λ\n");
         exit(1);
     }
-    cexpr *body = parse_expr(p);
+    expr *body = parse_expr(p);
     expr *ret = make_abstraction(v, body);
     free(v);
 
     return ret;
 }
 
-HOT INLINE expr *parse_app(Parser *p) {
+expr *parse_app(Parser *p) {
+    expr *lhs = parse_atom(p);
     skip_whitespace(p);
-    expr *e = parse_atom(p);
-    skip_whitespace(p);
-    char c = peek(p);
-    while (c && c != ')' && c != '.') {
-        expr *a = parse_atom(p);
-        e = make_application(e, a);
+
+    while (p->i < p->n && peek(p) != ')' && !is_lambda(p)) {
+        expr *rhs = parse_atom(p);
+        lhs = make_application(lhs, rhs);
         skip_whitespace(p);
-        c = peek(p);
     }
 
-    return e;
+    return lhs;
 }
 
-HOT INLINE expr *parse_atom(Parser *p) {
+expr *parse_atom(Parser *p) {
     skip_whitespace(p);
-    // Check for lambda as atom
-    if (is_lambda(p)) return parse_abs(p);
-    
-    cchar c = peek(p);
-    if (c == '(') {
-        consume(p);
+
+    if (peek(p) == '(') {
+        consume(p); // '('
         expr *e = parse_expr(p);
         skip_whitespace(p);
         if (consume(p) != ')') {
@@ -114,44 +84,50 @@ HOT INLINE expr *parse_atom(Parser *p) {
         }
         return e;
     }
-    if (isdigit((uchar) c)) {
-        const int v = parse_number(p);
-        return church(v);
-    }
-    char *name = parse_varname(p);
-    expr *v = make_variable(name);
-    free(name);
 
-    return v;
+    if (is_lambda(p)) return parse_abs(p);
+
+    char *v = parse_varname(p);
+    expr *e = make_variable(v);
+    free(v);
+
+    return e;
 }
 
-int parse_number(Parser *p) {
-    int v = 0;
-    if (!isdigit((uchar) peek(p))) {
-        fprintf(stderr, "Expected digit at %zu\n", p->i);
-        exit(1);
-    }
-    while (isdigit((uchar) peek(p))) v = v * 10 + (consume(p) - '0');
-
-    return v;
-}
-
-HOT INLINE char *parse_varname(Parser *p) {
+char *parse_varname(Parser *p) {
     skip_whitespace(p);
-    const unsigned int start = p->i;
-    while (p->i < p->n && !is_invalid_char(p, peek(p))) p->i++;
-    unsigned int len = p->i - start;
-    if (len == 0) {
-        fprintf(stderr, "Invalid var start at %zu\n", p->i);
+    size_t start = p->i;
+    
+    while (p->i < p->n && isalnum(p->src[p->i])) p->i++;
+    
+    if (p->i == start) {
+        fprintf(stderr, "Expected variable name\n");
         exit(1);
     }
-    char *out = malloc(len + 1);
-    if (!out) {
-        perror("malloc");
-        exit(1);
-    }
-    memcpy(out, p->src + start, len);
-    out[len] = '\0';
+    
+    size_t len = p->i - start;
+    char *name = malloc(len + 1);
+    memcpy(name, p->src + start, len);
+    name[len] = '\0';
+    
+    return name;
+}
 
-    return out;
+expr *parse(Parser *p) {
+    skip_whitespace(p);
+    if (p->i >= p->n) {
+        fprintf(stderr, "Empty input\n");
+        return NULL;
+    }
+
+    expr *e = parse_expr(p);
+    skip_whitespace(p);
+
+    if (p->i < p->n) {
+        fprintf(stderr, "Unexpected character at position %zu\n", p->i);
+        free_expr(e);
+        return NULL;
+    }
+
+    return e;
 }
