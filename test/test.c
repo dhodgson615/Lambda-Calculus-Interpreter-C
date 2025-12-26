@@ -11,10 +11,6 @@
 #include <stdio.h>
 #include <string.h>
 
-// Global variables needed by the main program
-expr *def_vals[N_DEFS];
-strbuf sb;
-
 /**
  * @brief              Check if two expressions are equal.
  * @param  e1          the first expression

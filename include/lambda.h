@@ -10,6 +10,8 @@
 #define LAMBDA_H
 
 #include "types.h"
+#include "macros.h"
+#include "strbuf.h"
 
 /**
  * @brief              Delta definitions.
@@ -43,14 +45,15 @@ static cchar *def_src[] = {
 /**
  * @brief              Delta definition names.
  */
-static cchar *def_names[N_DEFS] = {"true", "false", "and", "or", "dec",
+static cchar *def_names[N_DEFS] UNUSED = {"true", "false", "and", "or", "dec",
                                         "inc", "+", "*", "iszero", "-", "<=",
                                         "pair",
                                         /* Untested */
                                         "==", ">", "<", ">=", "not", "nand",
                                         "nor", "xor", "xnor"};
 
-expr *def_vals[N_DEFS];
+extern expr *def_vals[N_DEFS];
+extern strbuf sb;
 
 /**
  * @brief              Normalize an expression by abstracting Church numerals.

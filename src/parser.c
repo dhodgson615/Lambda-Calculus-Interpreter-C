@@ -9,12 +9,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-HOT PURE INLINE char peek(const Parser *p) {
+HOT PURE char peek(const Parser *p) {
     if (p->i < p->n) return p->src[p->i];
     return '\0';
 }
 
-HOT INLINE char consume(Parser *p) {
+HOT char consume(Parser *p) {
     if (!peek(p)) return '\0';
 
     if (is_lambda(p)) {
@@ -28,7 +28,7 @@ HOT INLINE char consume(Parser *p) {
 /* TODO: This function is called very often, so it should be optimized
          for performance. Calls to this function should also be
          consolidated together to reduce redundant computation. */
-HOT INLINE void skip_whitespace(Parser *p) {
+HOT void skip_whitespace(Parser *p) {
     cchar *src = p->src;
     size_t i = p->i;
     const size_t n = p->n;
@@ -38,12 +38,12 @@ HOT INLINE void skip_whitespace(Parser *p) {
     p->i = i;
 }
 
-HOT PURE INLINE bool is_lambda(const Parser *p) {
+HOT PURE bool is_lambda(const Parser *p) {
     return (p->i + 1 < p->n) && ((uchar) p->src[p->i] == 0xCE)
                              && ((uchar) p->src[p->i + 1] == 0xBB);
 }
 
-HOT PURE INLINE bool is_invalid_char(const Parser *p, cchar c) {
+HOT PURE bool is_invalid_char(const Parser *p, cchar c) {
     return (!c) || (c == '(')
                 || (c == ')')
                 || (c == '.')
@@ -63,12 +63,12 @@ expr *parse(Parser *p) {
     return e;
 }
 
-HOT INLINE expr *parse_expr(Parser *p) {
+HOT expr *parse_expr(Parser *p) {
     skip_whitespace(p);
     return is_lambda(p) ? parse_abs(p) : parse_app(p);
 }
 
-HOT INLINE expr *parse_abs(Parser *p) {
+HOT expr *parse_abs(Parser *p) {
     p->i += 2; // consume λ
     char *v = parse_varname(p);
     skip_whitespace(p);
@@ -83,7 +83,7 @@ HOT INLINE expr *parse_abs(Parser *p) {
     return ret;
 }
 
-HOT INLINE expr *parse_app(Parser *p) {
+HOT expr *parse_app(Parser *p) {
     skip_whitespace(p);
     expr *e = parse_atom(p);
     skip_whitespace(p);
@@ -98,7 +98,7 @@ HOT INLINE expr *parse_app(Parser *p) {
     return e;
 }
 
-HOT INLINE expr *parse_atom(Parser *p) {
+HOT expr *parse_atom(Parser *p) {
     skip_whitespace(p);
     // Check for lambda as atom
     if (is_lambda(p)) return parse_abs(p);
@@ -136,7 +136,7 @@ int parse_number(Parser *p) {
     return v;
 }
 
-HOT INLINE char *parse_varname(Parser *p) {
+HOT char *parse_varname(Parser *p) {
     skip_whitespace(p);
     const unsigned int start = p->i;
     while (p->i < p->n && !is_invalid_char(p, peek(p))) p->i++;

@@ -17,12 +17,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+expr *def_vals[N_DEFS];
 strbuf sb;
 
 static bool CONFIG_SHOW_STEP_TYPE = true;
 static bool CONFIG_DELTA_ABSTRACT = true;
 
-INLINE void vs_init(VarSet *s) {
+void vs_init(VarSet *s) {
     s->v = NULL;
     s->c = 0;
 }
