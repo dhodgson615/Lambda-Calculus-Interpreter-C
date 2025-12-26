@@ -1,5 +1,6 @@
 #include "test.h"
 
+#include "../include/arena.h"
 #include "../include/expr.h"
 #include "../include/lambda.h"
 #include "../include/strbuf.h"
@@ -423,6 +424,81 @@ TEST(church_booleans) {
     cleanup_delta_defs();
 }
 
+// Test arena allocator basic functionality
+TEST(arena_allocator) {
+    Arena arena;
+    arena_init(&arena, 256);
+
+    // Test basic allocation
+    int *p1 = arena_alloc(&arena, sizeof(int), sizeof(int));
+    assert(p1 != NULL);
+    *p1 = 42;
+    assert(*p1 == 42);
+
+    // Test multiple allocations
+    int *p2 = arena_alloc(&arena, sizeof(int), sizeof(int));
+    assert(p2 != NULL);
+    *p2 = 100;
+    assert(*p1 == 42); // First allocation should still be valid
+    assert(*p2 == 100);
+
+    // Test string allocation
+    char *str = arena_alloc(&arena, 20, 1);
+    assert(str != NULL);
+    strcpy(str, "Hello, Arena!");
+    assert(strcmp(str, "Hello, Arena!") == 0);
+
+    // Test reset
+    arena_reset(&arena);
+    int *p3 = arena_alloc(&arena, sizeof(int), sizeof(int));
+    assert(p3 != NULL);
+    *p3 = 999;
+    assert(*p3 == 999);
+
+    arena_free(&arena);
+}
+
+// Test that copy_expr works with large/deep trees
+TEST(copy_expr_large_tree) {
+    // Create a deep nested abstraction: λx.λy.λz.λw.x
+    expr *var_x = make_variable("x");
+    expr *abs_w = make_abstraction("w", var_x);
+    expr *abs_z = make_abstraction("z", abs_w);
+    expr *abs_y = make_abstraction("y", abs_z);
+    expr *abs_x = make_abstraction("x", abs_y);
+
+    // Copy it
+    expr *copy = copy_expr(abs_x);
+
+    // Verify the copy is equal but not the same
+    assert(expr_equal(abs_x, copy));
+    assert(abs_x != copy);
+    assert(abs_x->abs_body != copy->abs_body);
+
+    free_expr(abs_x);
+    free_expr(copy);
+}
+
+// Test copy_expr with complex application trees
+TEST(copy_expr_complex_app) {
+    // Create: (λx.x) ((λy.y) z)
+    expr *id1 = make_abstraction("x", make_variable("x"));
+    expr *id2 = make_abstraction("y", make_variable("y"));
+    expr *z = make_variable("z");
+    expr *app1 = make_application(id2, z);
+    expr *app2 = make_application(id1, app1);
+
+    // Copy it
+    expr *copy = copy_expr(app2);
+
+    // Verify
+    assert(expr_equal(app2, copy));
+    assert(app2 != copy);
+
+    free_expr(app2);
+    free_expr(copy);
+}
+
 int main(void) {
     printf("\n==== Lambda Calculus Test Suite ====\n\n");
 
@@ -444,6 +520,9 @@ int main(void) {
     RUN_TEST(fresh_variable);     /* TODO: verify test is complete */
     RUN_TEST(abstract_numerals);  /* TODO: verify test is complete */
     RUN_TEST(church_booleans);    /* TODO: verify test is complete */
+    RUN_TEST(arena_allocator);    /* Test arena allocator */
+    RUN_TEST(copy_expr_large_tree); /* Test copy_expr with deep trees */
+    RUN_TEST(copy_expr_complex_app); /* Test copy_expr with complex apps */
 
     printf("\n==== All tests passed successfully. ====\n\n");
     return 0;

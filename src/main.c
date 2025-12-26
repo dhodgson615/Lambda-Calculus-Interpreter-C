@@ -1,14 +1,13 @@
 #include "../include/expr.h"
 #include "../include/lambda.h"
+#include "../include/parser.h"
 #include "../include/strbuf.h"
 #include "../include/types.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-expr *def_vals[N_DEFS];
-strbuf sb;
+#include <sys/types.h>
 
 int main(cint argc, char *argv[]) {
     char *input = nullptr;
