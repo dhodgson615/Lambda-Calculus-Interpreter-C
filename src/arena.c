@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 void arena_init(Arena *arena, size_t block_size) {
     arena->first = NULL;
@@ -28,12 +29,18 @@ void *arena_alloc(Arena *arena, size_t size, size_t align) {
     /* Ensure alignment is valid */
     if (align == 0) align = sizeof(void *);
     
+    /* Check for potential overflow in allocation size */
+    if (size > SIZE_MAX - align) return NULL;
+    
     /* Try to allocate from current block */
     if (arena->current) {
         /* Calculate aligned position */
         size_t current_addr = (size_t)arena->current->data + arena->current->used;
         size_t aligned_addr = (current_addr + align - 1) & ~(align - 1);
         size_t padding = aligned_addr - current_addr;
+        
+        /* Check for overflow in total_needed calculation */
+        if (padding > SIZE_MAX - size) goto need_new_block;
         size_t total_needed = padding + size;
         
         if (arena->current->used + total_needed <= arena->current->capacity) {
@@ -43,6 +50,7 @@ void *arena_alloc(Arena *arena, size_t size, size_t align) {
         }
     }
     
+need_new_block:
     /* Need a new block */
     size_t block_size = arena->default_block_size;
     if (size > block_size) {
