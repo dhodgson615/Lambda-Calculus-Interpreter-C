@@ -13,7 +13,7 @@ void arena_init(Arena *arena, size_t block_size) {
 static ArenaBlock *arena_new_block(size_t size) {
     ArenaBlock *block = malloc(sizeof(ArenaBlock) + size);
     if (!block) {
-        perror("malloc");
+        perror("Failed to allocate arena block");
         exit(1);
     }
     block->next = NULL;
