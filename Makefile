@@ -1,7 +1,7 @@
 # Compiler settings
 CC          := gcc
-CFLAGS      := -std=c23 -Wall -Wextra -Werror -pedantic -Iinclude
-OFLAGS      := -O3 -march=native -flto -mtune=native -funroll-loops           \
+CFLAGS      := -std=c2x -Wall -Wextra -pedantic -Iinclude
+OFLAGS      := -O3 -march=native -mtune=native -funroll-loops           \
                -fomit-frame-pointer -pipe -ffast-math                         \
                -ffunction-sections -fdata-sections
 

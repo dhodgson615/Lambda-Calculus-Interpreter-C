@@ -1,6 +1,7 @@
 #include "../include/expr.h"
 
 #include "../include/types.h"
+#include "../include/arena.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -63,25 +64,112 @@ void free_expr(expr *e) {
     }
     free(e);
 }
-/* TODO: This is an inefficient implementation, as it does not handle
-         optimize for performance. Consider using a more efficient
-         algorithm for copying expressions, such as a hash table to
-         store already copied expressions. This is a simple
-         implementation that works for most cases but is not optimal
-         for large or complex expressions. */
-PURE expr *copy_expr(expr *e) {
+
+/* Internal helper for arena-based string duplication */
+static char *arena_strdup(Arena *arena, cchar *s) {
+    if (!s) return NULL;
+    size_t len = strlen(s);
+    char *copy = arena_alloc(arena, len + 1, 1);
+    memcpy(copy, s, len + 1);
+    return copy;
+}
+
+/* Internal helper for arena-based variable creation */
+static expr *arena_make_variable(Arena *arena, cchar *n) {
+    expr *e = arena_alloc(arena, sizeof(expr), sizeof(void *));
+    e->type = VAR_expr;
+    e->var_name = arena_strdup(arena, n);
+    return e;
+}
+
+/* Internal helper for arena-based abstraction creation */
+static expr *arena_make_abstraction(Arena *arena, cchar *p, cexpr *b) {
+    expr *e = arena_alloc(arena, sizeof(expr), sizeof(void *));
+    e->type = ABS_expr;
+    e->abs_param = arena_strdup(arena, p);
+    e->abs_body = (expr *)b;
+    return e;
+}
+
+/* Internal helper for arena-based application creation */
+static expr *arena_make_application(Arena *arena, expr *f, expr *a) {
+    expr *e = arena_alloc(arena, sizeof(expr), sizeof(void *));
+    e->type = APP_expr;
+    e->app_fn = f;
+    e->app_arg = a;
+    return e;
+}
+
+/* Internal recursive copy with arena allocation */
+static expr *copy_expr_arena_internal(expr *e, Arena *arena) {
+    if (!e) return NULL;
+
+    switch (e->type) {
+        case VAR_expr:
+            return arena_make_variable(arena, e->var_name);
+        case ABS_expr:
+            return arena_make_abstraction(arena, e->abs_param, 
+                                          copy_expr_arena_internal(e->abs_body, arena));
+        case APP_expr:
+            return arena_make_application(arena, 
+                                          copy_expr_arena_internal(e->app_fn, arena),
+                                          copy_expr_arena_internal(e->app_arg, arena));
+    }
+
+    return NULL; // unreachable
+}
+
+/* Helper to convert arena-allocated expr tree to heap-allocated tree */
+static expr *expr_arena_to_heap(cexpr *e) {
     if (!e) return NULL;
 
     switch (e->type) {
         case VAR_expr:
             return make_variable(e->var_name);
         case ABS_expr:
-            return make_abstraction(e->abs_param, copy_expr(e->abs_body));
+            return make_abstraction(e->abs_param, expr_arena_to_heap(e->abs_body));
         case APP_expr:
-            return make_application(copy_expr(e->app_fn), copy_expr(e->app_arg));
+            return make_application(expr_arena_to_heap(e->app_fn), 
+                                    expr_arena_to_heap(e->app_arg));
     }
 
     return NULL; // unreachable
+}
+
+/* 
+ * Public API: Copy expression using arena allocator for efficient memory management.
+ * 
+ * This function uses an arena allocator internally to reduce malloc overhead
+ * during the copy operation. The arena allows for efficient bulk allocation
+ * and deallocation, which is particularly beneficial when copying large or
+ * deeply nested expression trees.
+ * 
+ * The implementation:
+ * 1. Creates a temporary arena for intermediate allocations
+ * 2. Copies the expression tree using arena allocation (fast, cache-friendly)
+ * 3. Converts the arena-allocated tree to a regular heap-allocated tree
+ * 4. Frees the arena in one operation (much faster than individual frees)
+ * 
+ * The caller receives a standard heap-allocated expression tree and is
+ * responsible for freeing it with free_expr().
+ */
+expr *copy_expr(expr *e) {
+    if (!e) return NULL;
+
+    /* Create arena for efficient temporary allocation */
+    Arena arena;
+    arena_init(&arena, 8192); /* 8KB initial block size */
+    
+    /* Perform arena-based copy (fast, no malloc overhead per node) */
+    expr *arena_copy = copy_expr_arena_internal(e, &arena);
+    
+    /* Convert to heap-allocated tree for normal lifecycle management */
+    expr *heap_copy = expr_arena_to_heap(arena_copy);
+    
+    /* Free entire arena at once (fast, single operation) */
+    arena_free(&arena);
+    
+    return heap_copy;
 }
 
 expr *church(const int n) {

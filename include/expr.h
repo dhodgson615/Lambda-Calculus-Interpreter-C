@@ -14,7 +14,7 @@ expr *make_application(expr *f, expr *a);
 
 void free_expr(expr *e);
 
-PURE expr *copy_expr(expr *e);
+expr *copy_expr(expr *e);
 
 expr *church(int n);
 
