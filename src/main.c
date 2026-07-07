@@ -44,22 +44,27 @@ int main(cint argc, char *argv[]) {
     for (int i = 0; i < N_DEFS; i++) {
         Parser dp = {def_src[i], 0, strlen(def_src[i])};
         def_vals[i] = parse(&dp);
+
         if (!def_vals[i]) {
             fprintf(stderr, "Failed to parse definition: %s\n", def_src[i]);
             goto cleanup;
         }
     }
+
     sb_init(&sb, MAX_PRINT_LEN);
 
     if (argc > 1) {
         size_t L = 0;
         for (int i = 1; i < argc; i++) L += strlen(argv[i]) + 1;
         input = malloc(L + 1);
+
         if (!input) {
             perror("malloc for input");
             goto cleanup;
         }
+
         input[0] = '\0';
+
         for (int i = 1; i < argc; i++) {
             strcat(input, argv[i]);
             if (i < argc - 1) strcat(input, " ");
@@ -82,6 +87,7 @@ int main(cint argc, char *argv[]) {
             buf[chars_read - 1] = '\0';
 
         input = buf;
+
         if (!input) {
             perror("strdup for input");
             goto cleanup;
