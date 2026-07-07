@@ -72,10 +72,12 @@ HOT INLINE expr *parse_abs(Parser *p) {
     p->i += 2; // consume λ
     char *v = parse_varname(p);
     skip_whitespace(p);
+
     if (consume(p) != '.') {
         fprintf(stderr, "Expected '.' after λ\n");
         exit(1);
     }
+
     cexpr *body = parse_expr(p);
     expr *ret = make_abstraction(v, body);
     free(v);
@@ -102,16 +104,18 @@ HOT INLINE expr *parse_atom(Parser *p) {
     skip_whitespace(p);
     // Check for lambda as atom
     if (is_lambda(p)) return parse_abs(p);
-    
     cchar c = peek(p);
+
     if (c == '(') {
         consume(p);
         expr *e = parse_expr(p);
         skip_whitespace(p);
+
         if (consume(p) != ')') {
             fprintf(stderr, "Expected ')'\n");
             exit(1);
         }
+
         return e;
     }
     if (isdigit((uchar) c)) {
@@ -127,10 +131,12 @@ HOT INLINE expr *parse_atom(Parser *p) {
 
 int parse_number(Parser *p) {
     int v = 0;
+
     if (!isdigit((uchar) peek(p))) {
         fprintf(stderr, "Expected digit at %zu\n", p->i);
         exit(1);
     }
+
     while (isdigit((uchar) peek(p))) v = v * 10 + (consume(p) - '0');
 
     return v;
@@ -141,15 +147,19 @@ HOT INLINE char *parse_varname(Parser *p) {
     const unsigned int start = p->i;
     while (p->i < p->n && !is_invalid_char(p, peek(p))) p->i++;
     unsigned int len = p->i - start;
+
     if (len == 0) {
         fprintf(stderr, "Invalid var start at %zu\n", p->i);
         exit(1);
     }
+
     char *out = malloc(len + 1);
+
     if (!out) {
         perror("malloc");
         exit(1);
     }
+
     memcpy(out, p->src + start, len);
     out[len] = '\0';
 
