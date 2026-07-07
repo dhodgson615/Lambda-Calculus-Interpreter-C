@@ -1,3 +1,28 @@
+/*
+ * TODO: Split lambda.h / lambda.c into logical modules: definitions, variable
+ *       set, substitution, reduction, normalisation.
+ *
+ *       Eliminate global def_vals and sb. Pass them as parameters or make them
+ *       local.
+ *
+ *       Fix sb_ensure realloc bug (temporary pointer) and add
+ *       overflow/zero-size guards.
+ *
+ *       Protect count_applications from invalid input.
+ *
+ *       Decouple I/O from reduction. Normalisation should write to a provided
+ *       stream or buffer.
+ *
+ *       Improve memory management. Consider arena allocation for expressions
+ *       to reduce overhead and avoid recursive free.
+ *
+ *       Strengthen const‑correctness. Decide on true immutability and stick to
+ *       it.
+ *
+ *       Address the multiple‑definition issue immediately to avoid linker
+ *       errors on some platforms.
+ */
+
 #include "../include/expr.h"
 #include "../include/lambda.h"
 #include "../include/strbuf.h"
